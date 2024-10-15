@@ -50,10 +50,10 @@
 
 ## 文件结构
 
-# 文件结构
+# 项目结构
 
 - dev: Docker开发依赖容器
-- docs: Swagger API，`swag init`自动生成，无需受到编辑
+- docs: Swagger API，`swag init`自动生成，无需手动编辑
 - gb28181_server: Monibuca GB28181插件实现
 - src: web服务实现
     - apps：app接口
