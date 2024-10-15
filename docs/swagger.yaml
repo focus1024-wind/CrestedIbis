@@ -1,0 +1,43 @@
+definitions:
+  model.HttpResponse:
+    properties:
+      code:
+        type: integer
+      data: {}
+      msg:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /ipc/device/upload_image:
+    post:
+      consumes:
+      - multipart/form-data
+      description: GB28181图像抓拍，图片上传接口
+      parameters:
+      - description: 访问token
+        in: query
+        name: access_token
+        required: true
+        type: string
+      - description: 上传图片
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 上传图片失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      tags:
+      - IPC设备 /ipc/device
+swagger: "2.0"

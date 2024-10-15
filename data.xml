@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<Control>
+    <CmdType>DeviceConfig</CmdType>
+    <SN>1</SN>
+    <DeviceID>1</DeviceID>
+    <SnapShotConfig>
+        <SnapNum>1</SnapNum>
+        <Interval>2</Interval>
+        <UploadURL>1</UploadURL>
+        <SessionID>1</SessionID>
+    </SnapShotConfig>
+</Control>

@@ -1,0 +1,58 @@
+http-server:
+  ip: 0.0.0.0
+  port: 9527
+  # public-host: 公网IP：解决容器环境下访问IP和实际绑定IP不一致情况，默认为http://ip:port
+  public-host: http://192.168.10.45:9527
+
+datasource:
+  type: mysql
+  host: localhost
+  port: 3306
+  username: root
+  password: CrestedIbis
+  db-name: CrestedIbis
+  max-idle: 10
+  max-open: 10
+
+store:
+  snapshot: store/snapshot
+
+jwt:
+  key: CrestedIbis
+  expire-time: 3600
+
+log:
+  file: CrestedIbis.log
+  # support: Trace Debug Info Waring Error Fatal Panic
+  level: Info
+
+# monibuca视频服务器全局配置
+global:
+  http:
+    listenaddr: :8802 # 网关地址，用于访问API
+    listenaddrtls: :8443  # 用于HTTPS方式访问API的端口配置
+
+# GB28181SIP服务器配置
+gb28181:
+  serial: "34020000001320000001"
+  realm: "6101130049"
+  password: "admin123"
+  auto-invite: true
+  sip-server:
+    ip: "192.168.1.11"
+    mode: udp
+
+record:
+  flv:
+    ext: .flv
+    path: store/record/flv
+    autorecord: true
+    filter: ""
+    fragment: 0
+
+  mp4:
+    ext: .mp4
+    path: store/record/mp4
+    autorecord: true
+    filter: ""
+    fragment: 1h

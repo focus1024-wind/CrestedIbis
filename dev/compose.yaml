@@ -1,0 +1,11 @@
+services:
+  CrestedIbis-DB:
+    image: mysql:8.0.39
+    hostname: CrestedIbis-DB
+    container_name: CrestedIbis-DB
+    ports:
+      - "3306:3306"
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: CrestedIbis
+      MYSQL_DATABASE: CrestedIbis
