@@ -51,14 +51,14 @@ CrestedIbis目前是一个基于GB28181标准实现的音视频云平台，负�
 
 #### 安装部署
 
-1. 准备数据库环境，如果你有Docker环境，请参考如下步骤。如果没有，请搜索相关文档，自己安装数据库，本文档不做介绍
+1. 克隆本仓库
+    ```shell
+    git clone https://github.com/focus1024-wind/CrestedIbis.git
+    ```
+2. 准备数据库环境，如果你有Docker环境，请参考如下步骤。如果没有，请搜索相关文档，自己安装数据库，本文档不做介绍
     ```shell
     cd dev
     docker compose up -d
-    ```
-2. 克隆本仓库
-    ```shell
-    git clone https://github.com/focus1024-wind/CrestedIbis.git
     ```
 3. 下载依赖
     ```shell
@@ -150,5 +150,5 @@ filetree
 
 ## License
 
-Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE)
-or [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)).
+- Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE)
+  or [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)).
