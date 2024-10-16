@@ -2,18 +2,19 @@
 
 CrestedIbis目前是一个基于GB28181标准实现的音视频云平台，负责实现GB28181信令和设备管理，未来将会是一个支持物联网设备接入，算法训练和部署的综合物联网平台。
 
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
+![GitHub forks](https://img.shields.io/github/forks/focus1024-wind/CrestedIbis)
+![GitHub Repo stars](https://img.shields.io/github/stars/focus1024-wind/CrestedIbis)
+![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/focus1024-wind/CrestedIbis)
+![GitHub License](https://img.shields.io/github/license/focus1024-wind/CrestedIbis)
+![GitHub contributors](https://img.shields.io/github/contributors-anon/focus1024-wind/CrestedIbis)
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/focus1024-wind/CrestedIbis)
 
 <br />
 
-<div style="text-align: center;">
-<h3 style="text-align: center;">CrestedIbis</h3>
-  <p style="text-align: center;">
+
+<div align="center">
+<h3 align="center">CrestedIbis</h3>
+  <p align="center">
     GB28181音视频平台!
     <br />
     <a href="https://github.com/focus1024-wind/CrestedIbis"><strong>探索本项目的文档 »</strong></a>
