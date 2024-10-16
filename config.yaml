@@ -1,10 +1,14 @@
 http-server:
+  # require: web server bind ip
   ip: 0.0.0.0
-  port: 9527
-  # public-host: 公网IP：解决容器环境下访问IP和实际绑定IP不一致情况，默认为http://ip:port
-  public-host: http://192.168.10.45:9527
+  # require: web server bind port
+  port: 8848
+  # public-host: public network host, resolve the inconsistency between the host bound in the proxy and container, provide a public network accessible interface
+  # default: http://${ip}:${host}
+  public-host: http://192.168.10.45:8848
 
 datasource:
+  # require: currently, only MySQL and PostgreSQL are supported
   type: mysql
   host: localhost
   port: 3306
@@ -15,6 +19,7 @@ datasource:
   max-open: 10
 
 store:
+  # GB28181 snapshot upload image storage location
   snapshot: store/snapshot
 
 jwt:
@@ -26,22 +31,41 @@ log:
   # support: Trace Debug Info Waring Error Fatal Panic
   level: Info
 
-# monibuca视频服务器全局配置
+# GB28181 config
+gb28181:
+  serial: "34020000001320000001"
+  realm: "6101130049"
+  password: "admin123"
+  # default: true
+  # if true: an INVITE sip request will be automatically initiated during Keepalive when the stream has been disconnected
+  auto-invite: true
+  sip-server:
+    # default: 0.0.0.0
+    ip: "192.168.1.11"
+    # default: 5060
+    port: 5060
+    mode: udp
+  media-server:
+    # default: 0.0.0.0
+    ip: "192.168.1.11"
+    # default: 58200-59200
+    port: 58200-59200
+    mode: udp
+    # media stream connection timeout, timeout will result in disconnection
+    # default: 10
+    # unit: s
+    timeout: 10
+
+
+# below is monibuca audio and video engine, you can see more at https://github.com/Monibuca
+# monibuca engine https://github.com/Monibuca/engine
 global:
   http:
     listenaddr: :8802 # 网关地址，用于访问API
     listenaddrtls: :8443  # 用于HTTPS方式访问API的端口配置
 
-# GB28181SIP服务器配置
-gb28181:
-  serial: "34020000001320000001"
-  realm: "6101130049"
-  password: "admin123"
-  auto-invite: true
-  sip-server:
-    ip: "192.168.1.11"
-    mode: udp
 
+# monibuca plugin record https://github.com/Monibuca/plugin-record
 record:
   flv:
     ext: .flv
