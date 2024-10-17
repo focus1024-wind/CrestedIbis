@@ -1,7 +1,15 @@
 {
     "swagger": "2.0",
     "info": {
-        "contact": {}
+        "contact": {
+            "name": "CrestedIbis",
+            "url": "https://github.com/focus1024-wind/CrestedIbis",
+            "email": "focus1024@foxmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
     },
     "paths": {
         "/ipc/device/upload_image": {
@@ -53,9 +61,135 @@
                     }
                 }
             }
+        },
+        "/system/user/login": {
+            "post": {
+                "description": "用户登录并生成用户登录日志信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理 /system/user"
+                ],
+                "parameters": [
+                    {
+                        "description": "用户登录信息，密码采用加盐加密",
+                        "name": "SysLoginUser",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.SysUserLogin"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "登录成功，响应JWT",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "登录失败，响应失败信息",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/system/user/register": {
+            "post": {
+                "description": "注册用户",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理 /system/user"
+                ],
+                "parameters": [
+                    {
+                        "description": "用户注册信息，密码采用加盐加密",
+                        "name": "SysUser",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.SysUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "注册成功",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "注册失败，响应失败信息",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "gorm.DeletedAt": {
+            "type": "object",
+            "properties": {
+                "time": {
+                    "type": "string"
+                },
+                "valid": {
+                    "description": "Valid is true if Time is not NULL",
+                    "type": "boolean"
+                }
+            }
+        },
         "model.HttpResponse": {
             "type": "object",
             "properties": {
@@ -65,6 +199,67 @@
                 "data": {},
                 "msg": {
                     "type": "string"
+                }
+            }
+        },
+        "user.SysUser": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "avatar": {
+                    "type": "string"
+                },
+                "created_time": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "CrestedIbis"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "sex": {
+                    "type": "integer"
+                },
+                "updated_time": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "admin"
+                }
+            }
+        },
+        "user.SysUserLogin": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string",
+                    "example": "CrestedIbis"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "admin"
                 }
             }
         }

@@ -48,6 +48,11 @@ var rootCmd = &cobra.Command{
 	},
 }
 
+// @contact.name   CrestedIbis
+// @contact.url    https://github.com/focus1024-wind/CrestedIbis
+// @contact.email  focus1024@foxmail.com
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 func main() {
 	if err := rootCmd.Execute(); err != nil {
 		rootCmd.PrintErrf("CrestedIbis root cmd execute: %s", err)

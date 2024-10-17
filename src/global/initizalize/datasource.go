@@ -2,6 +2,7 @@ package initizalize
 
 import (
 	"CrestedIbis/src/apps/ipc/ipc_device"
+	"CrestedIbis/src/apps/system/user"
 	"CrestedIbis/src/config/model"
 	"CrestedIbis/src/global"
 	"CrestedIbis/src/utils"
@@ -85,6 +86,7 @@ func InitDbTable() {
 	err := global.Db.AutoMigrate(
 		&ipc_device.IpcDevice{},
 		&ipc_device.IpcChannel{},
+		&user.SysUser{},
 		&utils.CasbinRule{})
 
 	if err != nil {

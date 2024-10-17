@@ -1,12 +1,11 @@
 package main
 
 import (
+	"CrestedIbis/src/apps/ipc"
+	"fmt"
 	"testing"
 )
 
 func Test(t *testing.T) {
-	snapshot := "store/snapshot/"
-	if '/' == snapshot[len(snapshot)-1] {
-		snapshot = snapshot[:len(snapshot)-1]
-	}
+	fmt.Println(ipc.GenUploadImageAccessToken("123"))
 }

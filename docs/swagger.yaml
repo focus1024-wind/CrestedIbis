@@ -1,4 +1,12 @@
 definitions:
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
   model.HttpResponse:
     properties:
       code:
@@ -7,8 +15,56 @@ definitions:
       msg:
         type: string
     type: object
+  user.SysUser:
+    properties:
+      avatar:
+        type: string
+      created_time:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      email:
+        type: string
+      nickname:
+        type: string
+      password:
+        example: CrestedIbis
+        type: string
+      phone:
+        type: string
+      sex:
+        type: integer
+      updated_time:
+        type: string
+      user_id:
+        type: integer
+      username:
+        example: admin
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  user.SysUserLogin:
+    properties:
+      password:
+        example: CrestedIbis
+        type: string
+      username:
+        example: admin
+        type: string
+    required:
+    - password
+    - username
+    type: object
 info:
-  contact: {}
+  contact:
+    email: focus1024@foxmail.com
+    name: CrestedIbis
+    url: https://github.com/focus1024-wind/CrestedIbis
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
 paths:
   /ipc/device/upload_image:
     post:
@@ -40,4 +96,69 @@ paths:
               type: object
       tags:
       - IPC设备 /ipc/device
+  /system/user/login:
+    post:
+      consumes:
+      - application/json
+      description: 用户登录并生成用户登录日志信息
+      parameters:
+      - description: 用户登录信息，密码采用加盐加密
+        in: body
+        name: SysLoginUser
+        required: true
+        schema:
+          $ref: '#/definitions/user.SysUserLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 登录成功，响应JWT
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: 登录失败，响应失败信息
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      tags:
+      - 用户管理 /system/user
+  /system/user/register:
+    post:
+      consumes:
+      - application/json
+      description: 注册用户
+      parameters:
+      - description: 用户注册信息，密码采用加盐加密
+        in: body
+        name: SysUser
+        required: true
+        schema:
+          $ref: '#/definitions/user.SysUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 注册成功
+          schema:
+            $ref: '#/definitions/model.HttpResponse'
+        "500":
+          description: 注册失败，响应失败信息
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      tags:
+      - 用户管理 /system/user
 swagger: "2.0"

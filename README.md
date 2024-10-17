@@ -64,23 +64,32 @@ CrestedIbis目前是一个基于GB28181标准实现的音视频云平台，负�
     ```shell
     go mod download
     ```
-4. 启动服务
+4. Swagger文档生成:
+    ```shell
+    # 下载swag工具 
+    go install github.com/swaggo/swag/cmd/swag@latest
+    ```
+    ```shell
+    # CrestedIbis数据库模型中依赖于gorm.DeletedAt，所以在生成API文档时，应使用如下命令
+    swag init --parseDependency --parseInternal
+    ```
+5. 启动服务
     ```shell
     # 读取当前路径下config.yaml文件，运行
     go run main.go
     # 读取指定config文件
     go run main.go -c ${config_file}
     ```
-5. 准备数据库数据，执行resources数据库脚本(本项目依赖[gorm](https://github.com/go-gorm/gorm)，启动时，会自动创建数据库表)
+6. 准备数据库数据，执行resources数据库脚本(本项目依赖[gorm](https://github.com/go-gorm/gorm)，启动时，会自动创建数据库表)
 
-> [本项目依赖Casbin](https://github.com/casbin/casbin)进行权限管理，所以在首次初始化数据库表后，一定要执行数据库脚本，否则相关接口将无法访问。
+> [本项目依赖Casbin](https://github.com/casbin/casbin)进行权限管理，所以在首次初始化数据库表后，需要执行数据库脚本，否则相关接口将无权限访问。
 
 ### 文件目录说明
 
 ```
 filetree
 ├─dev                   # 开发环境，Docker开发compose脚本
-├─docs                  # Swagger API文档，`swag init`自动生成，无需手动编辑
+├─docs                  # Swagger API文档，`swag init --parseDependency --parseInternal`自动生成，无需手动编辑
 ├─gb28181_server        # 基于Monibuca实现的GB28181插件
 ├─resources             # 资源文档，存放数据库脚本
 ├─src                   # web服务实现
