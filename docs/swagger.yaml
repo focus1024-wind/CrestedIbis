@@ -15,6 +15,23 @@ definitions:
       msg:
         type: string
     type: object
+  user.RoleGroup:
+    properties:
+      created_time:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      role_id:
+        type: integer
+      role_name:
+        type: string
+      updated_time:
+        type: string
+      user:
+        items:
+          $ref: '#/definitions/user.SysUser'
+        type: array
+    type: object
   user.SysUser:
     properties:
       avatar:
@@ -32,6 +49,10 @@ definitions:
         type: string
       phone:
         type: string
+      roleGroups:
+        items:
+          $ref: '#/definitions/user.RoleGroup'
+        type: array
       sex:
         type: integer
       updated_time:

@@ -213,6 +213,32 @@ const docTemplate = `{
                 }
             }
         },
+        "user.RoleGroup": {
+            "type": "object",
+            "properties": {
+                "created_time": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "role_id": {
+                    "type": "integer"
+                },
+                "role_name": {
+                    "type": "string"
+                },
+                "updated_time": {
+                    "type": "string"
+                },
+                "user": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/user.SysUser"
+                    }
+                }
+            }
+        },
         "user.SysUser": {
             "type": "object",
             "required": [
@@ -241,6 +267,12 @@ const docTemplate = `{
                 },
                 "phone": {
                     "type": "string"
+                },
+                "roleGroups": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/user.RoleGroup"
+                    }
                 },
                 "sex": {
                     "type": "integer"

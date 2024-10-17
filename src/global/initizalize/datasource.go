@@ -1,6 +1,7 @@
 package initizalize
 
 import (
+	"CrestedIbis/src/apps/audit_log"
 	"CrestedIbis/src/apps/ipc/ipc_device"
 	"CrestedIbis/src/apps/system/user"
 	"CrestedIbis/src/config/model"
@@ -84,8 +85,10 @@ func initPostgres(datasource *model.Datasource) *gorm.DB {
 
 func InitDbTable() {
 	err := global.Db.AutoMigrate(
+		&audit_log.AuditLogLogin{},
 		&ipc_device.IpcDevice{},
 		&ipc_device.IpcChannel{},
+		&user.RoleGroup{},
 		&user.SysUser{},
 		&utils.CasbinRule{})
 

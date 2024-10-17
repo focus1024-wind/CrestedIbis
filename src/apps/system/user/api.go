@@ -1,6 +1,7 @@
 package user
 
 import (
+	"CrestedIbis/src/apps/audit_log"
 	"CrestedIbis/src/global/model"
 	"CrestedIbis/src/utils"
 	"github.com/gin-gonic/gin"
@@ -15,7 +16,7 @@ import (
 //	@Tags			用户管理 /system/user
 //	@Accept			json
 //	@Produce		json
-//	@Param			SysLoginUser	body		SysUserLogin				true	"用户登录信息，密码采用加盐加密"
+//	@Param			SysLoginUser	body		SysUserLogin					true	"用户登录信息，密码采用加盐加密"
 //	@Success		200				{object}	model.HttpResponse{data=string}	"登录成功，响应JWT"
 //	@Failure		500				{object}	model.HttpResponse{data=string}	"登录失败，响应失败信息"
 //	@Router			/system/user/login [POST]
@@ -25,16 +26,20 @@ func Login(c *gin.Context) {
 		// 参数错误
 		panic(http.StatusBadRequest)
 	} else {
-		err = SysUser{}.Login(sysUserLogin)
+		roles, err := SysUser{}.Login(sysUserLogin)
+
 		if err != nil {
 			// 登陆失败
+			_ = audit_log.AuditLogLogin{}.Insert(c, sysUserLogin.Username, false, err.Error())
 			model.HttpResponse{}.FailGin(c, err.Error())
 		} else {
 			// 登陆成功，生成Token
-			token, err := utils.JwtToken{}.GenToken(sysUserLogin.Username)
+			token, err := utils.JwtToken{}.GenToken(sysUserLogin.Username, roles)
 			if err != nil {
+				_ = audit_log.AuditLogLogin{}.Insert(c, sysUserLogin.Username, false, "Token生成失败")
 				model.HttpResponse{}.FailGin(c, "Token生成失败")
 			} else {
+				_ = audit_log.AuditLogLogin{}.Insert(c, sysUserLogin.Username, true, "登陆成功")
 				model.HttpResponse{}.OkGin(c, token)
 			}
 		}
@@ -49,7 +54,7 @@ func Login(c *gin.Context) {
 //	@Tags			用户管理 /system/user
 //	@Accept			json
 //	@Produce		json
-//	@Param			SysUser	body		SysUser					true	"用户注册信息，密码采用加盐加密"
+//	@Param			SysUser	body		SysUser							true	"用户注册信息，密码采用加盐加密"
 //	@Success		200		{object}	model.HttpResponse{}			"注册成功"
 //	@Failure		500		{object}	model.HttpResponse{data=string}	"注册失败，响应失败信息"
 //	@Router			/system/user/register [POST]

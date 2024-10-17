@@ -13,10 +13,10 @@ type JwtToken struct {
 }
 
 // GenToken 生成token信息
-func (JwtToken) GenToken(username string) (string, error) {
+func (JwtToken) GenToken(username string, roles []string) (string, error) {
 	claims := JwtToken{
 		username,
-		[]string{"admin"},
+		roles,
 		jwt.RegisteredClaims{
 			Issuer: "CrestedIbis",
 			// 过期时间
