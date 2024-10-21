@@ -11,7 +11,7 @@ import (
 )
 
 func (config *GB28181Config) SipMessageHandler(req sip.Request, tx sip.ServerTransaction) {
-	if device, ok := GetSipOnlineDevice(req); ok {
+	if device, ok := getOnlineGB28181DeviceBySip(req); ok {
 		xmlMessageBody := &struct {
 			XMLName          xml.Name
 			CmdType          string

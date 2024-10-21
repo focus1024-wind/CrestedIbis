@@ -1,11 +1,10 @@
 package gb28181_server
 
 import (
-	"CrestedIbis/gb28181_server_back/utils"
+	"CrestedIbis/gb28181_server/utils"
 	"crypto/md5"
 	"fmt"
 	"github.com/ghettovoice/gosip/sip"
-	"go.uber.org/zap"
 	"m7s.live/engine/v4/log"
 	"net/http"
 	"strconv"
@@ -25,18 +24,10 @@ var (
 )
 
 func (config *GB28181Config) SipRegisterHandler(req sip.Request, tx sip.ServerTransaction) {
-	if deviceID, ok := GetSipDeviceId(req); ok {
-		// 获取Expires头，判断请求为注册还是注销
-		if expiresHeader := req.GetHeaders("Expires"); len(expiresHeader) > 0 {
-			// 获取expires头，并进行格式化
-			expiresValue, err := strconv.ParseInt(expiresHeader[0].Value(), 10, 32)
-			if err != nil {
-				log.Error("[SIP SERVER] DeviceID: %s Error Expires", deviceID, expiresHeader[0].Value())
-				return
-			}
-
+	if deviceID, ok := getGB28181DeviceIdBySip(req); ok {
+		if expiresValue, ok := handlerExpiresValue(req); ok {
 			if expiresValue != 0 {
-				// Expires不为0：注册设备
+				// 注册设备
 				if config.Password != "" {
 					// 有密码参数，多次认证登陆
 					if authHeaders := req.GetHeaders("Authorization"); len(authHeaders) > 0 {
@@ -62,7 +53,7 @@ func (config *GB28181Config) SipRegisterHandler(req sip.Request, tx sip.ServerTr
 							return
 						}
 					} else {
-						// 有Authorization请求头，第一次上报
+						// 无Authorization请求头，第一次上报
 						// 第一次上报，返回WWW-Authorization
 						unAuthorization(deviceID, req, tx)
 					}
@@ -71,24 +62,38 @@ func (config *GB28181Config) SipRegisterHandler(req sip.Request, tx sip.ServerTr
 					registerDevice(deviceID, req, tx)
 				}
 			} else {
+				// 注销设备
 				// Expires为0：注销设备
 				logoutDevice(deviceID, req, tx)
 				return
 			}
 		} else {
-			// 消息头中无 Expires 信息，异常
-			log.Error("[SIP SERVER] DeviceID: %s Sip Register must have header Expires", deviceID)
-			return
 		}
+		_ = tx.Respond(sip.NewResponseFromRequest("", req, http.StatusBadRequest, "BAD REQUEST", ""))
 	} else {
+		_ = tx.Respond(sip.NewResponseFromRequest("", req, http.StatusBadRequest, "BAD REQUEST", ""))
 		return
 	}
 }
 
+// handlerExpiresValue 获取REGISTER Expires头信息
+// >0: 注册设备
+// =0: 注销设备
+// 其他: 异常
+func handlerExpiresValue(req sip.Request) (expireValue int64, ok bool) {
+	if expiresHeader := req.GetHeaders("Expires"); len(expiresHeader) > 0 {
+		// 获取expires头，并进行格式化
+		expireValue, err := strconv.ParseInt(expiresHeader[0].Value(), 10, 32)
+		if err == nil && expireValue >= 0 {
+			return expireValue, true
+		}
+	}
+	return -1, false
+}
+
 // logoutDevice 注销设备
 func logoutDevice(deviceId string, req sip.Request, tx sip.ServerTransaction) {
-	var device GB28181Device
-	device.Logoff(deviceId)
+	GlobalGB28181DeviceStore.DeviceOffline(deviceId)
 
 	response := sip.NewResponseFromRequest("", req, http.StatusOK, "OK", "")
 
@@ -121,7 +126,7 @@ func logoutDevice(deviceId string, req sip.Request, tx sip.ServerTransaction) {
 // 设备未认证：返回 401状态码，WWW-Authenticate 消息头
 func unAuthorization(deviceId string, req sip.Request, tx sip.ServerTransaction) {
 	// 返回WWW-Authorization
-	log.Info("[SIP SERVER] DeviceID: %s Sip UnAuthorization Request")
+	log.Info(fmt.Sprintf("[SIP SERVER] DeviceID: %s Sip UnAuthorization Request", deviceId))
 
 	response := sip.NewResponseFromRequest("", req, http.StatusUnauthorized, "StatusUnauthorized", "")
 	nonce, _ := DeviceNonce.LoadOrStore(deviceId, utils.RandNumString(32))
@@ -136,20 +141,12 @@ func unAuthorization(deviceId string, req sip.Request, tx sip.ServerTransaction)
 // registerDevice 认证成功，设备注册
 func registerDevice(deviceId string, req sip.Request, tx sip.ServerTransaction) {
 	// 存储设备信息
-	// 提前定义变量，而不是通过 :=，避免影子变量
-	var (
-		device GB28181Device
-		ok     bool
-	)
-	if device, ok = GlobalGB28181DeviceStore.LoadDevice(deviceId); ok {
-		device.RecoverDevice(req)
-	} else {
-		device.StoreDevice(req)
-	}
+	var device GB28181Device
+	device.storeDevice(req)
 
 	DeviceNonce.Delete(deviceId)
 	DeviceRegister.Store(deviceId, time.Now())
-	log.Info("[SIP SERVER] 国标设备注册 ", zap.String("deviceID", deviceId))
+	log.Info(fmt.Sprintf("[SIP SERVER] DeviceID: %s Sip Register", deviceId))
 
 	// 注册响应
 	response := sip.NewResponseFromRequest("", req, http.StatusOK, "OK", "")

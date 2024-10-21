@@ -80,4 +80,4 @@ record:
     path: store/record/mp4
     autorecord: true
     filter: ""
-    fragment: 1h
+    fragment: 1m

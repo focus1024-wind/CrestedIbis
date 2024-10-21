@@ -23,7 +23,7 @@ type GB28181Channel struct {
 }
 
 func (channel *GB28181Channel) CreateSipRequest(method sip.RequestMethod) (req sip.Request) {
-	if device, ok := GetOnlineDevice(channel.ParentID); ok {
+	if device, ok := getOnlineGB28181DeviceById(channel.ParentID); ok {
 		device.SN++
 
 		callId := sip.CallID(utils.RandNumString(10))
@@ -43,7 +43,7 @@ func (channel *GB28181Channel) CreateSipRequest(method sip.RequestMethod) (req s
 			},
 			Params: sip.NewParams().Add("tag", sip.String{Str: utils.RandNumString(9)}),
 		}
-		toAddress, _ := device.GetToAddress()
+		toAddress, _ := device.getToAddress()
 
 		req = sip.NewRequest(
 			"",

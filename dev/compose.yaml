@@ -9,6 +9,7 @@ services:
       TZ: Asia/Shanghai
       MYSQL_ROOT_PASSWORD: CrestedIbis
       MYSQL_DATABASE: CrestedIbis
+    
 
   CrestedIbis-Media:
     # 2024-10-19

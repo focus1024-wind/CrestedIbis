@@ -1,7 +1,7 @@
 package gb28181_server
 
 import (
-	"CrestedIbis/gb28181_server_back/utils"
+	"CrestedIbis/gb28181_server/utils"
 	"fmt"
 )
 
