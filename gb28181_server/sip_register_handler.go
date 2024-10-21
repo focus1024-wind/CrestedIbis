@@ -1,11 +1,12 @@
 package gb28181_server
 
 import (
-	"CrestedIbis/gb28181_server/utils"
+	"CrestedIbis/gb28181_server_back/utils"
 	"crypto/md5"
 	"fmt"
 	"github.com/ghettovoice/gosip/sip"
 	"go.uber.org/zap"
+	"m7s.live/engine/v4/log"
 	"net/http"
 	"strconv"
 	"sync"
@@ -23,7 +24,6 @@ var (
 	DeviceChannels sync.Map
 )
 
-// SipRegisterHandler SIP REGISTER 处理
 func (config *GB28181Config) SipRegisterHandler(req sip.Request, tx sip.ServerTransaction) {
 	if deviceID, ok := GetSipDeviceId(req); ok {
 		// 获取Expires头，判断请求为注册还是注销
@@ -31,7 +31,7 @@ func (config *GB28181Config) SipRegisterHandler(req sip.Request, tx sip.ServerTr
 			// 获取expires头，并进行格式化
 			expiresValue, err := strconv.ParseInt(expiresHeader[0].Value(), 10, 32)
 			if err != nil {
-				globalGB28181Plugin.Error("[SIP SERVER] ", zap.String("deviceID", deviceID), zap.String("Error Expires", expiresHeader[0].Value()))
+				log.Error("[SIP SERVER] DeviceID: %s Error Expires", deviceID, expiresHeader[0].Value())
 				return
 			}
 
@@ -58,7 +58,7 @@ func (config *GB28181Config) SipRegisterHandler(req sip.Request, tx sip.ServerTr
 							registerDevice(deviceID, req, tx)
 						} else {
 							// 校验失败
-							globalGB28181Plugin.Error("[SIP SERVER] Verify failed", zap.String("deviceID", deviceID))
+							log.Error("[SIP SERVER] DeviceID: %s Verify failed", deviceID)
 							return
 						}
 					} else {
@@ -77,7 +77,7 @@ func (config *GB28181Config) SipRegisterHandler(req sip.Request, tx sip.ServerTr
 			}
 		} else {
 			// 消息头中无 Expires 信息，异常
-			globalGB28181Plugin.Error("[SIP SERVER] ", zap.String("deviceID", deviceID), zap.String("Sip Register must have header", "Expires"))
+			log.Error("[SIP SERVER] DeviceID: %s Sip Register must have header Expires", deviceID)
 			return
 		}
 	} else {
@@ -121,7 +121,7 @@ func logoutDevice(deviceId string, req sip.Request, tx sip.ServerTransaction) {
 // 设备未认证：返回 401状态码，WWW-Authenticate 消息头
 func unAuthorization(deviceId string, req sip.Request, tx sip.ServerTransaction) {
 	// 返回WWW-Authorization
-	globalGB28181Plugin.Info("[SIP SERVER] Sip UnAuthorization Reques", zap.String("deviceID", deviceId))
+	log.Info("[SIP SERVER] DeviceID: %s Sip UnAuthorization Request")
 
 	response := sip.NewResponseFromRequest("", req, http.StatusUnauthorized, "StatusUnauthorized", "")
 	nonce, _ := DeviceNonce.LoadOrStore(deviceId, utils.RandNumString(32))
@@ -141,7 +141,7 @@ func registerDevice(deviceId string, req sip.Request, tx sip.ServerTransaction) 
 		device GB28181Device
 		ok     bool
 	)
-	if device, ok = GlobalDeviceStore.LoadDevice(deviceId); ok {
+	if device, ok = GlobalGB28181DeviceStore.LoadDevice(deviceId); ok {
 		device.RecoverDevice(req)
 	} else {
 		device.StoreDevice(req)
@@ -149,7 +149,7 @@ func registerDevice(deviceId string, req sip.Request, tx sip.ServerTransaction) 
 
 	DeviceNonce.Delete(deviceId)
 	DeviceRegister.Store(deviceId, time.Now())
-	globalGB28181Plugin.Info("[SIP SERVER] 国标设备注册 ", zap.String("deviceID", deviceId))
+	log.Info("[SIP SERVER] 国标设备注册 ", zap.String("deviceID", deviceId))
 
 	// 注册响应
 	response := sip.NewResponseFromRequest("", req, http.StatusOK, "OK", "")
@@ -203,7 +203,7 @@ func (authorization *Authorization) Verify(username, passwd, realm, nonce string
 		plainText := fmt.Sprintf("%s:%s:%s:%s:%s:%s", hash1, nonce, authorization.Nc(), authorization.CNonce(), authorization.Qop(), hash2)
 		cipherText = authorization.encryption(plainText)
 	} else {
-		globalGB28181Plugin.Error("Authorization algorithm wrong")
+		log.Error("Authorization algorithm wrong")
 		return false
 	}
 

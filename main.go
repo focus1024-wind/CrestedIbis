@@ -1,7 +1,7 @@
 package main
 
 import (
-	"CrestedIbis/gb28181_server"
+	"CrestedIbis/gb28181_server_back"
 	"CrestedIbis/src/apps/ipc/ipc_device"
 	"CrestedIbis/src/config"
 	"CrestedIbis/src/global"
@@ -34,7 +34,7 @@ var rootCmd = &cobra.Command{
 		initizalize.InitDbTable()
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		gb28181_server.InstallDevicePlugin(new(ipc_device.IpcDevice))
+		gb28181_server_back.InstallDevicePlugin(new(ipc_device.IpcDevice))
 		// 启动GB28181服务器
 		go func() {
 			err := engine.Run(context.Background(), configFilePath)

@@ -1,7 +1,7 @@
 package gb28181_server
 
 import (
-	"CrestedIbis/gb28181_server/utils"
+	"CrestedIbis/gb28181_server_back/utils"
 	"fmt"
 )
 
@@ -48,6 +48,6 @@ func BuildCatalogXML(sn int, id string) string {
 
 // BuildSnapShotXML 图片抓拍
 func BuildSnapShotXML(sn int, id string, snapNum int, interval int) string {
-	uploadUrl := GlobalDeviceStore.SnapShotUploadUrl(id)
+	uploadUrl := GlobalGB28181DeviceStore.SnapShotUploadUrl(id)
 	return fmt.Sprintf(SnapShotXML, sn, id, snapNum, interval, uploadUrl, utils.RandNumString(32))
 }

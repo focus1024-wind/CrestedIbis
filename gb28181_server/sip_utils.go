@@ -18,7 +18,7 @@ func GetSipDeviceId(req sip.Request) (string, bool) {
 // GetSipDevice 根据sip请求，获取SIP设备信息
 func GetSipDevice(req sip.Request) (GB28181Device, bool) {
 	if deviceId, ok := GetSipDeviceId(req); ok {
-		if device, ok := GlobalDeviceStore.LoadDevice(deviceId); ok {
+		if device, ok := GlobalGB28181DeviceStore.LoadDevice(deviceId); ok {
 			return device, true
 		}
 	}
@@ -40,7 +40,7 @@ func GetSipOnlineDevice(req sip.Request) (GB28181Device, bool) {
 
 // GetDevice 根据设备ID，获取设备信息
 func GetDevice(deviceId string) (GB28181Device, bool) {
-	if device, ok := GlobalDeviceStore.LoadDevice(deviceId); ok {
+	if device, ok := GlobalGB28181DeviceStore.LoadDevice(deviceId); ok {
 		return device, true
 	} else {
 		return GB28181Device{}, false

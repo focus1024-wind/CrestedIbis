@@ -9,3 +9,23 @@ services:
       TZ: Asia/Shanghai
       MYSQL_ROOT_PASSWORD: CrestedIbis
       MYSQL_DATABASE: CrestedIbis
+
+  CrestedIbis-Media:
+    # 2024-10-19
+    image: zlmediakit/zlmediakit:master
+    hostname: CrestedIbis-Media
+    container_name: CrestedIbis-Media
+    ports:
+      # ZLM
+      # ZLM-HTTP
+      - "80:80"
+      # ZLM-RTP
+      - "10000:10000/tcp"
+      - "10000:10000/udp"
+      # ZLM-RTP_PROXY
+      - "30000-30500:30000-30500/tcp"
+      - "30000-30500:30000-30500/udp"
+    volumes:
+      - ./CrestedIbis-Media.ini:/opt/media/conf/config.ini:ro
+    environment:
+      TZ: Asia/Shanghai

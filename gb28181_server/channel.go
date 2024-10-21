@@ -2,7 +2,6 @@ package gb28181_server
 
 import (
 	"CrestedIbis/gb28181_server/utils"
-	"context"
 	"fmt"
 	"github.com/ghettovoice/gosip/sip"
 	"go.uber.org/zap"
@@ -10,11 +9,8 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 )
-
-var PublishStore sync.Map
 
 type GB28181Channel struct {
 	ParentID     string `desc:"GB28181父设备ID"`
@@ -31,7 +27,7 @@ func (channel *GB28181Channel) CreateSipRequest(method sip.RequestMethod) (req s
 		device.SN++
 
 		callId := sip.CallID(utils.RandNumString(10))
-		userAgent := sip.UserAgentHeader(UserAgent)
+		userAgent := sip.UserAgentHeader("CrestedIbis")
 		maxForwards := sip.MaxForwards(70)
 		cseq := sip.CSeq{
 			SeqNo:      uint32(device.SN),

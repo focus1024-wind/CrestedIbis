@@ -1,11 +1,12 @@
 package gb28181_server
 
 import (
-	"CrestedIbis/gb28181_server/utils"
+	"CrestedIbis/gb28181_server_back/utils"
 	"context"
 	"errors"
 	"github.com/ghettovoice/gosip/sip"
 	"go.uber.org/zap"
+	"m7s.live/engine/v4/log"
 	"regexp"
 	"strings"
 	"time"
@@ -62,7 +63,7 @@ func (device *GB28181Device) StoreDevice(req sip.Request) {
 	device.UpdatedTime = time.Now()
 	device.Status = DeviceOnLineStatus
 
-	GlobalDeviceStore.StoreDevice(*device)
+	GlobalGB28181DeviceStore.StoreDevice(*device)
 }
 
 // RecoverDevice 覆盖设备信息，设备上线
@@ -76,7 +77,7 @@ func (device *GB28181Device) RecoverDevice(req sip.Request) {
 	device.UpdatedTime = time.Now()
 	device.Status = DeviceOnLineStatus
 
-	GlobalDeviceStore.RecoverDevice(*device)
+	GlobalGB28181DeviceStore.RecoverDevice(*device)
 }
 
 // Logoff 注销设备信息，设备下线
@@ -86,8 +87,8 @@ func (device *GB28181Device) Logoff(deviceId string) {
 	device.DeviceID = deviceId
 	device.Status = DeviceOffLineStatus
 
-	GlobalDeviceStore.RecoverDevice(*device)
-	GlobalDeviceStore.DeviceOffline(deviceId)
+	GlobalGB28181DeviceStore.RecoverDevice(*device)
+	GlobalGB28181DeviceStore.DeviceOffline(deviceId)
 }
 
 // GetToAddress 根据device.FromAddress信息获取服务端发起请求时ToAddress信息
@@ -127,7 +128,7 @@ func (device *GB28181Device) CreateSipRequest(method sip.RequestMethod) (req sip
 	device.SN++
 
 	callId := sip.CallID(utils.RandNumString(10))
-	userAgent := sip.UserAgentHeader(UserAgent)
+	userAgent := sip.UserAgentHeader("CrestedIbis")
 	maxForwards := sip.MaxForwards(70)
 	cseq := sip.CSeq{
 		SeqNo:      uint32(device.SN),
@@ -185,7 +186,7 @@ func (device *GB28181Device) syncDeviceInfo() {
 
 	_, err := globalSipServer.RequestWithContext(context.Background(), request)
 	if err != nil {
-		globalGB28181Plugin.Error("[SIP SERVER] 同步设备信息失败", zap.String("deviceID", device.DeviceID))
+		log.Error("[SIP SERVER] 同步设备信息失败", zap.String("deviceID", device.DeviceID))
 	}
 }
 
@@ -202,7 +203,7 @@ func (device *GB28181Device) syncCatalog() {
 
 	_, err := globalSipServer.RequestWithContext(context.Background(), request)
 	if err != nil {
-		globalGB28181Plugin.Error("[SIP SERVER] 同步通道信息失败", zap.String("deviceID", device.DeviceID))
+		log.Error("[SIP SERVER] 同步通道信息失败", zap.String("deviceID", device.DeviceID))
 	}
 }
 
@@ -217,6 +218,6 @@ func (device *GB28181Device) snapshot(snapNum int, interval int) {
 
 	_, err := globalSipServer.RequestWithContext(context.Background(), request)
 	if err != nil {
-		globalGB28181Plugin.Error("[SIP SERVER] 同步通道信息失败", zap.String("deviceID", device.DeviceID))
+		log.Error("[SIP SERVER] 同步通道信息失败", zap.String("deviceID", device.DeviceID))
 	}
 }
