@@ -19,7 +19,7 @@ services:
     ports:
       # ZLM
       # ZLM-HTTP
-      - "80:80"
+      - "8080:80"
       # ZLM-RTP
       - "10000:10000/tcp"
       - "10000:10000/udp"

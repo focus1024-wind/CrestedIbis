@@ -74,6 +74,7 @@ func (channel *GB28181Channel) CreateSipRequest(method sip.RequestMethod) (req s
 }
 
 func (channel *GB28181Channel) Invite(opt *InviteOptions) (err error) {
+	logger.Infof("设备 %s/%s 开始拉流", channel.ParentID, channel.DeviceID)
 	var (
 		streamPath string
 		streamMode string
@@ -93,9 +94,11 @@ func (channel *GB28181Channel) Invite(opt *InviteOptions) (err error) {
 	port, err := GetMediaInvitePort(streamPath)
 
 	if err != nil {
+		logger.Errorf("拉流失败: %v", err.Error())
 		return err
 	} else {
 		opt.MediaPort = uint16(port)
+		logger.Infof("Media Port: %d", opt.MediaPort)
 	}
 
 	protocol := ""
@@ -166,6 +169,7 @@ func (channel *GB28181Channel) Invite(opt *InviteOptions) (err error) {
 // AutoInvite 自动拉流
 func AutoInvite(deviceID string, opt *InviteOptions) {
 	if globalGB28181Config.AutoInvite {
+		logger.Infof("自动拉流")
 		value, _ := DeviceChannels.Load(deviceID)
 
 		if value != nil {

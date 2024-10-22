@@ -51,7 +51,7 @@ gb28181:
   media-server:
     # default: 0.0.0.0
     secret: "Uva5PKPA1aGOoBiQHglYExH2kMi2cX2S"
-    server: "http://localhost:80"
+    server: "http://localhost:8080"
     mode: udp
 
 
