@@ -4,9 +4,7 @@ import (
 	"CrestedIbis/gb28181_server/utils"
 	"context"
 	"errors"
-	"fmt"
 	"github.com/ghettovoice/gosip/sip"
-	"m7s.live/engine/v4/log"
 	"regexp"
 	"strings"
 	"time"
@@ -159,7 +157,7 @@ func (gb28181Device *GB28181Device) syncDeviceInfo() {
 
 	_, err := globalSipServer.RequestWithContext(context.Background(), request)
 	if err != nil {
-		log.Error(fmt.Sprintf("[SIP SERVER] DeviceId: %s 同步设备信息失败", gb28181Device.DeviceID))
+		logger.Error("[SIP SERVER] DeviceId: %s 同步设备信息失败", gb28181Device.DeviceID)
 	}
 }
 
@@ -176,7 +174,7 @@ func (gb28181Device *GB28181Device) syncCatalog() {
 
 	_, err := globalSipServer.RequestWithContext(context.Background(), request)
 	if err != nil {
-		log.Error(fmt.Sprintf("[SIP SERVER] DeviceId: %s 同步通道信息失败", gb28181Device.DeviceID))
+		logger.Error("[SIP SERVER] DeviceId: %s 同步通道信息失败", gb28181Device.DeviceID)
 	}
 }
 
@@ -191,6 +189,6 @@ func (gb28181Device *GB28181Device) snapshot(snapNum int, interval int) {
 
 	_, err := globalSipServer.RequestWithContext(context.Background(), request)
 	if err != nil {
-		log.Error(fmt.Sprintf("[SIP SERVER] DeviceId: %s 图片抓拍失败", gb28181Device.DeviceID))
+		logger.Error("[SIP SERVER] DeviceId: %s 图片抓拍失败", gb28181Device.DeviceID)
 	}
 }

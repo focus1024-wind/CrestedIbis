@@ -2,15 +2,16 @@ package gb28181_server
 
 import (
 	"CrestedIbis/gb28181_server/utils"
+	"context"
 	"fmt"
 	"github.com/ghettovoice/gosip/sip"
-	"go.uber.org/zap"
-	"m7s.live/plugin/ps/v4"
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
+	"sync"
 )
+
+var PublishStore sync.Map
 
 type GB28181Channel struct {
 	ParentID     string `desc:"GB28181父设备ID"`
@@ -77,6 +78,7 @@ func (channel *GB28181Channel) Invite(opt *InviteOptions) (err error) {
 		streamPath string
 		streamMode string
 	)
+
 	opt.CreateSSRC()
 	if opt.IsRecord() {
 		// 回放流
@@ -88,12 +90,12 @@ func (channel *GB28181Channel) Invite(opt *InviteOptions) (err error) {
 		streamMode = "Play"
 	}
 
-	if globalGB28181Config.portsManager.Valid {
-		opt.MediaPort, err = globalGB28181Config.portsManager.GetPort()
-		opt.recyclePort = globalGB28181Config.portsManager.Recycle
-	}
+	port, err := GetMediaInvitePort(streamPath)
+
 	if err != nil {
 		return err
+	} else {
+		opt.MediaPort = uint16(port)
 	}
 
 	protocol := ""
@@ -103,9 +105,9 @@ func (channel *GB28181Channel) Invite(opt *InviteOptions) (err error) {
 	// sdp信息
 	sdpInfo := []string{
 		"v=0",
-		fmt.Sprintf("o=%s 0 0 IN IP4 %s", channel.DeviceID, "192.168.1.11"),
+		fmt.Sprintf("o=%s 0 0 IN IP4 %s", channel.DeviceID, globalGB28181Config.SipServer.IP),
 		"s=" + streamMode,
-		"c=IN IP4 " + "192.168.1.11",
+		"c=IN IP4 " + globalGB28181Config.SipServer.IP,
 		opt.String(),
 		fmt.Sprintf("m=video %d %sRTP/AVP 96 97 98", opt.MediaPort, protocol),
 		"a=recvonly",
@@ -133,16 +135,11 @@ func (channel *GB28181Channel) Invite(opt *InviteOptions) (err error) {
 	invite.AppendHeader(&subject)
 
 	inviteRes, err := globalSipServer.RequestWithContext(context.Background(), invite)
-
 	if err != nil {
-		if opt.recyclePort != nil {
-			_ = opt.recyclePort(opt.MediaPort)
-		}
 		return err
 	}
 
 	if int(inviteRes.StatusCode()) == http.StatusOK {
-		var networkType = globalGB28181Config.MediaServer.Mode
 		inviteResBodyLines := strings.Split(inviteRes.Body(), "\r\n")
 
 		for _, line := range inviteResBodyLines {
@@ -155,29 +152,9 @@ func (channel *GB28181Channel) Invite(opt *InviteOptions) (err error) {
 				if ls[0] == "m" && len(ls[1]) > 0 {
 					networkInfo := strings.Split(ls[1], " ")
 					if strings.ToUpper(networkInfo[2]) != "TCP/RTP/AVP" {
-						globalGB28181Plugin.Debug("[Stream] ipc_device not support tcp, ", zap.String("streamPath", streamPath))
-						networkType = "udp"
+						logger.Debug("[Stream] ipc_device not support tcp, streamPath: ", streamPath)
 					}
 				}
-			}
-		}
-		var psPublisher ps.PSPublisher
-
-		err = psPublisher.Receive(streamPath, opt.dump, fmt.Sprintf("%s:%d", networkType, opt.MediaPort), opt.SSRC, false)
-		if err != nil {
-			if opt.recyclePort != nil {
-				_ = opt.recyclePort(opt.MediaPort)
-			}
-			return err
-		}
-
-		if !opt.IsLive() {
-			// 超时关闭无数据关闭
-			if psPublisher.Stream.DelayCloseTimeout == 0 {
-				psPublisher.Stream.DelayCloseTimeout = time.Second * time.Duration(globalGB28181Config.MediaServer.timeout)
-			}
-			if psPublisher.Stream.IdleTimeout == 0 {
-				psPublisher.Stream.IdleTimeout = time.Duration(globalGB28181Config.MediaServer.timeout)
 			}
 		}
 		err = globalSipServer.Send(sip.NewAckRequest("", invite, inviteRes, "", nil))
@@ -200,9 +177,9 @@ func AutoInvite(deviceID string, opt *InviteOptions) {
 
 				if stream != nil && stream.(bool) {
 					// 流已存在，不重复拉流
-					globalGB28181Plugin.Info("[Stream] 已存在码流", zap.String("streamPath", streamPath))
+					logger.Info("[Stream] 已存在码流, streamPath", streamPath)
 				} else {
-					channel, exist := GlobalDeviceStore.LoadChannel(deviceID, channelID)
+					channel, exist := GlobalGB28181DeviceStore.LoadChannel(deviceID, channelID)
 					if exist {
 						_ = channel.Invite(opt)
 					}

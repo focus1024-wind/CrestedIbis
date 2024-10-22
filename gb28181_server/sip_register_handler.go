@@ -5,7 +5,6 @@ import (
 	"crypto/md5"
 	"fmt"
 	"github.com/ghettovoice/gosip/sip"
-	"m7s.live/engine/v4/log"
 	"net/http"
 	"strconv"
 	"sync"
@@ -49,7 +48,7 @@ func (config *GB28181Config) SipRegisterHandler(req sip.Request, tx sip.ServerTr
 							registerDevice(deviceID, req, tx)
 						} else {
 							// 校验失败
-							log.Error("[SIP SERVER] DeviceID: %s Verify failed", deviceID)
+							logger.Error("[SIP SERVER] DeviceID: %s Verify failed", deviceID)
 							return
 						}
 					} else {
@@ -126,7 +125,7 @@ func logoutDevice(deviceId string, req sip.Request, tx sip.ServerTransaction) {
 // 设备未认证：返回 401状态码，WWW-Authenticate 消息头
 func unAuthorization(deviceId string, req sip.Request, tx sip.ServerTransaction) {
 	// 返回WWW-Authorization
-	log.Info(fmt.Sprintf("[SIP SERVER] DeviceID: %s Sip UnAuthorization Request", deviceId))
+	logger.Info("[SIP SERVER] DeviceID: %s Sip UnAuthorization Request", deviceId)
 
 	response := sip.NewResponseFromRequest("", req, http.StatusUnauthorized, "StatusUnauthorized", "")
 	nonce, _ := DeviceNonce.LoadOrStore(deviceId, utils.RandNumString(32))
@@ -146,7 +145,7 @@ func registerDevice(deviceId string, req sip.Request, tx sip.ServerTransaction) 
 
 	DeviceNonce.Delete(deviceId)
 	DeviceRegister.Store(deviceId, time.Now())
-	log.Info(fmt.Sprintf("[SIP SERVER] DeviceID: %s Sip Register", deviceId))
+	logger.Info("[SIP SERVER] DeviceID: %s Sip Register", deviceId)
 
 	// 注册响应
 	response := sip.NewResponseFromRequest("", req, http.StatusOK, "OK", "")
@@ -200,7 +199,7 @@ func (authorization *Authorization) Verify(username, passwd, realm, nonce string
 		plainText := fmt.Sprintf("%s:%s:%s:%s:%s:%s", hash1, nonce, authorization.Nc(), authorization.CNonce(), authorization.Qop(), hash2)
 		cipherText = authorization.encryption(plainText)
 	} else {
-		log.Error("Authorization algorithm wrong")
+		logger.Error("Authorization algorithm wrong")
 		return false
 	}
 

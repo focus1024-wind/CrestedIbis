@@ -40,6 +40,8 @@ gb28181:
   # default: true
   # if true: an INVITE sip request will be automatically initiated during Keepalive when the stream has been disconnected
   auto-invite: true
+  # support: Trace Debug Info Waring Error Fatal Panic
+  log-level: Info
   sip-server:
     # default: 0.0.0.0
     ip: "192.168.1.11"
@@ -48,14 +50,9 @@ gb28181:
     mode: udp
   media-server:
     # default: 0.0.0.0
-    ip: "192.168.1.11"
-    # default: 58200-59200
-    port: 58200-59200
+    secret: "Uva5PKPA1aGOoBiQHglYExH2kMi2cX2S"
+    server: "http://localhost:80"
     mode: udp
-    # media stream connection timeout, timeout will result in disconnection
-    # default: 10
-    # unit: s
-    timeout: 10
 
 
 # below is monibuca audio and video engine, you can see more at https://github.com/Monibuca

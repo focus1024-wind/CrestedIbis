@@ -4,8 +4,6 @@ import (
 	"CrestedIbis/gb28181_server/utils"
 	"encoding/xml"
 	"github.com/ghettovoice/gosip/sip"
-	"go.uber.org/zap"
-	"m7s.live/engine/v4/log"
 	"net/http"
 	"time"
 )
@@ -27,11 +25,11 @@ func (config *GB28181Config) SipMessageHandler(req sip.Request, tx sip.ServerTra
 
 		err := utils.XMLDecoder(xmlMessageBody, []byte(req.Body()))
 		if err != nil {
-			log.Error("[SIP SERVER] MESSAGE xml body 解析失败")
+			logger.Error("[SIP SERVER] MESSAGE xml body 解析失败")
 			return
 		}
 
-		log.Info("[SIP SERVER] ", zap.String("deviceID", device.DeviceID), zap.String("Method", "MESSAGE"), zap.String("CmdType", xmlMessageBody.CmdType))
+		logger.Info("[SIP SERVER] deviceID %s, Method MESSAGE, CmdType %s", device.DeviceID, xmlMessageBody.CmdType)
 
 		var body string
 		switch xmlMessageBody.CmdType {
@@ -43,7 +41,7 @@ func (config *GB28181Config) SipMessageHandler(req sip.Request, tx sip.ServerTra
 			device.Name = xmlMessageBody.DeviceName
 			device.Manufacturer = xmlMessageBody.Manufacturer
 			device.Model = xmlMessageBody.Model
-			GlobalGB28181DeviceStore.RecoverDevice(device)
+			GlobalGB28181DeviceStore.StoreDevice(device)
 		case "Catalog":
 			// 更新设备通道信息和设备通道ID信息
 			var (
