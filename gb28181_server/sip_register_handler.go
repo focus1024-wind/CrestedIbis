@@ -174,6 +174,7 @@ func registerDevice(deviceId string, req sip.Request, tx sip.ServerTransaction) 
 
 	_ = tx.Respond(response)
 
+	AutoInvite(device.DeviceID, &InviteOptions{})
 	// 同步通道目录信息
 	go device.syncChannels()
 }

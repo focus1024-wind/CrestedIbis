@@ -29,12 +29,12 @@ func (config *GB28181Config) SipMessageHandler(req sip.Request, tx sip.ServerTra
 			return
 		}
 
-		logger.Info("[SIP SERVER] deviceID %s, Method MESSAGE, CmdType %s", device.DeviceID, xmlMessageBody.CmdType)
+		logger.Infof("[SIP SERVER] deviceID %s, Method MESSAGE, CmdType %s", device.DeviceID, xmlMessageBody.CmdType)
 
 		var body string
 		switch xmlMessageBody.CmdType {
 		case "Keepalive":
-			AutoInvite(device.DeviceID, &InviteOptions{})
+			//AutoInvite(device.DeviceID, &InviteOptions{})
 			DeviceRegister.Store(device.DeviceID, time.Now())
 		case "DeviceInfo":
 			// 更新设备信息

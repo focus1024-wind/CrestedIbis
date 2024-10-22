@@ -53,28 +53,5 @@ gb28181:
     secret: "Uva5PKPA1aGOoBiQHglYExH2kMi2cX2S"
     server: "http://localhost:8080"
     mode: udp
-
-
-# below is monibuca audio and video engine, you can see more at https://github.com/Monibuca
-# monibuca engine https://github.com/Monibuca/engine
-global:
-  http:
-    listenaddr: :8802 # 网关地址，用于访问API
-    listenaddrtls: :8443  # 用于HTTPS方式访问API的端口配置
-
-
-# monibuca plugin record https://github.com/Monibuca/plugin-record
-record:
-  flv:
-    ext: .flv
-    path: store/record/flv
-    autorecord: true
-    filter: ""
-    fragment: 0
-
-  mp4:
-    ext: .mp4
-    path: store/record/mp4
-    autorecord: true
-    filter: ""
-    fragment: 1m
+  http-server:
+    port: 18080

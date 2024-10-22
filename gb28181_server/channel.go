@@ -98,7 +98,7 @@ func (channel *GB28181Channel) Invite(opt *InviteOptions) (err error) {
 		return err
 	} else {
 		opt.MediaPort = uint16(port)
-		logger.Infof("Media Port: %d", opt.MediaPort)
+		logger.Infof("Media Port: %d", port)
 	}
 
 	protocol := ""

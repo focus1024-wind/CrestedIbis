@@ -105,13 +105,57 @@ func ApiHookOnShellLogin(_ http.ResponseWriter, _ *http.Request) {
 }
 
 // ApiHookOnStreamChanged 流注册注销通知事件
-func ApiHookOnStreamChanged(_ http.ResponseWriter, _ *http.Request) {
+func ApiHookOnStreamChanged(w http.ResponseWriter, r *http.Request) {
 	logger.Info("ApiHookOnStreamChanged")
+	var req = &struct {
+		App           string `json:"app"`
+		Regist        bool   `json:"regist"`
+		Schema        string `json:"schema"`
+		Stream        string `json:"stream"`
+		Vhost         string `json:"vhost"`
+		MediaServerId string `json:"mediaServerId"`
+	}{}
+
+	err := json.NewDecoder(r.Body).Decode(req)
+	if err != nil {
+		logger.Errorf("ApiHookOnStreamChanged 请求解析失败: %v", err.Error())
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if req.Regist {
+		logger.Infof("%s 流注册", req.Stream)
+		PublishStore.Store(req.Stream, true)
+	} else {
+		logger.Infof("%s 流注销", req.Stream)
+		PublishStore.Delete(req.Stream)
+	}
+
+	resp := &struct {
+		Code int    `json:"code"`
+		Msg  string `json:"msg"`
+	}{
+		Code: 0,
+		Msg:  "success",
+	}
+
+	msg, _ := json.Marshal(resp)
+	_, _ = w.Write(msg)
 }
 
 // ApiHookOnStreamNoneReader 流无人观看通知事件
-func ApiHookOnStreamNoneReader(_ http.ResponseWriter, _ *http.Request) {
+func ApiHookOnStreamNoneReader(w http.ResponseWriter, _ *http.Request) {
 	logger.Info("ApiHookOnStreamNoneReader")
+	resp := &struct {
+		Code  int  `json:"code"`
+		Close bool `json:"close"`
+	}{
+		Code:  0,
+		Close: false,
+	}
+
+	msg, _ := json.Marshal(resp)
+	_, _ = w.Write(msg)
 }
 
 // ApiHookOnStreamNotFound 流未找到事件
@@ -173,25 +217,22 @@ func ApiHookOnServerKeepalive(w http.ResponseWriter, _ *http.Request) {
 func ApiHookOnRtpServerTimeout(w http.ResponseWriter, r *http.Request) {
 	logger.Info("ApiHookOnRtpServerTimeout")
 	var req = &struct {
-		LocalPort     string `json:"local_port"`
-		Id            string `json:"id"`
-		Ip            string `json:"ip"`
-		Params        string `json:"params"`
-		Port          uint16 `json:"port"`
-		Schema        string `json:"schema"`
-		Stream        string `json:"stream"`
-		Vhost         string `json:"vhost"`
+		LocalPort     uint16 `json:"local_port"`
+		ReUsePort     bool   `json:"re_use_port"`
+		Ssrc          uint32 `json:"ssrc"`
+		StreamId      string `json:"stream_id"`
+		TcpMode       int    `json:"tcp_mode"`
 		MediaServerId string `json:"mediaServerId"`
 	}{}
 
 	err := json.NewDecoder(r.Body).Decode(req)
 	if err != nil {
-		logger.Errorf("ApiHookOnStreamNotFound 请求解析失败: %v", err.Error())
+		logger.Errorf("ApiHookOnRtpServerTimeout 请求解析失败: %v", err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	PublishStore.Delete(req.Stream)
+	PublishStore.Delete(req.StreamId)
 	resp := &struct {
 		Code int    `json:"code"`
 		Msg  string `json:"msg"`
