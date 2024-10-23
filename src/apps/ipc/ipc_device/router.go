@@ -6,5 +6,6 @@ func InitIpcDeviceRouter() {
 	ipcDeviceRouter := global.HttpEngine.Group("/ipc/device")
 	{
 		ipcDeviceRouter.GET("/devices", GetIpcDevicesByPages)
+		ipcDeviceRouter.POST("/upload_image", IpcUploadImage)
 	}
 }

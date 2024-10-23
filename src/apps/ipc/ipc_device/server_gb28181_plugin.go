@@ -2,7 +2,6 @@ package ipc_device
 
 import (
 	"CrestedIbis/gb28181_server"
-	"CrestedIbis/src/apps/ipc"
 	"CrestedIbis/src/global"
 	"fmt"
 )
@@ -99,6 +98,6 @@ func (device *IpcDevice) UpdateChannels(channels []gb28181_server.GB28181Channel
 }
 
 func (device *IpcDevice) SnapShotUploadUrl(deviceId string) string {
-	accessToken := ipc.GenUploadImageAccessToken(deviceId)
+	accessToken := GenUploadImageAccessToken(deviceId)
 	return fmt.Sprintf("%s/ipc/device/upload_image?access_token=%s", global.Conf.HttpServer.PublicHost, accessToken)
 }
