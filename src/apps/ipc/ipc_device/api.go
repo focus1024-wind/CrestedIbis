@@ -17,7 +17,7 @@ type IpcDevicePage struct {
 // GetIpcDevicesByPages 分页查询IpcDevice设备
 //
 //	@Title			分页查询IpcDevice设备
-//	@Version		1.0.0
+//	@Version		0.0.1
 //	@Description	分页查询GB28181 IpcDevice设备
 //	@Tags			IPC设备 /ipc/device
 //	@Accept			json

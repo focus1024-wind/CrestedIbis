@@ -13,7 +13,7 @@ import (
 // IpcUploadImage IPC图像上传
 //
 //	@Title			IPC图像上传
-//	@Version		1.0.0
+//	@Version		0.0.1
 //	@Description	GB28181图像抓拍，图片上传接口
 //	@Tags			IPC设备 /ipc/device
 //	@Accept			mpfd

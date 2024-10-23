@@ -10,8 +10,8 @@ const docTemplate = `{
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "contact": {
-            "name": "CrestedIbis",
-            "url": "https://github.com/focus1024-wind/CrestedIbis",
+            "name": "北溪入江流(focus1024)",
+            "url": "http://focus1024.com(https://github.com/focus1024-wind/CrestedIbis)",
             "email": "focus1024@foxmail.com"
         },
         "license": {
@@ -479,12 +479,12 @@ const docTemplate = `{
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "",
+	Version:          "0.0.1",
 	Host:             "",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "",
-	Description:      "",
+	Title:            "CrestedIbis",
+	Description:      "CrestedIbis目前是一个基于GB28181标准实现的音视频云平台，负责实现GB28181信令和设备管理，未来将会是一个支持物联网设备接入，算法训练和部署的综合物联网平台。",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

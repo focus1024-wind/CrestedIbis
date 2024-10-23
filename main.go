@@ -34,8 +34,11 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-// @contact.name	CrestedIbis
-// @contact.url	https://github.com/focus1024-wind/CrestedIbis
+// @title			CrestedIbis
+// @version		0.0.1
+// @description	CrestedIbis目前是一个基于GB28181标准实现的音视频云平台，负责实现GB28181信令和设备管理，未来将会是一个支持物联网设备接入，算法训练和部署的综合物联网平台。
+// @contact.name	北溪入江流(focus1024)
+// @contact.url	http://focus1024.com(https://github.com/focus1024-wind/CrestedIbis)
 // @contact.email	focus1024@foxmail.com
 // @license.name	Apache 2.0
 // @license.url	http://www.apache.org/licenses/LICENSE-2.0.html
