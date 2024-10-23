@@ -61,6 +61,8 @@ func GetMediaPlayUrl(streamId string) map[string]string {
 		if streamList["hls"] {
 			mediaPlayUrl["hls"] = fmt.Sprintf("http://%s/rtp/%s/hls.m3u8", globalGB28181Config.MediaServer.IP, streamId)
 			mediaPlayUrl["https_hls"] = fmt.Sprintf("https://%s/rtp/%s/hls.m3u8", globalGB28181Config.MediaServer.IP, streamId)
+		}
+		if streamList["hls.fmp4"] {
 			mediaPlayUrl["hls_fmp4"] = fmt.Sprintf("http://%s/rtp/%s/hls.fmp4.m3u8", globalGB28181Config.MediaServer.IP, streamId)
 			mediaPlayUrl["https_hls_fmp4"] = fmt.Sprintf("https://%s/rtp/%s/hls.fmp4.m3u8", globalGB28181Config.MediaServer.IP, streamId)
 		}
@@ -226,10 +228,10 @@ func ApiHookOnStreamChanged(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if req.Regist {
-		logger.Infof("%s 流注册", req.Stream)
+		logger.Infof("%s %s 流注册", req.Stream, req.Schema)
 		PublishStoreStore(req.Stream, req.Schema)
 	} else {
-		logger.Infof("%s 流注销", req.Stream)
+		logger.Infof("%s %s 流注销", req.Stream, req.Schema)
 		PublishStoreDelete(req.Stream, req.Schema)
 	}
 

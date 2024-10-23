@@ -12,7 +12,7 @@ services:
     
 
   CrestedIbis-Media:
-    # 2024-10-19
+    # 2024-10-19T13:20:31: 4c90a1a
     image: zlmediakit/zlmediakit:master
     hostname: CrestedIbis-Media
     container_name: CrestedIbis-Media
