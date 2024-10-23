@@ -26,7 +26,7 @@ func GetMediaInvitePort(streamId string) (port int, err error) {
 		"vhost":     "__defaultVhost__",
 		"app":       "rtp",
 		"stream_id": streamId,
-	}).SetResult(response).SetError(response).Get(fmt.Sprintf("%s/index/api/openRtpServer", globalGB28181Config.MediaServer.Server))
+	}).SetResult(response).SetError(response).Get(fmt.Sprintf("%s/index/api/openRtpServer", globalGB28181Config.MediaServer.server))
 
 	if err != nil {
 		logger.Error(err)

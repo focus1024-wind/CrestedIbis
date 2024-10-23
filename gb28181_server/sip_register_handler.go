@@ -16,7 +16,7 @@ const RegisterTimeLayout = "2006-01-02T15:04:05"
 var (
 	// DeviceNonce 存储设备注册 Nonce 信息、防止伪造
 	DeviceNonce sync.Map
-	// DeviceRegister 存储设备注册信息，key：deviceID，value：RegisterTIme
+	// DeviceRegister 存储设备注册信息，key：deviceID，value：RegisterTime
 	DeviceRegister sync.Map
 	// DeviceChannels 存储设备通道ID，避免自动拉流，多次搜索数据库，减少数据库压力
 	DeviceChannels sync.Map
@@ -48,7 +48,7 @@ func (config *GB28181Config) SipRegisterHandler(req sip.Request, tx sip.ServerTr
 							registerDevice(deviceID, req, tx)
 						} else {
 							// 校验失败
-							logger.Errorf("[SIP SERVER] DeviceID: %s Verify failed", deviceID)
+							logger.Errorf("[SIP SERVER] DeviceID: %s 设备认证失败", deviceID)
 							return
 						}
 					} else {
@@ -125,7 +125,7 @@ func logoutDevice(deviceId string, req sip.Request, tx sip.ServerTransaction) {
 // 设备未认证：返回 401状态码，WWW-Authenticate 消息头
 func unAuthorization(deviceId string, req sip.Request, tx sip.ServerTransaction) {
 	// 返回WWW-Authorization
-	logger.Infof("[SIP SERVER] DeviceID: %s Sip UnAuthorization Request", deviceId)
+	logger.Infof("[SIP SERVER] DeviceID: %s 设备未认证", deviceId)
 
 	response := sip.NewResponseFromRequest("", req, http.StatusUnauthorized, "StatusUnauthorized", "")
 	nonce, _ := DeviceNonce.LoadOrStore(deviceId, utils.RandNumString(32))
@@ -145,7 +145,7 @@ func registerDevice(deviceId string, req sip.Request, tx sip.ServerTransaction) 
 
 	DeviceNonce.Delete(deviceId)
 	DeviceRegister.Store(deviceId, time.Now())
-	logger.Infof("[SIP SERVER] DeviceID: %s Sip Register", deviceId)
+	logger.Infof("[SIP SERVER] DeviceID: %s 设备注册", deviceId)
 
 	// 注册响应
 	response := sip.NewResponseFromRequest("", req, http.StatusOK, "OK", "")
@@ -174,7 +174,6 @@ func registerDevice(deviceId string, req sip.Request, tx sip.ServerTransaction) 
 
 	_ = tx.Respond(response)
 
-	AutoInvite(device.DeviceID, &InviteOptions{})
 	// 同步通道目录信息
 	go device.syncChannels()
 }
@@ -200,7 +199,7 @@ func (authorization *Authorization) Verify(username, passwd, realm, nonce string
 		plainText := fmt.Sprintf("%s:%s:%s:%s:%s:%s", hash1, nonce, authorization.Nc(), authorization.CNonce(), authorization.Qop(), hash2)
 		cipherText = authorization.encryption(plainText)
 	} else {
-		logger.Errorf("Authorization algorithm wrong")
+		logger.Errorf("非法登陆鉴权算法")
 		return false
 	}
 

@@ -3,7 +3,37 @@ package gb28181_server
 import (
 	"encoding/json"
 	"net/http"
+	"sync"
 )
+
+// PublishStore 维护已播放流
+// Key: 流ID、Value: Set(流注册协议)
+var PublishStore sync.Map
+
+func PublishStoreStore(streamId string, stream string) {
+	value, _ := PublishStore.Load(streamId)
+
+	var streamList map[string]bool
+	if value != nil {
+		// 流已存在
+		streamList = value.(map[string]bool)
+	} else {
+		// 流未存在
+		streamList = map[string]bool{}
+	}
+	streamList[stream] = true
+	PublishStore.Store(streamId, streamList)
+}
+
+func PublishStoreDelete(streamId string, stream string) {
+	value, _ := PublishStore.Load(streamId)
+
+	if value != nil {
+		streamList := value.(map[string]bool)
+		delete(streamList, stream)
+		PublishStore.Store(streamId, streamList)
+	}
+}
 
 func ApiHookRouters() {
 	http.HandleFunc("/index/hook/on_flow_report", ApiHookOnFlowReport)
@@ -22,7 +52,7 @@ func ApiHookRouters() {
 	http.HandleFunc("/index/hook/on_rtp_server_timeout", ApiHookOnRtpServerTimeout)
 }
 
-// ApiHookOnFlowReport 浏览统计事件
+// ApiHookOnFlowReport 流量统计事件
 func ApiHookOnFlowReport(_ http.ResponseWriter, _ *http.Request) {
 	logger.Info("ApiHookOnFlowReport")
 }
@@ -48,8 +78,9 @@ func ApiHookOnplay(w http.ResponseWriter, _ *http.Request) {
 }
 
 // ApiHookOnPublish 推流鉴权事件
+// 参数说明请查看：https://docs.zlmediakit.com/zh/guide/media_server/web_hook_api.html#_7%E3%80%81on-publish
 func ApiHookOnPublish(w http.ResponseWriter, r *http.Request) {
-	logger.Info("ApiHookOnplay")
+	logger.Info("ApiHookOnPublish 推流鉴权")
 	var req = &struct {
 		App           string `json:"app"`
 		Id            string `json:"id"`
@@ -64,20 +95,45 @@ func ApiHookOnPublish(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(req)
 	if err != nil {
-		logger.Errorf("ApiHookOnPublish 请求解析失败: %v", err.Error())
+		logger.Errorf("ApiHookOnPublish 推流鉴权 请求解析失败: %v", err.Error())
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	PublishStore.Store(req.Stream, true)
 	resp := &struct {
-		Code       int    `json:"code"`
-		Msg        string `json:"msg"`
-		EnableRtmp bool   `json:"enable_rtmp"`
+		Code          int    `json:"code"`
+		Msg           string `json:"msg"`
+		EnableHls     bool   `json:"enable_hls"`
+		EnableHlsFmp4 bool   `json:"enable_hls_fmp4"`
+		EnableMp4     bool   `json:"enable_mp4"`
+		EnableRtsp    bool   `json:"enable_rtsp"`
+		EnableRtmp    bool   `json:"enable_rtmp"`
+		EnableTs      bool   `json:"enable_ts"`
+		EnableFmp4    bool   `json:"enable_fmp4"`
+		HlsDemand     bool   `json:"hls_demand"`
+		RtspDemand    bool   `json:"rtsp_demand"`
+		RtmpDemand    bool   `json:"rtmp_demand"`
+		TsDemand      bool   `json:"ts_demand"`
+		Fmp4Demand    bool   `json:"fmp4_demand"`
+		EnableAudio   bool   `json:"enable_audio"`
+		ModifyStamp   int    `json:"modify_stamp"`
 	}{
-		Code:       0,
-		Msg:        "success",
-		EnableRtmp: true,
+		Code:          0,
+		Msg:           "success",
+		EnableHls:     true,
+		EnableHlsFmp4: true,
+		EnableMp4:     true,
+		EnableRtsp:    true,
+		EnableRtmp:    true,
+		EnableTs:      true,
+		EnableFmp4:    true,
+		HlsDemand:     true,
+		RtspDemand:    true,
+		RtmpDemand:    true,
+		TsDemand:      true,
+		Fmp4Demand:    true,
+		EnableAudio:   true,
+		ModifyStamp:   1,
 	}
 
 	msg, _ := json.Marshal(resp)
@@ -105,6 +161,7 @@ func ApiHookOnShellLogin(_ http.ResponseWriter, _ *http.Request) {
 }
 
 // ApiHookOnStreamChanged 流注册注销通知事件
+// 注册注销流同步 PublishStore
 func ApiHookOnStreamChanged(w http.ResponseWriter, r *http.Request) {
 	logger.Info("ApiHookOnStreamChanged")
 	var req = &struct {
@@ -125,10 +182,10 @@ func ApiHookOnStreamChanged(w http.ResponseWriter, r *http.Request) {
 
 	if req.Regist {
 		logger.Infof("%s 流注册", req.Stream)
-		PublishStore.Store(req.Stream, true)
+		PublishStoreStore(req.Stream, req.Schema)
 	} else {
 		logger.Infof("%s 流注销", req.Stream)
-		PublishStore.Delete(req.Stream)
+		PublishStoreDelete(req.Stream, req.Schema)
 	}
 
 	resp := &struct {
@@ -159,6 +216,7 @@ func ApiHookOnStreamNoneReader(w http.ResponseWriter, _ *http.Request) {
 }
 
 // ApiHookOnStreamNotFound 流未找到事件
+// 未找到流，删除流
 func ApiHookOnStreamNotFound(w http.ResponseWriter, r *http.Request) {
 	logger.Info("ApiHookOnStreamNotFound")
 	var req = &struct {
@@ -214,6 +272,7 @@ func ApiHookOnServerKeepalive(w http.ResponseWriter, _ *http.Request) {
 }
 
 // ApiHookOnRtpServerTimeout openRtpServer接口流超时事件
+// 推流失败，删除流
 func ApiHookOnRtpServerTimeout(w http.ResponseWriter, r *http.Request) {
 	logger.Info("ApiHookOnRtpServerTimeout")
 	var req = &struct {

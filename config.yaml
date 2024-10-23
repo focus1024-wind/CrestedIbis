@@ -34,9 +34,9 @@ log:
 
 # GB28181 config
 gb28181:
-  serial: "34020000001320000001"
-  realm: "6101130049"
-  password: "admin123"
+  serial: 34020000001320000001
+  realm: 6101130049
+  password: admin123
   # default: true
   # if true: an INVITE sip request will be automatically initiated during Keepalive when the stream has been disconnected
   auto-invite: true
@@ -44,14 +44,15 @@ gb28181:
   log-level: Info
   sip-server:
     # default: 0.0.0.0
-    ip: "192.168.1.11"
+    ip: 192.168.1.11
     # default: 5060
     port: 5060
     mode: udp
   media-server:
     # default: 0.0.0.0
-    secret: "Uva5PKPA1aGOoBiQHglYExH2kMi2cX2S"
-    server: "http://localhost:8080"
+    secret: Uva5PKPA1aGOoBiQHglYExH2kMi2cX2S
+    ip: localhost
+    port: 8080
     mode: udp
   http-server:
     port: 18080

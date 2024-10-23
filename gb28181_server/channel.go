@@ -8,10 +8,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"sync"
 )
-
-var PublishStore sync.Map
 
 type GB28181Channel struct {
 	ParentID     string `desc:"GB28181父设备ID"`
@@ -23,6 +20,7 @@ type GB28181Channel struct {
 	State        int `desc:"通道状态" enum:"0: 空闲，1：Invite，2：正在播放/对讲"`
 }
 
+// CreateSipRequest 创建通用SIP请求
 func (channel *GB28181Channel) CreateSipRequest(method sip.RequestMethod) (req sip.Request) {
 	if device, ok := getOnlineGB28181DeviceById(channel.ParentID); ok {
 		device.SN++
@@ -73,8 +71,9 @@ func (channel *GB28181Channel) CreateSipRequest(method sip.RequestMethod) (req s
 	}
 }
 
+// Invite 点播
 func (channel *GB28181Channel) Invite(opt *InviteOptions) (err error) {
-	logger.Infof("设备 %s/%s 开始拉流", channel.ParentID, channel.DeviceID)
+	logger.Infof("[STREAM] 开始拉流，流ID %s/%s", channel.ParentID, channel.DeviceID)
 	var (
 		streamPath string
 		streamMode string
@@ -98,7 +97,6 @@ func (channel *GB28181Channel) Invite(opt *InviteOptions) (err error) {
 		return err
 	} else {
 		opt.MediaPort = uint16(port)
-		logger.Infof("Media Port: %d", port)
 	}
 
 	protocol := ""
@@ -108,9 +106,9 @@ func (channel *GB28181Channel) Invite(opt *InviteOptions) (err error) {
 	// sdp信息
 	sdpInfo := []string{
 		"v=0",
-		fmt.Sprintf("o=%s 0 0 IN IP4 %s", channel.DeviceID, globalGB28181Config.SipServer.IP),
+		fmt.Sprintf("o=%s 0 0 IN IP4 %s", channel.DeviceID, globalGB28181Config.MediaServer.IP),
 		"s=" + streamMode,
-		"c=IN IP4 " + globalGB28181Config.SipServer.IP,
+		"c=IN IP4 " + globalGB28181Config.MediaServer.IP,
 		opt.String(),
 		fmt.Sprintf("m=video %d %sRTP/AVP 96 97 98", opt.MediaPort, protocol),
 		"a=recvonly",
@@ -169,7 +167,6 @@ func (channel *GB28181Channel) Invite(opt *InviteOptions) (err error) {
 // AutoInvite 自动拉流
 func AutoInvite(deviceID string, opt *InviteOptions) {
 	if globalGB28181Config.AutoInvite {
-		logger.Infof("自动拉流")
 		value, _ := DeviceChannels.Load(deviceID)
 
 		if value != nil {
@@ -179,7 +176,7 @@ func AutoInvite(deviceID string, opt *InviteOptions) {
 				streamPath := fmt.Sprintf("%s/%s", deviceID, channelID)
 				stream, _ := PublishStore.Load(streamPath)
 
-				if stream != nil && stream.(bool) {
+				if stream != nil {
 					// 流已存在，不重复拉流
 					logger.Info("[Stream] 已存在码流, streamPath", streamPath)
 				} else {

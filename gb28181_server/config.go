@@ -20,7 +20,10 @@ type GB28181Config struct {
 	} `yaml:"sip-server" desc:"SIP服务器配置"`
 	MediaServer struct {
 		Secret string `yaml:"secret" desc:"ZLMediaKit服务器密钥"`
-		Server string `default:"http://localhost:80" yaml:"server" desc:"ZLMediaKit服务器地址"`
+		server string `default:"http://localhost:80" desc:"ZLMediaKit服务器地址"`
+		IP     string `default:"localhost" yaml:"ip" desc:"ZLMediaKit服务器地址"`
+		Port   uint16 `default:"80" yaml:"port" desc:"ZLMediaKit服务器API端口"`
+		SSL    bool   `default:"false" yaml:"ssl" desc:"是否启用HTTPS协议"`
 		Mode   string `default:"udp" yaml:"mode" desc:"SIP服务器模式" enum:"udp: UDP模式，tcp: TCP模式"`
 	} `yaml:"media-server"`
 	HttpServer struct {
@@ -66,8 +69,10 @@ func Run(configFilePath string) {
 	}
 	logger.SetLevel(uint32(level))
 
-	if '/' == globalGB28181Config.MediaServer.Server[len(globalGB28181Config.MediaServer.Server)-1] {
-		globalGB28181Config.MediaServer.Server = globalGB28181Config.MediaServer.Server[:len(globalGB28181Config.MediaServer.Server)-1]
+	if globalGB28181Config.MediaServer.SSL {
+		globalGB28181Config.MediaServer.server = fmt.Sprintf("https://%s:%d", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port)
+	} else {
+		globalGB28181Config.MediaServer.server = fmt.Sprintf("http://%s:%d", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port)
 	}
 
 	globalGB28181Config.startSipServer()
