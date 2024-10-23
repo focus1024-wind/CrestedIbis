@@ -23,6 +23,60 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/ipc/device/devices": {
+            "get": {
+                "description": "分页查询GB28181 IpcDevice设备",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "IPC设备 /ipc/device"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分页查询页码，默认值: 1",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页查询数量，默认值: 15",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "查询数据失败",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/ipc/device/upload_image": {
             "post": {
                 "description": "GB28181图像抓拍，图片上传接口",
@@ -198,6 +252,120 @@ const docTemplate = `{
                 "valid": {
                     "description": "Valid is true if Time is not NULL",
                     "type": "boolean"
+                }
+            }
+        },
+        "ipc_device.IpcChannel": {
+            "type": "object",
+            "properties": {
+                "created_time": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "deviceID": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "manufacturer": {
+                    "type": "string"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "parentID": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updated_time": {
+                    "type": "string"
+                }
+            }
+        },
+        "ipc_device.IpcDevice": {
+            "type": "object",
+            "properties": {
+                "created_time": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "deviceAddr": {
+                    "type": "string"
+                },
+                "deviceID": {
+                    "type": "string"
+                },
+                "device_id": {
+                    "type": "string"
+                },
+                "fromAddress": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "ipcChannels": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ipc_device.IpcChannel"
+                    }
+                },
+                "manufacturer": {
+                    "type": "string"
+                },
+                "model": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "registerTime": {
+                    "type": "string"
+                },
+                "sn": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "updatedTime": {
+                    "type": "string"
+                },
+                "updated_time": {
+                    "type": "string"
+                }
+            }
+        },
+        "ipc_device.IpcDevicePage": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ipc_device.IpcDevice"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },

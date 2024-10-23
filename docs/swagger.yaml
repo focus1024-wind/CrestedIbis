@@ -7,6 +7,81 @@ definitions:
         description: Valid is true if Time is not NULL
         type: boolean
     type: object
+  ipc_device.IpcChannel:
+    properties:
+      created_time:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      deviceID:
+        type: string
+      id:
+        type: integer
+      manufacturer:
+        type: string
+      model:
+        type: string
+      name:
+        type: string
+      parentID:
+        type: string
+      state:
+        type: integer
+      status:
+        type: string
+      updated_time:
+        type: string
+    type: object
+  ipc_device.IpcDevice:
+    properties:
+      created_time:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      device_id:
+        type: string
+      deviceAddr:
+        type: string
+      deviceID:
+        type: string
+      fromAddress:
+        type: string
+      id:
+        type: integer
+      ipcChannels:
+        items:
+          $ref: '#/definitions/ipc_device.IpcChannel'
+        type: array
+      manufacturer:
+        type: string
+      model:
+        type: string
+      name:
+        type: string
+      registerTime:
+        type: string
+      sn:
+        type: integer
+      status:
+        type: string
+      updated_time:
+        type: string
+      updatedTime:
+        type: string
+    type: object
+  ipc_device.IpcDevicePage:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/ipc_device.IpcDevice'
+        type: array
+      page:
+        type: integer
+      page_size:
+        type: integer
+      total:
+        type: integer
+    type: object
   model.HttpResponse:
     properties:
       code:
@@ -87,6 +162,38 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 paths:
+  /ipc/device/devices:
+    get:
+      consumes:
+      - application/json
+      description: 分页查询GB28181 IpcDevice设备
+      parameters:
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: '分页查询页码，默认值: 1'
+        in: query
+        name: page
+        type: integer
+      - description: '每页查询数量，默认值: 15'
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 查询数据失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      tags:
+      - IPC设备 /ipc/device
   /ipc/device/upload_image:
     post:
       consumes:

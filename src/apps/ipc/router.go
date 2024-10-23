@@ -1,10 +1,14 @@
 package ipc
 
-import "CrestedIbis/src/global"
+import (
+	"CrestedIbis/src/apps/ipc/ipc_device"
+	"CrestedIbis/src/global"
+)
 
 func InitIpcRouter() {
-	ipcDeviceRouter := global.HttpEngine.Group("/ipc")
+	ipc_device.InitIpcDeviceRouter()
+	ipcRouter := global.HttpEngine.Group("/ipc")
 	{
-		ipcDeviceRouter.POST("/device/upload_image", IpcUploadImage)
+		ipcRouter.POST("/device/upload_image", IpcUploadImage)
 	}
 }
