@@ -2,6 +2,7 @@ package gb28181_server
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"sync"
 )
@@ -10,6 +11,7 @@ import (
 // Key: 流ID、Value: Set(流注册协议)
 var PublishStore sync.Map
 
+// PublishStoreStore PublishStore对应码流ID，处理注册信息
 func PublishStoreStore(streamId string, stream string) {
 	value, _ := PublishStore.Load(streamId)
 
@@ -25,6 +27,7 @@ func PublishStoreStore(streamId string, stream string) {
 	PublishStore.Store(streamId, streamList)
 }
 
+// PublishStoreDelete PublishStore对应码流ID，处理注销信息
 func PublishStoreDelete(streamId string, stream string) {
 	value, _ := PublishStore.Load(streamId)
 
@@ -33,6 +36,48 @@ func PublishStoreDelete(streamId string, stream string) {
 		delete(streamList, stream)
 		PublishStore.Store(streamId, streamList)
 	}
+}
+
+// GetMediaPlayUrl 根据StreamId生成对应播放规则URL
+func GetMediaPlayUrl(streamId string) map[string]string {
+	var mediaPlayUrl map[string]string
+
+	value, _ := PublishStore.Load(streamId)
+
+	if value != nil {
+		streamList := value.(map[string]bool)
+		if streamList["rtsp"] {
+			mediaPlayUrl["rtsp"] = fmt.Sprintf("rtsp://%s/rtp/%s", globalGB28181Config.MediaServer.IP, streamId)
+			mediaPlayUrl["rtsps"] = fmt.Sprintf("rtsps://%s/rtp/%s", globalGB28181Config.MediaServer.IP, streamId)
+		}
+		if streamList["rtmp"] {
+			mediaPlayUrl["rtmp"] = fmt.Sprintf("rtmp://%s/rtp/%s", globalGB28181Config.MediaServer.IP, streamId)
+			mediaPlayUrl["rtmps"] = fmt.Sprintf("rtmps://%s/rtp/%s", globalGB28181Config.MediaServer.IP, streamId)
+			mediaPlayUrl["flv"] = fmt.Sprintf("http://%s/rtp/%s.live.flv", globalGB28181Config.MediaServer.IP, streamId)
+			mediaPlayUrl["https_flv"] = fmt.Sprintf("https://%s/rtp/%s.live.flv", globalGB28181Config.MediaServer.IP, streamId)
+			mediaPlayUrl["ws_flv"] = fmt.Sprintf("ws://%s/rtp/%s.live.flv", globalGB28181Config.MediaServer.IP, streamId)
+			mediaPlayUrl["wss_flv"] = fmt.Sprintf("wss://%s/rtp/%s.live.flv", globalGB28181Config.MediaServer.IP, streamId)
+		}
+		if streamList["hls"] {
+			mediaPlayUrl["hls"] = fmt.Sprintf("http://%s/rtp/%s/hls.m3u8", globalGB28181Config.MediaServer.IP, streamId)
+			mediaPlayUrl["https_hls"] = fmt.Sprintf("https://%s/rtp/%s/hls.m3u8", globalGB28181Config.MediaServer.IP, streamId)
+			mediaPlayUrl["hls_fmp4"] = fmt.Sprintf("http://%s/rtp/%s/hls.fmp4.m3u8", globalGB28181Config.MediaServer.IP, streamId)
+			mediaPlayUrl["https_hls_fmp4"] = fmt.Sprintf("https://%s/rtp/%s/hls.fmp4.m3u8", globalGB28181Config.MediaServer.IP, streamId)
+		}
+		if streamList["ts"] {
+			mediaPlayUrl["ts"] = fmt.Sprintf("http://%s/rtp/%s.live.ts", globalGB28181Config.MediaServer.IP, streamId)
+			mediaPlayUrl["https_ts"] = fmt.Sprintf("https://%s/rtp/%s.live.ts", globalGB28181Config.MediaServer.IP, streamId)
+			mediaPlayUrl["ws_ts"] = fmt.Sprintf("ws://%s/rtp/%s.live.ts", globalGB28181Config.MediaServer.IP, streamId)
+			mediaPlayUrl["wss_ts"] = fmt.Sprintf("wss://%s/rtp/%s.live.ts", globalGB28181Config.MediaServer.IP, streamId)
+		}
+		if streamList["fmp4"] {
+			mediaPlayUrl["fmp4"] = fmt.Sprintf("http://%s/rtp/%s.live.mp4", globalGB28181Config.MediaServer.IP, streamId)
+			mediaPlayUrl["https_fmp4"] = fmt.Sprintf("https://%s/rtp/%s.live.mp4", globalGB28181Config.MediaServer.IP, streamId)
+			mediaPlayUrl["ws_fmp4"] = fmt.Sprintf("ws://%s/rtp/%s.live.mp4", globalGB28181Config.MediaServer.IP, streamId)
+			mediaPlayUrl["wss_fmp4"] = fmt.Sprintf("wss://%s/rtp/%s.live.mp4", globalGB28181Config.MediaServer.IP, streamId)
+		}
+	}
+	return mediaPlayUrl
 }
 
 func ApiHookRouters() {
