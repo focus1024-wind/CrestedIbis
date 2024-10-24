@@ -10,7 +10,7 @@ import (
 
 // Login 用户登录
 //
-//	@Title			用户登录
+//	@Summary		用户登录
 //	@Version		1.0.0
 //	@Description	用户登录并生成用户登录日志信息
 //	@Tags			用户管理 /system/user
@@ -48,7 +48,7 @@ func Login(c *gin.Context) {
 
 // Register 注册用户
 //
-//	@Title			注册用户
+//	@Summary		注册用户
 //	@Version		1.0.0
 //	@Description	注册用户
 //	@Tags			用户管理 /system/user

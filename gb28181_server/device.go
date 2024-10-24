@@ -16,16 +16,16 @@ const (
 )
 
 type GB28181Device struct {
-	DeviceID     string    `desc:"GB28181设备ID"`
-	Name         string    `desc:"GB28181设备名称"`
-	Manufacturer string    `desc:"GB28181设备制作厂商"`
-	Model        string    `desc:"GB28181设备Model"`
-	SN           int       `desc:"SIP流媒体命令序列号"`
-	FromAddress  string    `desc:"GB28181 FromHeader Uri信息"`
-	DeviceAddr   string    `desc:"GB28181设备对应网卡IP"`
-	RegisterTime time.Time `desc:"GB28181设备最新注册时间"`
-	UpdatedTime  time.Time `desc:"GB28181设备最新更新时间"`
-	Status       string    `desc:"GB28181设备状态"`
+	DeviceID     string    `desc:"GB28181设备ID" json:"device_id"`
+	Name         string    `desc:"GB28181设备名称" json:"name"`
+	Manufacturer string    `desc:"GB28181设备制作厂商" json:"manufacturer"`
+	Model        string    `desc:"GB28181设备Model" json:"model"`
+	SN           int       `desc:"SIP流媒体命令序列号" json:"sn"`
+	FromAddress  string    `desc:"GB28181 FromHeader Uri信息" json:"from_address"`
+	DeviceAddr   string    `desc:"GB28181设备对应网卡IP" json:"device_addr"`
+	RegisterTime time.Time `desc:"GB28181设备最新注册时间" json:"register_time"`
+	UpdatedTime  time.Time `desc:"GB28181设备最新更新时间" json:"updated_time"`
+	Status       string    `desc:"GB28181设备状态" json:"status"`
 }
 
 // GB28181DeviceStoreInterface 仅负责 GB28181Device 的存储相关操作

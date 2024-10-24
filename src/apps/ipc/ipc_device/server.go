@@ -22,6 +22,11 @@ func selectIpcDevicesByPages(page int64, pageSize int64) (total int64, ipcDevice
 	return
 }
 
+func selectIpcChannels(deviceID string) (channels []IpcChannel, err error) {
+	err = global.Db.Where(&IpcChannel{ParentID: deviceID}).Take(&channels).Error
+	return
+}
+
 func GenUploadImageAccessToken(deviceId string) string {
 	token, err := utils.JwtToken{}.GenTempAccessToken(deviceId, []string{"ipc_device"}, 180)
 	if err != nil {

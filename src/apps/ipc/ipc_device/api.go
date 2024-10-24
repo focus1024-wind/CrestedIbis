@@ -21,12 +21,13 @@ type IpcDevicePage struct {
 
 // GetIpcDevicesByPages 分页查询IpcDevice设备
 //
-//	@Title			分页查询IpcDevice设备
+//	@Summary		分页查询IpcDevice设备
 //	@Version		0.0.1
 //	@Description	分页查询GB28181 IpcDevice设备
 //	@Tags			IPC设备 /ipc/device
 //	@Accept			json
 //	@Produce		json
+//	@Param			Authorization	header		string									false	"访问token"
 //	@Param			access_token	query		string									false	"访问token"
 //	@Param			page			query		integer									false	"分页查询页码，默认值: 1"
 //	@Param			page_size		query		integer									false	"每页查询数量，默认值: 15"
@@ -59,9 +60,39 @@ func GetIpcDevicesByPages(c *gin.Context) {
 	}
 }
 
+// GetIpcChannels 获取设备通道信息
+//
+//	@Summary		获取设备通道信息
+//	@Version		0.0.1
+//	@Description	查询GB28181 设备对应通道信息
+//	@Tags			IPC设备 /ipc/device
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string									false	"访问token"
+//	@Param			access_token	query		string									false	"访问token"
+//	@Param			device_id		query		string									true	"设备ID"
+//	@Success		200				{object}	model.HttpResponse{data=[]IpcChannel}	"查询数据成功"
+//	@Failure		200				{object}	model.HttpResponse{data=string}			"查询数据失败"
+//	@Router			/ipc/device/channels [GET]
+func GetIpcChannels(c *gin.Context) {
+	deviceId := c.Query("device_id")
+	if deviceId == "" {
+		panic(http.StatusBadRequest)
+	}
+
+	ipcChannels, err := selectIpcChannels(deviceId)
+
+	if err != nil {
+		model.HttpResponse{}.FailGin(c, "查询数据失败")
+		return
+	} else {
+		model.HttpResponse{}.OkGin(c, ipcChannels)
+	}
+}
+
 // IpcUploadImage IPC图像上传
 //
-//	@Title			IPC图像上传
+//	@Summary		IPC图像上传
 //	@Version		0.0.1
 //	@Description	GB28181图像抓拍，图片上传接口
 //	@Tags			IPC设备 /ipc/device

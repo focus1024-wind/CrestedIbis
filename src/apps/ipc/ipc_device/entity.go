@@ -16,7 +16,7 @@ type IpcDevice struct {
 type IpcChannel struct {
 	gb28181_server.GB28181Channel
 	ID       int64  `gorm:"primary_key;auto_increment" json:"id"`
-	ParentID string `gorm:"uniqueIndex:channel_index"`
-	DeviceID string `gorm:"uniqueIndex:channel_index"`
+	ParentID string `gorm:"uniqueIndex:channel_index" json:"parent_id"`
+	DeviceID string `gorm:"uniqueIndex:channel_index" json:"device_id"`
 	model.BaseModel
 }

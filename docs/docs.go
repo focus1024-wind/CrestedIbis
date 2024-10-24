@@ -23,6 +23,62 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/ipc/device/channels": {
+            "get": {
+                "description": "查询GB28181 设备对应通道信息",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "IPC设备 /ipc/device"
+                ],
+                "summary": "获取设备通道信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "设备ID",
+                        "name": "device_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "查询数据失败",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/ipc/device/devices": {
             "get": {
                 "description": "分页查询GB28181 IpcDevice设备",
@@ -35,7 +91,14 @@ const docTemplate = `{
                 "tags": [
                     "IPC设备 /ipc/device"
                 ],
+                "summary": "分页查询IpcDevice设备",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
                     {
                         "type": "string",
                         "description": "访问token",
@@ -89,6 +152,7 @@ const docTemplate = `{
                 "tags": [
                     "IPC设备 /ipc/device"
                 ],
+                "summary": "IPC图像上传",
                 "parameters": [
                     {
                         "type": "string",
@@ -139,6 +203,7 @@ const docTemplate = `{
                 "tags": [
                     "用户管理 /system/user"
                 ],
+                "summary": "用户登录",
                 "parameters": [
                     {
                         "description": "用户登录信息，密码采用加盐加密",
@@ -202,6 +267,7 @@ const docTemplate = `{
                 "tags": [
                     "用户管理 /system/user"
                 ],
+                "summary": "注册用户",
                 "parameters": [
                     {
                         "description": "用户注册信息，密码采用加盐加密",
@@ -243,28 +309,13 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "gorm.DeletedAt": {
-            "type": "object",
-            "properties": {
-                "time": {
-                    "type": "string"
-                },
-                "valid": {
-                    "description": "Valid is true if Time is not NULL",
-                    "type": "boolean"
-                }
-            }
-        },
         "ipc_device.IpcChannel": {
             "type": "object",
             "properties": {
                 "created_time": {
                     "type": "string"
                 },
-                "deletedAt": {
-                    "$ref": "#/definitions/gorm.DeletedAt"
-                },
-                "deviceID": {
+                "device_id": {
                     "type": "string"
                 },
                 "id": {
@@ -279,7 +330,7 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "parentID": {
+                "parent_id": {
                     "type": "string"
                 },
                 "state": {
@@ -299,19 +350,13 @@ const docTemplate = `{
                 "created_time": {
                     "type": "string"
                 },
-                "deletedAt": {
-                    "$ref": "#/definitions/gorm.DeletedAt"
-                },
-                "deviceAddr": {
-                    "type": "string"
-                },
-                "deviceID": {
+                "device_addr": {
                     "type": "string"
                 },
                 "device_id": {
                     "type": "string"
                 },
-                "fromAddress": {
+                "from_address": {
                     "type": "string"
                 },
                 "id": {
@@ -332,16 +377,13 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "registerTime": {
+                "register_time": {
                     "type": "string"
                 },
                 "sn": {
                     "type": "integer"
                 },
                 "status": {
-                    "type": "string"
-                },
-                "updatedTime": {
                     "type": "string"
                 },
                 "updated_time": {
@@ -387,9 +429,6 @@ const docTemplate = `{
                 "created_time": {
                     "type": "string"
                 },
-                "deletedAt": {
-                    "$ref": "#/definitions/gorm.DeletedAt"
-                },
                 "role_id": {
                     "type": "integer"
                 },
@@ -419,9 +458,6 @@ const docTemplate = `{
                 },
                 "created_time": {
                     "type": "string"
-                },
-                "deletedAt": {
-                    "$ref": "#/definitions/gorm.DeletedAt"
                 },
                 "email": {
                     "type": "string"
