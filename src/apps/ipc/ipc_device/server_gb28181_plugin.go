@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-func (device *IpcDevice) LoadDevice(deviceId string) (gb28181_server.GB28181Device, bool) {
+func (IpcDevice) LoadDevice(deviceId string) (gb28181_server.GB28181Device, bool) {
 	var gb28181Device IpcDevice
 	err := global.Db.Where(&IpcDevice{DeviceID: deviceId}).First(&gb28181Device).Error
 	if err != nil {
@@ -17,7 +17,7 @@ func (device *IpcDevice) LoadDevice(deviceId string) (gb28181_server.GB28181Devi
 	}
 }
 
-func (device *IpcDevice) StoreDevice(gb28181Device gb28181_server.GB28181Device) {
+func (IpcDevice) StoreDevice(gb28181Device gb28181_server.GB28181Device) {
 	err := global.Db.Debug().Where(&IpcDevice{
 		DeviceID: gb28181Device.DeviceID,
 	}).Save(&IpcDevice{
@@ -34,14 +34,14 @@ func (device *IpcDevice) StoreDevice(gb28181Device gb28181_server.GB28181Device)
 	}
 }
 
-func (device *IpcDevice) DeviceOffline(deviceId string) {
+func (IpcDevice) DeviceOffline(deviceId string) {
 	var gb28181Device IpcDevice
 	global.Db.Where(&IpcDevice{DeviceID: deviceId}).First(&gb28181Device)
 	gb28181Device.Status = gb28181_server.DeviceOffLineStatus
 	global.Db.Save(&gb28181Device)
 }
 
-func (device *IpcDevice) LoadChannel(deviceId string, channelId string) (gb28181_server.GB28181Channel, bool) {
+func (IpcDevice) LoadChannel(deviceId string, channelId string) (gb28181_server.GB28181Channel, bool) {
 	var channel IpcChannel
 	err := global.Db.Where(&IpcChannel{
 		ParentID: deviceId,
@@ -57,7 +57,7 @@ func (device *IpcDevice) LoadChannel(deviceId string, channelId string) (gb28181
 	}
 }
 
-func (device *IpcDevice) LoadChannels(deviceId string) ([]gb28181_server.GB28181Channel, bool) {
+func (IpcDevice) LoadChannels(deviceId string) ([]gb28181_server.GB28181Channel, bool) {
 	result := make([]IpcChannel, 0)
 	err := global.Db.Where(&IpcChannel{ParentID: deviceId}).Take(&result).Error
 	if err != nil {
@@ -74,7 +74,7 @@ func (device *IpcDevice) LoadChannels(deviceId string) ([]gb28181_server.GB28181
 	}
 }
 
-func (device *IpcDevice) UpdateChannels(channels []gb28181_server.GB28181Channel) {
+func (IpcDevice) UpdateChannels(channels []gb28181_server.GB28181Channel) {
 	for _, channel := range channels {
 		err := global.Db.Debug().Where(&IpcChannel{
 			ParentID: channel.ParentID,
@@ -97,7 +97,7 @@ func (device *IpcDevice) UpdateChannels(channels []gb28181_server.GB28181Channel
 	}
 }
 
-func (device *IpcDevice) SnapShotUploadUrl(deviceId string) string {
+func (IpcDevice) SnapShotUploadUrl(deviceId string) string {
 	accessToken := GenUploadImageAccessToken(deviceId)
 	return fmt.Sprintf("%s/ipc/device/upload_image?access_token=%s", global.Conf.HttpServer.PublicHost, accessToken)
 }

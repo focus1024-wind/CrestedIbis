@@ -2,6 +2,7 @@ package main
 
 import (
 	"CrestedIbis/gb28181_server"
+	"CrestedIbis/src/apps/ipc/ipc_alarm"
 	"CrestedIbis/src/apps/ipc/ipc_device"
 	"CrestedIbis/src/config"
 	"CrestedIbis/src/global"
@@ -28,6 +29,7 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// 启动GB28181服务器
 		gb28181_server.InstallGB28181DevicePlugin(new(ipc_device.IpcDevice))
+		gb28181_server.InstallAlarmHandlerPlugin(new(ipc_alarm.Alarm))
 		go gb28181_server.Run(configFilePath)
 		// 启动Web服务器
 		initizalize.InitHttpServer()

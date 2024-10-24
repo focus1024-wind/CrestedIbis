@@ -3,7 +3,6 @@ package gb28181_server
 import (
 	"CrestedIbis/gb28181_server/utils"
 	"encoding/xml"
-	"fmt"
 	"github.com/ghettovoice/gosip/sip"
 	"net/http"
 	"time"
@@ -58,7 +57,13 @@ func (config *GB28181Config) SipMessageHandler(req sip.Request, tx sip.ServerTra
 			DeviceChannels.Store(device.DeviceID, channelIDs)
 			AutoInvite(device.DeviceID, &InviteOptions{})
 		case "Alarm":
-			fmt.Println(req.Body())
+			alarm := &Alarm{}
+			err = utils.XMLDecoder(alarm, []byte(req.Body()))
+			if err != nil {
+				logger.Error("[SIP SERVER] MESSAGE Alarm xml body 解析失败")
+				return
+			}
+			GlobalAlarmHandler.Handler(*alarm)
 			device.snapshot(1, 1)
 		}
 
