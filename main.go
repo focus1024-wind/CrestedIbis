@@ -29,7 +29,7 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		// 启动GB28181服务器
 		gb28181_server.InstallGB28181DevicePlugin(new(ipc_device.IpcDevice))
-		gb28181_server.InstallAlarmHandlerPlugin(new(ipc_alarm.Alarm))
+		gb28181_server.InstallAlarmHandlerPlugin(new(ipc_alarm.IpcAlarm))
 		go gb28181_server.Run(configFilePath)
 		// 启动Web服务器
 		initizalize.InitHttpServer()
