@@ -59,6 +59,27 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
+                        "description": "查询数据成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/ipc_device.IpcChannel"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
                         "description": "查询数据失败",
                         "schema": {
                             "allOf": [
@@ -120,6 +141,24 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
+                        "description": "分页查询成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/ipc_device.IpcDevicePage"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
                         "description": "查询数据失败",
                         "schema": {
                             "allOf": [
@@ -171,6 +210,24 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
+                        "description": "上传图片成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
                         "description": "上传图片失败",
                         "schema": {
                             "allOf": [

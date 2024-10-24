@@ -32,7 +32,7 @@ type IpcDevicePage struct {
 //	@Param			page			query		integer									false	"分页查询页码，默认值: 1"
 //	@Param			page_size		query		integer									false	"每页查询数量，默认值: 15"
 //	@Success		200				{object}	model.HttpResponse{data=IpcDevicePage}	"分页查询成功"
-//	@Failure		200				{object}	model.HttpResponse{data=string}			"查询数据失败"
+//	@Failure		500				{object}	model.HttpResponse{data=string}			"查询数据失败"
 //	@Router			/ipc/device/devices [GET]
 func GetIpcDevicesByPages(c *gin.Context) {
 	pageQuery := c.DefaultQuery("page", "1")
@@ -72,7 +72,7 @@ func GetIpcDevicesByPages(c *gin.Context) {
 //	@Param			access_token	query		string									false	"访问token"
 //	@Param			device_id		query		string									true	"设备ID"
 //	@Success		200				{object}	model.HttpResponse{data=[]IpcChannel}	"查询数据成功"
-//	@Failure		200				{object}	model.HttpResponse{data=string}			"查询数据失败"
+//	@Failure		500				{object}	model.HttpResponse{data=string}			"查询数据失败"
 //	@Router			/ipc/device/channels [GET]
 func GetIpcChannels(c *gin.Context) {
 	deviceId := c.Query("device_id")
@@ -101,7 +101,7 @@ func GetIpcChannels(c *gin.Context) {
 //	@Param			access_token	query		string							true	"访问token"
 //	@Param			file			formData	file							true	"上传图片"
 //	@Success		200				{object}	model.HttpResponse{data=string}	"上传图片成功"
-//	@Failure		200				{object}	model.HttpResponse{data=string}	"上传图片失败"
+//	@Failure		500				{object}	model.HttpResponse{data=string}	"上传图片失败"
 //	@Router			/ipc/device/upload_image [POST]
 func IpcUploadImage(c *gin.Context) {
 	file, err := c.FormFile("file")
