@@ -24,6 +24,8 @@ definitions:
     type: object
   ipc_device.IpcDevice:
     properties:
+      channel_num:
+        type: integer
       created_time:
         type: string
       device_addr:
@@ -38,6 +40,8 @@ definitions:
         items:
           $ref: '#/definitions/ipc_device.IpcChannel'
         type: array
+      keepalive_time:
+        type: string
       manufacturer:
         type: string
       model:
@@ -65,6 +69,17 @@ definitions:
         type: integer
       total:
         type: integer
+    type: object
+  ipc_media.IpcMediaPlayModel:
+    properties:
+      channel_id:
+        type: string
+      device_id:
+        type: string
+      end:
+        type: string
+      start:
+        type: string
     type: object
   model.HttpResponse:
     properties:
@@ -276,6 +291,50 @@ paths:
       summary: IPC图像上传
       tags:
       - IPC设备 /ipc/device
+  /ipc/media/play:
+    post:
+      consumes:
+      - application/json
+      description: Ipc设备点播
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 点播参数
+        in: body
+        name: IpcMediaPlayModel
+        required: true
+        schema:
+          $ref: '#/definitions/ipc_media.IpcMediaPlayModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 注册成功，响应点播地址
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: 注册失败，响应失败信息
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: Ipc设备点播
+      tags:
+      - 设备点播 /ipc/media
   /system/user/login:
     post:
       consumes:

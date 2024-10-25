@@ -248,6 +248,82 @@ const docTemplate = `{
                 }
             }
         },
+        "/ipc/media/play": {
+            "post": {
+                "description": "Ipc设备点播",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "设备点播 /ipc/media"
+                ],
+                "summary": "Ipc设备点播",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "description": "点播参数",
+                        "name": "IpcMediaPlayModel",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ipc_media.IpcMediaPlayModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "注册成功，响应点播地址",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "注册失败，响应失败信息",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/system/user/login": {
             "post": {
                 "description": "用户登录并生成用户登录日志信息",
@@ -404,6 +480,9 @@ const docTemplate = `{
         "ipc_device.IpcDevice": {
             "type": "object",
             "properties": {
+                "channel_num": {
+                    "type": "integer"
+                },
                 "created_time": {
                     "type": "string"
                 },
@@ -424,6 +503,9 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/ipc_device.IpcChannel"
                     }
+                },
+                "keepalive_time": {
+                    "type": "string"
                 },
                 "manufacturer": {
                     "type": "string"
@@ -465,6 +547,23 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
+                }
+            }
+        },
+        "ipc_media.IpcMediaPlayModel": {
+            "type": "object",
+            "properties": {
+                "channel_id": {
+                    "type": "string"
+                },
+                "device_id": {
+                    "type": "string"
+                },
+                "end": {
+                    "type": "string"
+                },
+                "start": {
+                    "type": "string"
                 }
             }
         },

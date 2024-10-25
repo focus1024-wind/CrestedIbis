@@ -87,6 +87,7 @@ func GetIpcChannels(c *gin.Context) {
 		return
 	} else {
 		model.HttpResponse{}.OkGin(c, ipcChannels)
+		return
 	}
 }
 
