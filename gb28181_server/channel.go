@@ -189,3 +189,16 @@ func AutoInvite(deviceID string, opt *InviteOptions) {
 		}
 	}
 }
+
+// Bye 停止点播
+func (channel *GB28181Channel) Bye() int {
+	logger.Infof("码流 %s/%s 停止点播", channel.ParentID, channel.DeviceID)
+	request := channel.CreateSipRequest(sip.BYE)
+
+	resp, err := globalSipServer.RequestWithContext(context.Background(), request)
+	if err != nil {
+		return http.StatusInternalServerError
+	}
+
+	return int(resp.StatusCode())
+}

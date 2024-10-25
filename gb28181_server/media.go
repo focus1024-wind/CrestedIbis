@@ -22,3 +22,10 @@ func Play(deviceID string, channelID string) map[string]string {
 	}
 	return GetMediaPlayUrl(streamPath)
 }
+
+// PlayStop 停止音视频点播
+func PlayStop(deviceID string, channelID string) {
+	if channel, ok := GlobalGB28181DeviceStore.LoadChannel(deviceID, channelID); ok {
+		channel.Bye()
+	}
+}
