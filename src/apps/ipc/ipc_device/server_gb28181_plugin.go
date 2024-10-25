@@ -3,6 +3,7 @@ package ipc_device
 import (
 	"CrestedIbis/gb28181_server"
 	"CrestedIbis/src/global"
+	"CrestedIbis/src/global/model"
 	"fmt"
 	"time"
 )
@@ -26,6 +27,8 @@ func (IpcDevice) StoreDevice(gb28181Device gb28181_server.GB28181Device) {
 	}).Save(&IpcDevice{
 		DeviceID:      gb28181Device.DeviceID,
 		GB28181Device: gb28181Device,
+		RegisterTime:  model.LocalTime(gb28181Device.RegisterTime),
+		KeepaliveTime: model.LocalTime(gb28181Device.KeepaliveTime),
 	}).Error
 	if err != nil {
 		global.Db.Where(&IpcDevice{
@@ -33,6 +36,8 @@ func (IpcDevice) StoreDevice(gb28181Device gb28181_server.GB28181Device) {
 		}).Updates(&IpcDevice{
 			DeviceID:      gb28181Device.DeviceID,
 			GB28181Device: gb28181Device,
+			RegisterTime:  model.LocalTime(gb28181Device.RegisterTime),
+			KeepaliveTime: model.LocalTime(gb28181Device.KeepaliveTime),
 		})
 	}
 }
@@ -103,14 +108,15 @@ func (IpcDevice) UpdateChannels(channels []gb28181_server.GB28181Channel) {
 	// 更新通道数
 	for _, channel := range channels {
 		var count int64
-		if err := global.Db.Model(&IpcChannel{}).Where(&IpcChannel{ParentID: channel.ParentID}).Count(&count).Error; err != nil {
-			global.Db.Model(&IpcDevice{}).Where(&IpcDevice{
-				DeviceID: channel.ParentID,
-			}).Updates(&IpcDevice{
-				ChannelNum: count,
-			})
+		if err := global.Db.Debug().Model(&IpcChannel{}).Where(&IpcChannel{ParentID: channel.ParentID}).Count(&count).Error; err != nil {
+			return
 		}
-		break
+		global.Db.Debug().Model(&IpcDevice{}).Where(&IpcDevice{
+			DeviceID: channel.ParentID,
+		}).Updates(&IpcDevice{
+			ChannelNum: count,
+		})
+		return
 	}
 }
 

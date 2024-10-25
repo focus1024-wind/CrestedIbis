@@ -16,8 +16,8 @@ const RegisterTimeLayout = "2006-01-02T15:04:05"
 var (
 	// DeviceNonce 存储设备注册 Nonce 信息、防止伪造
 	DeviceNonce sync.Map
-	// DeviceRegister 存储设备注册信息，key：deviceID，value：RegisterTime
-	DeviceRegister sync.Map
+	// DeviceKeepalive 存储设备注册信息，key：deviceID，value：RegisterTime
+	DeviceKeepalive sync.Map
 	// DeviceChannels 存储设备通道ID，避免自动拉流，多次搜索数据库，减少数据库压力
 	DeviceChannels sync.Map
 )
@@ -144,7 +144,7 @@ func registerDevice(deviceId string, req sip.Request, tx sip.ServerTransaction) 
 	device.storeDevice(req, true)
 
 	DeviceNonce.Delete(deviceId)
-	DeviceRegister.Store(deviceId, time.Now())
+	DeviceKeepalive.Store(deviceId, time.Now())
 	logger.Infof("[SIP SERVER] DeviceID: %s 设备注册", deviceId)
 
 	// 注册响应

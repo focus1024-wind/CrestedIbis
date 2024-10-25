@@ -35,7 +35,9 @@ func (config *GB28181Config) SipMessageHandler(req sip.Request, tx sip.ServerTra
 		switch xmlMessageBody.CmdType {
 		case "Keepalive":
 			AutoInvite(device.DeviceID, &InviteOptions{})
-			DeviceRegister.Store(device.DeviceID, time.Now())
+			DeviceKeepalive.Store(device.DeviceID, time.Now())
+			device.KeepaliveTime = time.Now()
+			GlobalGB28181DeviceStore.StoreDevice(device)
 		case "DeviceInfo":
 			// 更新设备信息
 			device.Name = xmlMessageBody.DeviceName

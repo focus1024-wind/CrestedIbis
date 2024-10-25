@@ -28,7 +28,7 @@ func getGB28181DeviceBySip(req sip.Request) (GB28181Device, bool) {
 // getOnlineGB28181DeviceBySip 根据sip请求，获取在线设备信息
 func getOnlineGB28181DeviceBySip(req sip.Request) (GB28181Device, bool) {
 	if deviceId, ok := getGB28181DeviceIdBySip(req); ok {
-		registerTime, _ := DeviceRegister.Load(deviceId)
+		registerTime, _ := DeviceKeepalive.Load(deviceId)
 
 		// 设备已注册，且在3次心跳周期内
 		if registerTime != nil && time.Now().Sub(registerTime.(time.Time)).Seconds() < 3*60 {
@@ -49,7 +49,7 @@ func getGB28181DeviceById(deviceId string) (GB28181Device, bool) {
 
 // getOnlineGB28181DeviceById 根据设备ID，获取在线设备信息
 func getOnlineGB28181DeviceById(deviceId string) (GB28181Device, bool) {
-	registerTime, _ := DeviceRegister.Load(deviceId)
+	registerTime, _ := DeviceKeepalive.Load(deviceId)
 
 	// 设备已注册，且在3次心跳周期内
 	if registerTime != nil && time.Now().Sub(registerTime.(time.Time)).Seconds() < 3*60 {
