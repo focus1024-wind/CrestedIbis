@@ -6,6 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"io"
 	"os"
+	"time"
 )
 
 // InitLogger 初始化日志配置
@@ -19,7 +20,7 @@ func InitLogger(log *model.Log) *logrus.Logger {
 	// 格式化日志
 	logrus.SetReportCaller(true)
 	logrus.SetFormatter(&logrus.JSONFormatter{
-		TimestampFormat: "2006-01-02 15:04:05",
+		TimestampFormat: time.DateTime,
 	})
 
 	var output io.Writer

@@ -4,6 +4,7 @@ import (
 	"github.com/ghettovoice/gosip/log"
 	"github.com/sirupsen/logrus"
 	prefixed "github.com/x-cray/logrus-prefixed-formatter"
+	"time"
 )
 
 var (
@@ -30,7 +31,7 @@ func NewLogrusLogger() *log.LogrusLogger {
 	logger.Level = logrus.ErrorLevel
 	logger.Formatter = &prefixed.TextFormatter{
 		FullTimestamp:   true,
-		TimestampFormat: "2006-01-02 15:04:05.000",
+		TimestampFormat: time.DateTime,
 		ForceColors:     true,
 		ForceFormatting: true,
 	}

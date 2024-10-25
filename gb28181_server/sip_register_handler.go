@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-const RegisterTimeLayout = "2006-01-02T15:04:05"
+const RegisterTimeLayout = time.DateTime
 
 var (
 	// DeviceNonce 存储设备注册 Nonce 信息、防止伪造

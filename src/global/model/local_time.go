@@ -10,7 +10,7 @@ type LocalTime time.Time
 
 func (t *LocalTime) MarshalJSON() ([]byte, error) {
 	tTime := time.Time(*t)
-	return []byte(fmt.Sprintf("\"%v\"", tTime.Format("2006-01-02 15:04:05"))), nil
+	return []byte(fmt.Sprintf("\"%v\"", tTime.Format(time.DateTime))), nil
 }
 
 // Value gorm在底层通过值调用，这里不要修改类型
