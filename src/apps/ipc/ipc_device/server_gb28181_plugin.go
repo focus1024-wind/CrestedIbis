@@ -4,6 +4,7 @@ import (
 	"CrestedIbis/gb28181_server"
 	"CrestedIbis/src/global"
 	"fmt"
+	"time"
 )
 
 func (IpcDevice) LoadDevice(deviceId string) (gb28181_server.GB28181Device, bool) {
@@ -13,6 +14,8 @@ func (IpcDevice) LoadDevice(deviceId string) (gb28181_server.GB28181Device, bool
 		return gb28181_server.GB28181Device{DeviceID: deviceId}, false
 	} else {
 		gb28181Device.GB28181Device.DeviceID = gb28181Device.DeviceID
+		gb28181Device.GB28181Device.RegisterTime = time.Time(gb28181Device.RegisterTime)
+		gb28181Device.GB28181Device.KeepaliveTime = time.Time(gb28181Device.KeepaliveTime)
 		return gb28181Device.GB28181Device, true
 	}
 }
@@ -75,6 +78,7 @@ func (IpcDevice) LoadChannels(deviceId string) ([]gb28181_server.GB28181Channel,
 }
 
 func (IpcDevice) UpdateChannels(channels []gb28181_server.GB28181Channel) {
+	// 更新通道信息
 	for _, channel := range channels {
 		err := global.Db.Debug().Where(&IpcChannel{
 			ParentID: channel.ParentID,
@@ -94,6 +98,19 @@ func (IpcDevice) UpdateChannels(channels []gb28181_server.GB28181Channel) {
 				GB28181Channel: channel,
 			})
 		}
+	}
+
+	// 更新通道数
+	for _, channel := range channels {
+		var count int64
+		if err := global.Db.Model(&IpcChannel{}).Where(&IpcChannel{ParentID: channel.ParentID}).Count(&count).Error; err != nil {
+			global.Db.Model(&IpcDevice{}).Where(&IpcDevice{
+				DeviceID: channel.ParentID,
+			}).Updates(&IpcDevice{
+				ChannelNum: count,
+			})
+		}
+		break
 	}
 }
 

@@ -16,16 +16,16 @@ const (
 )
 
 type GB28181Device struct {
-	DeviceID     string    `desc:"GB28181设备ID" json:"device_id"`
-	Name         string    `desc:"GB28181设备名称" json:"name"`
-	Manufacturer string    `desc:"GB28181设备制作厂商" json:"manufacturer"`
-	Model        string    `desc:"GB28181设备Model" json:"model"`
-	SN           int       `desc:"SIP流媒体命令序列号" json:"sn"`
-	FromAddress  string    `desc:"GB28181 FromHeader Uri信息" json:"from_address"`
-	DeviceAddr   string    `desc:"GB28181设备对应网卡IP" json:"device_addr"`
-	RegisterTime time.Time `desc:"GB28181设备最新注册时间" json:"register_time"`
-	UpdatedTime  time.Time `desc:"GB28181设备最新更新时间" json:"updated_time"`
-	Status       string    `desc:"GB28181设备状态" json:"status"`
+	DeviceID      string    `desc:"GB28181设备ID" json:"device_id"`
+	Name          string    `desc:"GB28181设备名称" json:"name"`
+	Manufacturer  string    `desc:"GB28181设备制作厂商" json:"manufacturer"`
+	Model         string    `desc:"GB28181设备Model" json:"model"`
+	SN            int       `desc:"SIP流媒体命令序列号" json:"sn"`
+	FromAddress   string    `desc:"GB28181 FromHeader Uri信息" json:"from_address"`
+	DeviceAddr    string    `desc:"GB28181设备对应网卡IP" json:"device_addr"`
+	RegisterTime  time.Time `desc:"GB28181设备最新注册时间" json:"register_time"`
+	KeepaliveTime time.Time `desc:"GB28181设备最新更新时间" json:"keepalive_time"`
+	Status        string    `desc:"GB28181设备状态" json:"status"`
 }
 
 // GB28181DeviceStoreInterface 仅负责 GB28181Device 的存储相关操作
@@ -49,14 +49,16 @@ type GB28181DeviceStoreInterface interface {
 // ###### GB28181Device ######
 
 // storeDevice 新建设备信息，设备上线
-func (gb28181Device *GB28181Device) storeDevice(req sip.Request) {
+func (gb28181Device *GB28181Device) storeDevice(req sip.Request, register bool) {
 	from, _ := req.From()
 
 	gb28181Device.DeviceID, _ = getGB28181DeviceIdBySip(req)
 	gb28181Device.FromAddress = from.Address.String()
 	gb28181Device.DeviceAddr = req.Source()
-	gb28181Device.RegisterTime = time.Now()
-	gb28181Device.UpdatedTime = time.Now()
+	if register {
+		gb28181Device.RegisterTime = time.Now()
+	}
+	gb28181Device.KeepaliveTime = time.Now()
 	gb28181Device.Status = DeviceOnLineStatus
 
 	GlobalGB28181DeviceStore.StoreDevice(*gb28181Device)

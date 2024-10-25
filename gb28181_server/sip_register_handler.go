@@ -141,7 +141,7 @@ func unAuthorization(deviceId string, req sip.Request, tx sip.ServerTransaction)
 func registerDevice(deviceId string, req sip.Request, tx sip.ServerTransaction) {
 	// 存储设备信息
 	var device GB28181Device
-	device.storeDevice(req)
+	device.storeDevice(req, true)
 
 	DeviceNonce.Delete(deviceId)
 	DeviceRegister.Store(deviceId, time.Now())
