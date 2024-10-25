@@ -21,14 +21,14 @@ func (IpcDevice) LoadDevice(deviceId string) (gb28181_server.GB28181Device, bool
 }
 
 func (IpcDevice) StoreDevice(gb28181Device gb28181_server.GB28181Device) {
-	err := global.Db.Debug().Where(&IpcDevice{
+	err := global.Db.Where(&IpcDevice{
 		DeviceID: gb28181Device.DeviceID,
 	}).Save(&IpcDevice{
 		DeviceID:      gb28181Device.DeviceID,
 		GB28181Device: gb28181Device,
 	}).Error
 	if err != nil {
-		global.Db.Debug().Where(&IpcDevice{
+		global.Db.Where(&IpcDevice{
 			DeviceID: gb28181Device.DeviceID,
 		}).Updates(&IpcDevice{
 			DeviceID:      gb28181Device.DeviceID,
@@ -80,7 +80,7 @@ func (IpcDevice) LoadChannels(deviceId string) ([]gb28181_server.GB28181Channel,
 func (IpcDevice) UpdateChannels(channels []gb28181_server.GB28181Channel) {
 	// 更新通道信息
 	for _, channel := range channels {
-		err := global.Db.Debug().Where(&IpcChannel{
+		err := global.Db.Where(&IpcChannel{
 			ParentID: channel.ParentID,
 			DeviceID: channel.DeviceID,
 		}).Save(&IpcChannel{
@@ -89,7 +89,7 @@ func (IpcDevice) UpdateChannels(channels []gb28181_server.GB28181Channel) {
 			GB28181Channel: channel,
 		}).Error
 		if err != nil {
-			global.Db.Debug().Where(&IpcChannel{
+			global.Db.Where(&IpcChannel{
 				ParentID: channel.ParentID,
 				DeviceID: channel.DeviceID,
 			}).Updates(&IpcChannel{

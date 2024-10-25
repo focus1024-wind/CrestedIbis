@@ -2,9 +2,11 @@ package ipc_alarm
 
 import (
 	"CrestedIbis/gb28181_server"
-	"fmt"
+	"CrestedIbis/src/global"
 )
 
-func (Alarm) Handler(alarm gb28181_server.Alarm) {
-	fmt.Println(alarm)
+func (IpcAlarm) Handler(alarm gb28181_server.Alarm) {
+	global.Db.Save(&IpcAlarm{
+		Alarm: alarm,
+	})
 }

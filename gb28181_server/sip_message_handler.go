@@ -57,13 +57,17 @@ func (config *GB28181Config) SipMessageHandler(req sip.Request, tx sip.ServerTra
 			DeviceChannels.Store(device.DeviceID, channelIDs)
 			AutoInvite(device.DeviceID, &InviteOptions{})
 		case "Alarm":
-			alarm := &Alarm{}
+			alarm := &struct {
+				XMLName xml.Name
+				Alarm
+			}{}
 			err = utils.XMLDecoder(alarm, []byte(req.Body()))
 			if err != nil {
 				logger.Error("[SIP SERVER] MESSAGE Alarm xml body 解析失败")
 				return
 			}
-			GlobalAlarmHandler.Handler(*alarm)
+			alarm.DeviceID = device.DeviceID
+			GlobalAlarmHandler.Handler(alarm.Alarm)
 			device.snapshot(1, 1)
 		}
 

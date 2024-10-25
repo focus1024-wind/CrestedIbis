@@ -2,6 +2,7 @@ package initizalize
 
 import (
 	"CrestedIbis/src/apps/audit_log"
+	"CrestedIbis/src/apps/ipc/ipc_alarm"
 	"CrestedIbis/src/apps/ipc/ipc_device"
 	"CrestedIbis/src/apps/system/user"
 	"CrestedIbis/src/config/model"
@@ -88,6 +89,7 @@ func InitDbTable() {
 		&audit_log.AuditLogLogin{},
 		&ipc_device.IpcDevice{},
 		&ipc_device.IpcChannel{},
+		&ipc_alarm.IpcAlarm{},
 		&user.RoleGroup{},
 		&user.SysUser{},
 		&utils.CasbinRule{})
