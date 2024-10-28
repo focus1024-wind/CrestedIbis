@@ -15,6 +15,7 @@ type Config struct {
 	Jwt        *model.Jwt        `yaml:"jwt"`
 	Log        *model.Log        `yaml:"log"`
 	Store      *model.Store      `yaml:"store"`
+	GB28181    *model.GB28181    `yaml:"gb28181"`
 }
 
 // InitConfig 读取配置文件，生成配置
