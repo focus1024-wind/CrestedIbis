@@ -19,6 +19,10 @@ definitions:
         type: string
       id:
         type: integer
+      ipc_records:
+        items:
+          $ref: '#/definitions/ipc_alarm.IpcRecord'
+        type: array
       latitude:
         type: string
       longitude:
@@ -31,6 +35,44 @@ definitions:
       data:
         items:
           $ref: '#/definitions/ipc_alarm.IpcAlarm'
+        type: array
+      page:
+        type: integer
+      page_size:
+        type: integer
+      total:
+        type: integer
+    type: object
+  ipc_alarm.IpcRecord:
+    properties:
+      alarmID:
+        type: integer
+      app:
+        type: string
+      created_time:
+        type: string
+      file_name:
+        type: string
+      file_size:
+        type: integer
+      id:
+        type: integer
+      start_time:
+        type: integer
+      stream:
+        type: string
+      time_len:
+        type: number
+      updated_time:
+        type: string
+      url:
+        type: string
+    type: object
+  ipc_alarm.IpcRecordPage:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/ipc_alarm.IpcRecord'
         type: array
       page:
         type: integer
@@ -351,6 +393,68 @@ paths:
                   type: string
               type: object
       summary: 分页查询IpcDevice设备
+      tags:
+      - IPC设备 /ipc/device
+  /ipc/device/records:
+    get:
+      consumes:
+      - application/json
+      description: 分页查询IpcDevice设备录像信息
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: '分页查询页码，默认值: 1'
+        in: query
+        name: page
+        type: integer
+      - description: '每页查询数量，默认值: 15'
+        in: query
+        name: page_size
+        type: integer
+      - description: 设备ID
+        in: query
+        name: device_id
+        type: string
+      - description: 通道ID
+        in: query
+        name: channel_id
+        type: string
+      - description: '开始时间，默认值: 2006-01-02 15:04:05'
+        in: query
+        name: start
+        type: string
+      - description: '结束时间，默认值: 当前时间'
+        in: query
+        name: end
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 分页查询成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/ipc_alarm.IpcRecordPage'
+              type: object
+        "500":
+          description: 查询数据失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 分页查询IpcDevice设备录像信息
       tags:
       - IPC设备 /ipc/device
   /ipc/device/upload_image:
