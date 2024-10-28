@@ -17,7 +17,16 @@ func Play(deviceID string, channelID string) map[string]string {
 		channel, exist := GlobalGB28181DeviceStore.LoadChannel(deviceID, channelID)
 		if exist {
 			_ = channel.Invite(&InviteOptions{})
-			time.Sleep(3 * time.Second)
+			// 等待流注册完毕或流注册超时后返回
+			timeout := time.After(3 * time.Second)
+			stream, _ = PublishStore.Load(streamPath)
+			for stream != nil {
+				stream, _ = PublishStore.Load(streamPath)
+				select {
+				case <-timeout:
+					break
+				}
+			}
 		}
 	}
 	return GetMediaPlayUrl(streamPath)

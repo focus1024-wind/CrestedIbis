@@ -85,16 +85,13 @@ func initPostgres(datasource *model.Datasource) *gorm.DB {
 }
 
 func InitDbTable() {
-	err := global.Db.AutoMigrate(
+	_ = global.Db.AutoMigrate(
 		&audit_log.AuditLogLogin{},
 		&ipc_device.IpcDevice{},
 		&ipc_device.IpcChannel{},
 		&ipc_alarm.IpcAlarm{},
+		&ipc_alarm.IpcRecord{},
 		&user.RoleGroup{},
 		&user.SysUser{},
 		&utils.CasbinRule{})
-
-	if err != nil {
-		return
-	}
 }

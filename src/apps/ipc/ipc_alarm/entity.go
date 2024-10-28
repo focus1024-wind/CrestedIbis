@@ -7,6 +7,14 @@ import (
 
 type IpcAlarm struct {
 	gb28181_server.Alarm
-	ID int64 `gorm:"primary_key;auto_increment" json:"id"`
+	ID         int64       `gorm:"primary_key;auto_increment" json:"id"`
+	IpcRecords []IpcRecord `gorm:"foreignKey:AlarmID;references:ID"`
+	model.BaseModel
+}
+
+type IpcRecord struct {
+	gb28181_server.Record
+	ID      int64 `gorm:"primary_key;auto_increment" json:"id"`
+	AlarmID int64
 	model.BaseModel
 }

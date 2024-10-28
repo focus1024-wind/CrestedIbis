@@ -189,8 +189,28 @@ func ApiHookOnPublish(w http.ResponseWriter, r *http.Request) {
 }
 
 // ApiHookOnRecordMp4 MP4录制通知事件
-func ApiHookOnRecordMp4(http.ResponseWriter, *http.Request) {
+func ApiHookOnRecordMp4(w http.ResponseWriter, r *http.Request) {
 	logger.Info("ApiHookOnRecordMp4")
+
+	var req = &Record{}
+
+	err := json.NewDecoder(r.Body).Decode(req)
+	if err != nil {
+		logger.Errorf("ApiHookOnStreamChanged 请求解析失败: %v", err.Error())
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	resp := &struct {
+		Code int    `json:"code"`
+		Msg  string `json:"msg"`
+	}{
+		Code: 0,
+		Msg:  "success",
+	}
+
+	msg, _ := json.Marshal(resp)
+	_, _ = w.Write(msg)
 }
 
 // ApiHookOnRtspRealm Rtsp是否启用专用鉴权事件处理函数

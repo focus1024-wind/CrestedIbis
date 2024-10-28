@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-resty/resty/v2"
-	"strconv"
 	"time"
 )
 
@@ -40,53 +39,30 @@ func GetMediaInvitePort(streamId string) (port int, err error) {
 	return
 }
 
-func StartRecord(streamId string, maxSecond int, recordType int) (ok bool, err error) {
-	logger.Infof("%s 开始录制视频", streamId)
-	client := resty.New()
-
-	response := &struct {
-		Code   int  `json:"code"`
-		Result bool `json:"result"`
-	}{}
-
-	_, err = client.R().SetQueryParams(map[string]string{
-		"secret":     globalGB28181Config.MediaServer.Secret,
-		"type":       strconv.Itoa(recordType),
-		"vhost":      "__defaultVhost__",
-		"app":        "rtp",
-		"stream":     streamId,
-		"max_second": strconv.Itoa(maxSecond),
-	}).SetResult(response).SetError(response).Get(fmt.Sprintf("%s/index/api/startRecord", globalGB28181Config.MediaServer.server))
-
-	ok = response.Result
-	return
-}
-
-func record(streamId string, url string, maxSecond int) (ok bool, err error) {
-	if ok, _ := AddStreamProxy("proxy_rtp", streamId, url, true); ok {
+func record(app string, streamId string, url string, maxSecond int) (ok bool, err error) {
+	if ok, _ := AddStreamProxy(app, streamId, url, true); ok {
 		logger.Infof("%s 开始录制", streamId)
 		time.Sleep(time.Duration(maxSecond) * time.Second)
-		_, _ = DelStreamProxy(fmt.Sprintf("__defaultVhost__/proxy_rtp/%s", streamId))
+		_, _ = DelStreamProxy(fmt.Sprintf("__defaultVhost__/%s/%s", app, streamId))
 		logger.Infof("%s 录制结束", streamId)
 	}
 	return ok, err
 }
 
-func StartRecordMp4(deviceId string, channelId string, maxSecond int) (ok bool, err error) {
+func StartRecordMp4(app string, deviceId string, channelId string, maxSecond int) (ok bool, err error) {
 	streamId := fmt.Sprintf("%s/%s", deviceId, channelId)
 	stream, _ := PublishStore.Load(streamId)
 
 	if stream != nil {
 		// 流已存在，开始录制
 		mediaPlayUrl := GetMediaPlayUrl(streamId)
-		record(streamId, mediaPlayUrl["flv"], maxSecond)
+		_, _ = record(app, streamId, mediaPlayUrl["flv"], maxSecond)
 	} else {
 		// 流不存在，点播并录制
 		logger.Infof("%s 流不存在，重新点播", streamId)
-		Play(deviceId, channelId)
-		mediaPlayUrl := GetMediaPlayUrl(streamId)
-		record(streamId, mediaPlayUrl["flv"], maxSecond)
-		//PlayStop(deviceId, channelId)
+		mediaPlayUrl := Play(deviceId, channelId)
+		_, _ = record(app, streamId, mediaPlayUrl["flv"], maxSecond)
+		PlayStop(deviceId, channelId)
 	}
 	return
 }

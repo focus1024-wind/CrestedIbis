@@ -14,4 +14,5 @@ type Alarm struct {
 
 type AlarmHandlerInterface interface {
 	Handler(alarm Alarm)
+	RecordHandler(record Record)
 }
