@@ -13,7 +13,7 @@ type IpcDevice struct {
 	ChannelNum    int64           `json:"channel_num" desc:"设备通道数"`
 	RegisterTime  model.LocalTime `json:"register_time" desc:"设备最新注册时间"`
 	KeepaliveTime model.LocalTime `json:"keepalive_time" desc:"设备最新心跳时间"`
-	model.BaseModel
+	model.BaseHardDeleteModel
 }
 
 type IpcChannel struct {
@@ -21,5 +21,9 @@ type IpcChannel struct {
 	ID       int64  `gorm:"primary_key;auto_increment" json:"id"`
 	ParentID string `gorm:"uniqueIndex:channel_index" json:"parent_id"`
 	DeviceID string `gorm:"uniqueIndex:channel_index" json:"device_id"`
-	model.BaseModel
+	model.BaseHardDeleteModel
+}
+
+type IpcDeviceID struct {
+	DeviceID string `json:"device_id"`
 }

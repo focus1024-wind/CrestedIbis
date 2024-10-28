@@ -118,7 +118,7 @@ definitions:
         type: string
       id:
         type: integer
-      ipcChannels:
+      ipc_channels:
         items:
           $ref: '#/definitions/ipc_device.IpcChannel'
         type: array
@@ -137,6 +137,11 @@ definitions:
       status:
         type: string
       updated_time:
+        type: string
+    type: object
+  ipc_device.IpcDeviceID:
+    properties:
+      device_id:
         type: string
     type: object
   ipc_device.IpcDevicePage:
@@ -242,6 +247,50 @@ info:
   title: CrestedIbis
   version: 0.0.1
 paths:
+  /ipc/device:
+    delete:
+      consumes:
+      - application/json
+      description: 删除IPC设备及对应通道，该删除仅为删除数据库记录，不影响IPC设备的重新注册
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 设备ID
+        in: body
+        name: IpcDeviceID
+        required: true
+        schema:
+          $ref: '#/definitions/ipc_device.IpcDeviceID'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 查询数据成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: 查询数据失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 删除IPC设备
+      tags:
+      - IPC设备 /ipc/device
   /ipc/device/alarms:
     get:
       consumes:

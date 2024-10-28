@@ -60,6 +60,34 @@ func GetIpcDevicesByPages(c *gin.Context) {
 	}
 }
 
+// DeleteIpcDevice 删除IPC设备
+//
+//	@Summary		删除IPC设备
+//	@Version		0.0.1
+//	@Description	删除IPC设备及对应通道，该删除仅为删除数据库记录，不影响IPC设备的重新注册
+//	@Tags			IPC设备 /ipc/device
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string							false	"访问token"
+//	@Param			access_token	query		string							false	"访问token"
+//	@Param			IpcDeviceID		body		IpcDeviceID						true	"设备ID"
+//	@Success		200				{object}	model.HttpResponse{data=string}	"查询数据成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}	"查询数据失败"
+//	@Router			/ipc/device [DELETE]
+func DeleteIpcDevice(c *gin.Context) {
+	var deviceID IpcDeviceID
+	if err := c.ShouldBind(&deviceID); err != nil {
+		panic(http.StatusBadRequest)
+	}
+
+	err := deleteIpcDevice(deviceID.DeviceID)
+	if err != nil {
+		model.HttpResponse{}.FailGin(c, "删除设备失败")
+	} else {
+		model.HttpResponse{}.OkGin(c, "删除设备成功")
+	}
+}
+
 // GetIpcChannels 获取设备通道信息
 //
 //	@Summary		获取设备通道信息

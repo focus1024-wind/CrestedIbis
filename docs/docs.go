@@ -23,6 +23,82 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/ipc/device": {
+            "delete": {
+                "description": "删除IPC设备及对应通道，该删除仅为删除数据库记录，不影响IPC设备的重新注册",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "IPC设备 /ipc/device"
+                ],
+                "summary": "删除IPC设备",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "description": "设备ID",
+                        "name": "IpcDeviceID",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ipc_device.IpcDeviceID"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "查询数据成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "查询数据失败",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/ipc/device/alarms": {
             "get": {
                 "description": "分页查询IpcDevice设备报警信息",
@@ -829,7 +905,7 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "ipcChannels": {
+                "ipc_channels": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/ipc_device.IpcChannel"
@@ -857,6 +933,14 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updated_time": {
+                    "type": "string"
+                }
+            }
+        },
+        "ipc_device.IpcDeviceID": {
+            "type": "object",
+            "properties": {
+                "device_id": {
                     "type": "string"
                 }
             }

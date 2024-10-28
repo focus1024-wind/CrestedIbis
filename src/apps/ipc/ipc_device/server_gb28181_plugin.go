@@ -22,7 +22,10 @@ func (IpcDevice) LoadDevice(deviceId string) (gb28181_server.GB28181Device, bool
 }
 
 func (IpcDevice) StoreDevice(gb28181Device gb28181_server.GB28181Device) {
-	err := global.Db.Where(&IpcDevice{
+	if gb28181Device.DeviceID == "" {
+		return
+	}
+	err := global.Db.Debug().Where(&IpcDevice{
 		DeviceID: gb28181Device.DeviceID,
 	}).Save(&IpcDevice{
 		DeviceID:      gb28181Device.DeviceID,
@@ -31,7 +34,7 @@ func (IpcDevice) StoreDevice(gb28181Device gb28181_server.GB28181Device) {
 		KeepaliveTime: model.LocalTime(gb28181Device.KeepaliveTime),
 	}).Error
 	if err != nil {
-		global.Db.Where(&IpcDevice{
+		global.Db.Debug().Where(&IpcDevice{
 			DeviceID: gb28181Device.DeviceID,
 		}).Updates(&IpcDevice{
 			DeviceID:      gb28181Device.DeviceID,
@@ -44,7 +47,10 @@ func (IpcDevice) StoreDevice(gb28181Device gb28181_server.GB28181Device) {
 
 func (IpcDevice) DeviceOffline(deviceId string) {
 	var gb28181Device IpcDevice
-	global.Db.Where(&IpcDevice{DeviceID: deviceId}).First(&gb28181Device)
+	err := global.Db.Where(&IpcDevice{DeviceID: deviceId}).First(&gb28181Device).Error
+	if err != nil {
+		return
+	}
 	gb28181Device.Status = gb28181_server.DeviceOffLineStatus
 	global.Db.Save(&gb28181Device)
 }
