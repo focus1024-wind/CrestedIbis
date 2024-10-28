@@ -18,16 +18,23 @@ func (IpcAlarm) Handler(alarm gb28181_server.Alarm) {
 
 func (IpcAlarm) RecordHandler(record gb28181_server.Record) {
 	recordApps := strings.Split(record.App, "alarm_")
-	if len(recordApps) != 2 {
+	if len(recordApps) == 2 {
+		alarmID, err := strconv.ParseInt(recordApps[1], 10, 0)
+		if err != nil {
+			return
+		}
+		var ipcRecord = IpcRecord{
+			AlarmID: &alarmID,
+			Record:  record,
+		}
+		global.Db.Create(&ipcRecord)
+		return
+	} else {
+		var ipcRecord = IpcRecord{
+			AlarmID: nil,
+			Record:  record,
+		}
+		global.Db.Create(&ipcRecord)
 		return
 	}
-	alarmID, err := strconv.ParseInt(recordApps[1], 10, 0)
-	if err != nil {
-		return
-	}
-	var ipcRecord = IpcRecord{
-		AlarmID: alarmID,
-		Record:  record,
-	}
-	global.Db.Create(&ipcRecord)
 }
