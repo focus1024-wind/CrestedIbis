@@ -24,6 +24,15 @@ type IpcChannel struct {
 	model.BaseHardDeleteModel
 }
 
+// IpcDevicePage 分页查询设备响应结构
+type IpcDevicePage struct {
+	Total    int64       `json:"total" desc:"设备总数量"`
+	Data     []IpcDevice `json:"data" desc:"设备列表"`
+	Page     int64       `json:"page" desc:"页码"`
+	PageSize int64       `json:"page_size" desc:"每页查询数量"`
+}
+
+// IpcDeviceID 请求体设备ID包装结构
 type IpcDeviceID struct {
 	DeviceID string `json:"device_id"`
 }

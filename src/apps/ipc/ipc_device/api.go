@@ -12,13 +12,6 @@ import (
 	"strings"
 )
 
-type IpcDevicePage struct {
-	Total    int64       `json:"total" desc:"设备总数量"`
-	Data     []IpcDevice `json:"data" desc:"设备列表"`
-	Page     int64       `json:"page" desc:"页码"`
-	PageSize int64       `json:"page_size" desc:"每页查询数量"`
-}
-
 // GetIpcDevicesByPages 分页查询IpcDevice设备
 //
 //	@Summary		分页查询IpcDevice设备

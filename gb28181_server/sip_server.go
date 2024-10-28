@@ -48,13 +48,12 @@ func deviceOffline() {
 	DeviceKeepalive.Range(func(key, value interface{}) bool {
 		deviceID := key.(string)
 		keepaliveTime := value.(time.Time)
-		if time.Since(keepaliveTime) > 3*time.Minute {
-			if device, ok := getGB28181DeviceById(deviceID); ok {
-				device.Status = DeviceOffLineStatus
-				DeviceKeepalive.Delete(key)
-				GlobalGB28181DeviceStore.DeviceOffline(deviceID)
-				logger.Infof("GB28181设备 %s 心跳超时，已下线", deviceID)
-			}
+		device, ok := getGB28181DeviceById(deviceID)
+		if time.Since(keepaliveTime) > 3*time.Minute || !ok {
+			device.Status = DeviceOffLineStatus
+			DeviceKeepalive.Delete(key)
+			GlobalGB28181DeviceStore.DeviceOffline(deviceID)
+			logger.Infof("GB28181设备 %s 心跳超时，已下线", deviceID)
 		}
 		return true
 	})
