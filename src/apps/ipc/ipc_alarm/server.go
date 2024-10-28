@@ -23,7 +23,7 @@ func selectIpcAlarmsByPages(page int64, pageSize int64, deviceID string, channel
 			DeviceID:  deviceID,
 			ChannelID: channelID,
 		},
-	}).Order("id DESC").Offset(int(offset)).Limit(int(pageSize)).Find(&ipcDevices).Error; err != nil {
+	}).Preload("IpcRecords").Order("id DESC").Offset(int(offset)).Limit(int(pageSize)).Find(&ipcDevices).Error; err != nil {
 		return
 	}
 	return

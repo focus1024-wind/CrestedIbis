@@ -61,6 +61,7 @@ func StartRecordMp4(app string, deviceId string, channelId string, maxSecond int
 		// 流不存在，点播并录制
 		logger.Infof("%s 流不存在，重新点播", streamId)
 		mediaPlayUrl := Play(deviceId, channelId)
+		fmt.Println(mediaPlayUrl)
 		_, _ = record(app, streamId, mediaPlayUrl["flv"], maxSecond)
 		PlayStop(deviceId, channelId)
 	}

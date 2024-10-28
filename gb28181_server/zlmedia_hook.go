@@ -201,6 +201,8 @@ func ApiHookOnRecordMp4(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	GlobalAlarmHandler.RecordHandler(*req)
+
 	resp := &struct {
 		Code int    `json:"code"`
 		Msg  string `json:"msg"`

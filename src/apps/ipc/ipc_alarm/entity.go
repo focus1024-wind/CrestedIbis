@@ -8,7 +8,7 @@ import (
 type IpcAlarm struct {
 	gb28181_server.Alarm
 	ID         int64       `gorm:"primary_key;auto_increment" json:"id"`
-	IpcRecords []IpcRecord `gorm:"foreignKey:AlarmID;references:ID"`
+	IpcRecords []IpcRecord `gorm:"foreignKey:AlarmID;references:ID" json:"ipc_records"`
 	model.BaseModel
 }
 
