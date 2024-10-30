@@ -11,13 +11,16 @@ import (
 )
 
 type GB28181Channel struct {
-	ParentID     string `desc:"GB28181父设备ID" json:"parent_id"`
-	DeviceID     string `desc:"GB28181通道ID" json:"device_id"`
-	Name         string `desc:"GB28181设备名称" json:"name"`
-	Manufacturer string `desc:"GB28181设备制作厂商" json:"manufacturer"`
-	Model        string `desc:"GB28181设备Model" json:"model"`
-	Status       string `json:"status"`
-	State        int    `desc:"通道状态" enum:"0: 空闲，1：Invite，2：正在播放/对讲" json:"state"`
+	ParentID     string  `desc:"GB28181父设备ID" json:"parent_id"`
+	DeviceID     string  `desc:"GB28181通道ID" json:"device_id"`
+	Name         string  `desc:"GB28181设备名称" json:"name"`
+	Manufacturer string  `desc:"GB28181设备制作厂商" json:"manufacturer"`
+	Model        string  `desc:"GB28181设备Model" json:"model"`
+	PtzType      int8    `desc:"PTZ云台类型" json:"ptz_type" xml:"Info>PTZType"`
+	Longitude    float64 `desc:"经度" json:"longitude"`
+	Latitude     float64 `desc:"纬度" json:"latitude"`
+	Status       string  `json:"status"`
+	State        int     `desc:"通道状态" enum:"0: 空闲，1：Invite，2：正在播放/对讲" json:"state"`
 }
 
 // CreateSipRequest 创建通用SIP请求

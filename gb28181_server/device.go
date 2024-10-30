@@ -180,6 +180,22 @@ func (gb28181Device *GB28181Device) syncCatalog() {
 	}
 }
 
+func (gb28181Device *GB28181Device) syncMobilePosition() {
+	request := gb28181Device.createSipRequest(sip.SUBSCRIBE)
+
+	expires := sip.Expires(3600 / time.Second)
+	contentType := sip.ContentType("Application/MANSCDP+xml")
+
+	request.AppendHeader(&expires)
+	request.AppendHeader(&contentType)
+	request.SetBody(BuildMobilePositionXML(gb28181Device.SN, gb28181Device.DeviceID, 5), true)
+
+	_, err := globalSipServer.RequestWithContext(context.Background(), request)
+	if err != nil {
+		logger.Errorf("[SIP SERVER] DeviceId: %s 同步位置信息失败: %s", gb28181Device.DeviceID, err.Error())
+	}
+}
+
 // snapShot 图片抓拍
 func (gb28181Device *GB28181Device) snapshot(snapNum int, interval int) {
 	request := gb28181Device.createSipRequest(sip.MESSAGE)
@@ -191,6 +207,6 @@ func (gb28181Device *GB28181Device) snapshot(snapNum int, interval int) {
 
 	_, err := globalSipServer.RequestWithContext(context.Background(), request)
 	if err != nil {
-		logger.Error("[SIP SERVER] DeviceId: %s 图片抓拍失败", gb28181Device.DeviceID)
+		logger.Errorf("[SIP SERVER] DeviceId: %s 图片抓拍失败: %s", gb28181Device.DeviceID, err.Error())
 	}
 }

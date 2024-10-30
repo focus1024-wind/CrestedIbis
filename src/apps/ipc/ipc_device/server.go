@@ -4,7 +4,6 @@ import (
 	"CrestedIbis/src/global"
 	"CrestedIbis/src/utils"
 	"errors"
-	"fmt"
 )
 
 func selectIpcDevice(deviceID string) (device IpcDevice, err error) {
@@ -80,7 +79,6 @@ func selectIpcChannels(deviceID string) (channels []IpcChannel, err error) {
 func GenUploadImageAccessToken(deviceId string) string {
 	token, err := utils.JwtToken{}.GenTempAccessToken(deviceId, []string{"ipc_device"}, 180)
 	if err != nil {
-		fmt.Println(err)
 		return ""
 	} else {
 		return token

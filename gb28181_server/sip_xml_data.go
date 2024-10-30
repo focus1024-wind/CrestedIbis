@@ -34,6 +34,14 @@ var (
         <SessionID>%s</SessionID>
     </SnapShotConfig>
 </Control>`
+
+	MobilePositionXML = `<?xml version="1.0"?>
+<Query>
+<CmdType>MobilePosition</CmdType>
+<SN>%d</SN>
+<DeviceID>%s</DeviceID>
+<Interval>%d</Interval>
+</Query>`
 )
 
 // BuildDeviceInfoXML 获取设备详情指令
@@ -50,4 +58,9 @@ func BuildCatalogXML(sn int, id string) string {
 func BuildSnapShotXML(sn int, id string, snapNum int, interval int) string {
 	uploadUrl := GlobalGB28181DeviceStore.SnapShotUploadUrl(id)
 	return fmt.Sprintf(SnapShotXML, sn, id, snapNum, interval, uploadUrl, utils.RandNumString(32))
+}
+
+// BuildMobilePositionXML 移动位置订阅
+func BuildMobilePositionXML(sn int, id string, interval int) string {
+	return fmt.Sprintf(MobilePositionXML, sn, id, interval)
 }
