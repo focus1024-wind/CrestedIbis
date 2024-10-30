@@ -25,7 +25,7 @@ import (
 //	@Param			device_id		query		string								true	"设备ID"
 //	@Success		200				{object}	model.HttpResponse{data=IpcDevice}	"查询成功"
 //	@Failure		500				{object}	model.HttpResponse{data=string}		"查询数据失败"
-//	@Router			/ipc/device/devices [GET]
+//	@Router			/ipc/device [GET]
 func GetIpcDevice(c *gin.Context) {
 	deviceID := c.Query("device_id")
 	if deviceID == "" {
@@ -37,6 +37,34 @@ func GetIpcDevice(c *gin.Context) {
 		} else {
 			model.HttpResponse{}.OkGin(c, device)
 		}
+	}
+}
+
+// PostIpcDevice 更新IPC设备
+//
+//	@Summary		更新IPC设备
+//	@Version		0.0.1
+//	@Description	更新IPC设备
+//	@Tags			IPC设备 /ipc/device
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string								false	"访问token"
+//	@Param			access_token	query		string								false	"访问token"
+//	@Param			IpcDevice		body		IpcDevice							true	"设备信息"
+//	@Success		200				{object}	model.HttpResponse{data=IpcDevice}	"查询成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}		"查询数据失败"
+//	@Router			/ipc/device [POST]
+func PostIpcDevice(c *gin.Context) {
+	var ipcDevice IpcDevice
+	if err := c.ShouldBind(&ipcDevice); err != nil {
+		fmt.Println(err.Error())
+		panic(http.StatusBadRequest)
+	}
+	err := updateIpcDevice(ipcDevice)
+	if err != nil {
+		model.HttpResponse{}.FailGin(c, err.Error())
+	} else {
+		model.HttpResponse{}.OkGin(c, ipcDevice)
 	}
 }
 

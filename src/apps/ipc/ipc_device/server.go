@@ -3,11 +3,26 @@ package ipc_device
 import (
 	"CrestedIbis/src/global"
 	"CrestedIbis/src/utils"
+	"errors"
 	"fmt"
 )
 
 func selectIpcDevice(deviceID string) (device IpcDevice, err error) {
 	err = global.Db.Model(&IpcDevice{}).Where(&IpcDevice{DeviceID: deviceID}).First(&device).Error
+	return
+}
+
+func updateIpcDevice(device IpcDevice) (err error) {
+	if device.DeviceID == "" {
+		return errors.New("device_id is empty")
+	}
+	err = global.Db.Debug().Model(&IpcDevice{}).Where(&IpcDevice{
+		DeviceID: device.DeviceID,
+	}).Updates(&device).Error
+	if err != nil {
+		global.Logger.Errorf("更新 %s 设备失败：%s", device.DeviceID, err.Error())
+		return errors.New("update device error")
+	}
 	return
 }
 

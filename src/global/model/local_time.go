@@ -1,6 +1,7 @@
 package model
 
 import (
+	"CrestedIbis/src/global"
 	"database/sql/driver"
 	"fmt"
 	"time"
@@ -11,6 +12,19 @@ type LocalTime time.Time
 func (t *LocalTime) MarshalJSON() ([]byte, error) {
 	tTime := time.Time(*t)
 	return []byte(fmt.Sprintf("\"%v\"", tTime.Format(time.DateTime))), nil
+}
+
+func (t *LocalTime) UnmarshalJSON(data []byte) error {
+	if data[0] == '"' && data[len(data)-1] == '"' {
+		data = data[1 : len(data)-1]
+	}
+	location, err := time.ParseInLocation(time.DateTime, string(data), time.Local)
+	if err != nil {
+		global.Logger.Errorf("%s 转 LocalTime 格式转换失败: %s", string(data), err.Error())
+		return err
+	}
+	*t = LocalTime(location)
+	return nil
 }
 
 // Value gorm在底层通过值调用，这里不要修改类型
