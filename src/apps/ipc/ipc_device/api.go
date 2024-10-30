@@ -12,6 +12,62 @@ import (
 	"strings"
 )
 
+// GetIpcDevice 根据device_id获取IPC设备
+//
+//	@Summary		根据device_id获取IPC设备
+//	@Version		0.0.1
+//	@Description	根据device_id获取IPC设备
+//	@Tags			IPC设备 /ipc/device
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string								false	"访问token"
+//	@Param			access_token	query		string								false	"访问token"
+//	@Param			device_id		query		string								true	"设备ID"
+//	@Success		200				{object}	model.HttpResponse{data=IpcDevice}	"查询成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}		"查询数据失败"
+//	@Router			/ipc/device/devices [GET]
+func GetIpcDevice(c *gin.Context) {
+	deviceID := c.Query("device_id")
+	if deviceID == "" {
+		panic(http.StatusBadRequest)
+	} else {
+		device, err := selectIpcDevice(deviceID)
+		if err != nil {
+			model.HttpResponse{}.FailGin(c, "查询设备失败")
+		} else {
+			model.HttpResponse{}.OkGin(c, device)
+		}
+	}
+}
+
+// DeleteIpcDevice 删除IPC设备
+//
+//	@Summary		删除IPC设备
+//	@Version		0.0.1
+//	@Description	删除IPC设备及对应通道，该删除仅为删除数据库记录，不影响IPC设备的重新注册
+//	@Tags			IPC设备 /ipc/device
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string							false	"访问token"
+//	@Param			access_token	query		string							false	"访问token"
+//	@Param			IpcDeviceID		body		IpcDeviceID						true	"设备ID"
+//	@Success		200				{object}	model.HttpResponse{data=string}	"查询数据成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}	"查询数据失败"
+//	@Router			/ipc/device [DELETE]
+func DeleteIpcDevice(c *gin.Context) {
+	var deviceID IpcDeviceID
+	if err := c.ShouldBind(&deviceID); err != nil {
+		panic(http.StatusBadRequest)
+	}
+
+	err := deleteIpcDevice(deviceID.DeviceID)
+	if err != nil {
+		model.HttpResponse{}.FailGin(c, "删除设备失败")
+	} else {
+		model.HttpResponse{}.OkGin(c, "删除设备成功")
+	}
+}
+
 // GetIpcDevicesByPages 分页查询IpcDevice设备
 //
 //	@Summary		分页查询IpcDevice设备
@@ -50,34 +106,6 @@ func GetIpcDevicesByPages(c *gin.Context) {
 			Page:     page,
 			PageSize: pageSize,
 		})
-	}
-}
-
-// DeleteIpcDevice 删除IPC设备
-//
-//	@Summary		删除IPC设备
-//	@Version		0.0.1
-//	@Description	删除IPC设备及对应通道，该删除仅为删除数据库记录，不影响IPC设备的重新注册
-//	@Tags			IPC设备 /ipc/device
-//	@Accept			json
-//	@Produce		json
-//	@Param			Authorization	header		string							false	"访问token"
-//	@Param			access_token	query		string							false	"访问token"
-//	@Param			IpcDeviceID		body		IpcDeviceID						true	"设备ID"
-//	@Success		200				{object}	model.HttpResponse{data=string}	"查询数据成功"
-//	@Failure		500				{object}	model.HttpResponse{data=string}	"查询数据失败"
-//	@Router			/ipc/device [DELETE]
-func DeleteIpcDevice(c *gin.Context) {
-	var deviceID IpcDeviceID
-	if err := c.ShouldBind(&deviceID); err != nil {
-		panic(http.StatusBadRequest)
-	}
-
-	err := deleteIpcDevice(deviceID.DeviceID)
-	if err != nil {
-		model.HttpResponse{}.FailGin(c, "删除设备失败")
-	} else {
-		model.HttpResponse{}.OkGin(c, "删除设备成功")
 	}
 }
 

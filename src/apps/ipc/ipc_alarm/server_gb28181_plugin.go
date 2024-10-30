@@ -17,6 +17,10 @@ func (IpcAlarm) Handler(alarm gb28181_server.Alarm) {
 }
 
 func (IpcAlarm) RecordHandler(record gb28181_server.Record) {
+	if record.TimeLen < 3 {
+		return
+	}
+
 	recordApps := strings.Split(record.App, "alarm_")
 	if len(recordApps) == 2 {
 		alarmID, err := strconv.ParseInt(recordApps[1], 10, 0)

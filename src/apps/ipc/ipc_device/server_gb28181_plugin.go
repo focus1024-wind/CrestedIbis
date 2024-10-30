@@ -25,6 +25,7 @@ func (IpcDevice) StoreDevice(gb28181Device gb28181_server.GB28181Device) {
 	if gb28181Device.DeviceID == "" {
 		return
 	}
+	// 新建设备
 	err := global.Db.Debug().Where(&IpcDevice{
 		DeviceID: gb28181Device.DeviceID,
 	}).Save(&IpcDevice{
@@ -34,6 +35,9 @@ func (IpcDevice) StoreDevice(gb28181Device gb28181_server.GB28181Device) {
 		KeepaliveTime: model.LocalTime(gb28181Device.KeepaliveTime),
 	}).Error
 	if err != nil {
+		// 修改设备信息
+		// 参数置空，不额外存储设备名称，避免平台修改后被覆盖
+		gb28181Device.Name = ""
 		global.Db.Debug().Where(&IpcDevice{
 			DeviceID: gb28181Device.DeviceID,
 		}).Updates(&IpcDevice{
@@ -100,6 +104,9 @@ func (IpcDevice) UpdateChannels(channels []gb28181_server.GB28181Channel) {
 			GB28181Channel: channel,
 		}).Error
 		if err != nil {
+			// 修改设备信息
+			// 参数置空，不额外存储设备名称，避免平台修改后被覆盖
+			channel.Name = ""
 			global.Db.Where(&IpcChannel{
 				ParentID: channel.ParentID,
 				DeviceID: channel.DeviceID,

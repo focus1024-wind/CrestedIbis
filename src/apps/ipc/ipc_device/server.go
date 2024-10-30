@@ -6,6 +6,11 @@ import (
 	"fmt"
 )
 
+func selectIpcDevice(deviceID string) (device IpcDevice, err error) {
+	err = global.Db.Model(&IpcDevice{}).Where(&IpcDevice{DeviceID: deviceID}).First(&device).Error
+	return
+}
+
 func deleteIpcDevice(deviceID string) (err error) {
 	// 删除对应通道
 	err = global.Db.Model(&IpcChannel{}).Where(&IpcChannel{
