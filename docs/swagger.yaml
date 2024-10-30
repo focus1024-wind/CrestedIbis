@@ -356,7 +356,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: 查询成功
+          description: 更新成功
           schema:
             allOf:
             - $ref: '#/definitions/model.HttpResponse'
@@ -436,6 +436,50 @@ paths:
                   type: string
               type: object
       summary: 分页查询IpcDevice设备报警信息
+      tags:
+      - IPC设备 /ipc/device
+  /ipc/device/channel:
+    post:
+      consumes:
+      - application/json
+      description: 更新IPC通道
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 设备信息
+        in: body
+        name: IpcDevice
+        required: true
+        schema:
+          $ref: '#/definitions/ipc_device.IpcDevice'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 更新成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/ipc_device.IpcChannel'
+              type: object
+        "500":
+          description: 查询数据失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 更新IPC通道
       tags:
       - IPC设备 /ipc/device
   /ipc/device/channels:

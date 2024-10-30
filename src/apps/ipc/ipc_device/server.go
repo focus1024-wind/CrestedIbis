@@ -57,6 +57,21 @@ func selectIpcDevicesByPages(page int64, pageSize int64) (total int64, ipcDevice
 	return
 }
 
+func updateIpcChannel(channel IpcChannel) (err error) {
+	if channel.ParentID == "" || channel.DeviceID == "" {
+		return errors.New("parent_id or device_id is empty")
+	}
+	err = global.Db.Debug().Model(&IpcChannel{}).Where(&IpcChannel{
+		ParentID: channel.ParentID,
+		DeviceID: channel.DeviceID,
+	}).Updates(&channel).Error
+	if err != nil {
+		global.Logger.Errorf("更新 %s/%s 设备失败：%s", channel.ParentID, channel.DeviceID, err.Error())
+		return errors.New("update device error")
+	}
+	return
+}
+
 func selectIpcChannels(deviceID string) (channels []IpcChannel, err error) {
 	err = global.Db.Where(&IpcChannel{ParentID: deviceID}).Take(&channels).Error
 	return

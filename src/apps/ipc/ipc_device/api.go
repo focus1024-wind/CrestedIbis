@@ -51,13 +51,12 @@ func GetIpcDevice(c *gin.Context) {
 //	@Param			Authorization	header		string								false	"访问token"
 //	@Param			access_token	query		string								false	"访问token"
 //	@Param			IpcDevice		body		IpcDevice							true	"设备信息"
-//	@Success		200				{object}	model.HttpResponse{data=IpcDevice}	"查询成功"
+//	@Success		200				{object}	model.HttpResponse{data=IpcDevice}	"更新成功"
 //	@Failure		500				{object}	model.HttpResponse{data=string}		"查询数据失败"
 //	@Router			/ipc/device [POST]
 func PostIpcDevice(c *gin.Context) {
 	var ipcDevice IpcDevice
 	if err := c.ShouldBind(&ipcDevice); err != nil {
-		fmt.Println(err.Error())
 		panic(http.StatusBadRequest)
 	}
 	err := updateIpcDevice(ipcDevice)
@@ -134,6 +133,33 @@ func GetIpcDevicesByPages(c *gin.Context) {
 			Page:     page,
 			PageSize: pageSize,
 		})
+	}
+}
+
+// PostIpcChannel 更新IPC通道
+//
+//	@Summary		更新IPC通道
+//	@Version		0.0.1
+//	@Description	更新IPC通道
+//	@Tags			IPC设备 /ipc/device
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string								false	"访问token"
+//	@Param			access_token	query		string								false	"访问token"
+//	@Param			IpcDevice		body		IpcDevice							true	"设备信息"
+//	@Success		200				{object}	model.HttpResponse{data=IpcChannel}	"更新成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}		"查询数据失败"
+//	@Router			/ipc/device/channel [POST]
+func PostIpcChannel(c *gin.Context) {
+	var ipcChannel IpcChannel
+	if err := c.ShouldBind(&ipcChannel); err != nil {
+		panic(http.StatusBadRequest)
+	}
+	err := updateIpcChannel(ipcChannel)
+	if err != nil {
+		model.HttpResponse{}.FailGin(c, err.Error())
+	} else {
+		model.HttpResponse{}.OkGin(c, ipcChannel)
 	}
 }
 
