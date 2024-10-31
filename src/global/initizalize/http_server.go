@@ -38,10 +38,19 @@ func InitHttpServer() {
 	}
 	global.HttpEngine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
-	err := global.HttpEngine.Run(fmt.Sprintf("%s:%d", global.Conf.HttpServer.IP, global.Conf.HttpServer.Port))
-	if err != nil {
-		global.Logger.Printf("http server start error: %s", err)
+	// 优雅的关机: 监听关机信号，以释放系统资源
+	// 详情参考: https://gin-gonic.com/zh-cn/docs/examples/graceful-restart-or-stop/
+	// 在http_server仅启动Web程序，具体的事件监听和处理，由cobra进行处理
+	srv := &http.Server{
+		Addr:    fmt.Sprintf("%s:%d", global.Conf.HttpServer.IP, global.Conf.HttpServer.Port),
+		Handler: global.HttpEngine,
 	}
+
+	go func() {
+		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			global.Logger.Fatalf("listen: %s", err)
+		}
+	}()
 }
 
 // cors跨域配置

@@ -9,6 +9,7 @@ import (
 	"CrestedIbis/src/global/initizalize"
 	"github.com/spf13/cobra"
 	"os"
+	"os/signal"
 )
 
 var configFilePath string
@@ -18,8 +19,9 @@ func init() {
 }
 
 var rootCmd = &cobra.Command{
-	Use:   "CrestedIbis",
-	Short: "CrestedIbis Web video platform",
+	Use:     "CrestedIbis",
+	Short:   "CrestedIbis Web video platform",
+	Version: "0.0.1",
 	PreRun: func(cmd *cobra.Command, args []string) {
 		global.Conf = config.InitConfig(configFilePath)
 		global.Logger = initizalize.InitLogger(global.Conf.Log)
@@ -33,6 +35,23 @@ var rootCmd = &cobra.Command{
 		go gb28181_server.Run(configFilePath)
 		// 启动Web服务器
 		initizalize.InitHttpServer()
+
+		// 监听信号，这里仅监听，处理由PostRun进行
+		quit := make(chan os.Signal, 1)
+		signal.Notify(quit, os.Interrupt)
+		<-quit
+	},
+	PostRun: func(cmd *cobra.Command, args []string) {
+		// 更新所有在线设备为已下线
+		global.Db.Model(&ipc_device.IpcDevice{}).Where(ipc_device.IpcDevice{
+			GB28181Device: gb28181_server.GB28181Device{
+				Status: gb28181_server.DeviceOnLineStatus,
+			},
+		}).Updates(ipc_device.IpcDevice{
+			GB28181Device: gb28181_server.GB28181Device{
+				Status: gb28181_server.DeviceOffLineStatus,
+			},
+		})
 	},
 }
 
@@ -49,4 +68,5 @@ func main() {
 		rootCmd.PrintErrf("CrestedIbis root cmd execute: %s", err)
 		os.Exit(-1)
 	}
+
 }
