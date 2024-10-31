@@ -72,7 +72,7 @@ func updateIpcChannel(channel IpcChannel) (err error) {
 }
 
 func selectIpcChannels(deviceID string) (channels []IpcChannel, err error) {
-	err = global.Db.Where(&IpcChannel{ParentID: deviceID}).Take(&channels).Error
+	err = global.Db.Where(&IpcChannel{ParentID: deviceID}).Find(&channels).Error
 	return
 }
 

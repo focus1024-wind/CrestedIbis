@@ -77,7 +77,7 @@ func (IpcDevice) LoadChannel(deviceId string, channelId string) (gb28181_server.
 
 func (IpcDevice) LoadChannels(deviceId string) ([]gb28181_server.GB28181Channel, bool) {
 	result := make([]IpcChannel, 0)
-	err := global.Db.Where(&IpcChannel{ParentID: deviceId}).Take(&result).Error
+	err := global.Db.Where(&IpcChannel{ParentID: deviceId}).Find(&result).Error
 	if err != nil {
 		return []gb28181_server.GB28181Channel{}, false
 	} else {

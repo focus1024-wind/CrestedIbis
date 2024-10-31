@@ -49,3 +49,8 @@ func (SysUser) Insert(user SysUser) (err error) {
 		return err
 	}
 }
+
+func selectUsers() (users []SysUser, err error) {
+	err = global.Db.Model(&SysUser{}).Find(&users).Error
+	return
+}

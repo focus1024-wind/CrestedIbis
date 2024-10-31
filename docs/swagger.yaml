@@ -89,6 +89,10 @@ definitions:
         type: string
       id:
         type: integer
+      latitude:
+        type: number
+      longitude:
+        type: number
       manufacturer:
         type: string
       model:
@@ -97,6 +101,8 @@ definitions:
         type: string
       parent_id:
         type: string
+      ptz_type:
+        type: integer
       state:
         type: integer
       status:
@@ -784,6 +790,46 @@ paths:
                   type: string
               type: object
       summary: 注册用户
+      tags:
+      - 用户管理 /system/user
+  /system/user/users:
+    get:
+      consumes:
+      - application/json
+      description: 搜索用户
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 查询成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/user.SysUser'
+                  type: array
+              type: object
+        "500":
+          description: 查询数据失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 搜索用户
       tags:
       - 用户管理 /system/user
 swagger: "2.0"

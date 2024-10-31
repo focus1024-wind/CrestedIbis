@@ -45,39 +45,26 @@ func GetMediaPlayUrl(streamId string) map[string]string {
 	value, _ := PublishStore.Load(streamId)
 
 	if value != nil {
-		streamList := value.(map[string]bool)
-		if streamList["rtsp"] {
-			mediaPlayUrl["rtsp"] = fmt.Sprintf("rtsp://%s:%d/rtp/%s", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
-			mediaPlayUrl["rtsps"] = fmt.Sprintf("rtsps://%s:%d/rtp/%s", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
-		}
-		if streamList["rtmp"] {
-			mediaPlayUrl["rtmp"] = fmt.Sprintf("rtmp://%s:%d/rtp/%s", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
-			mediaPlayUrl["rtmps"] = fmt.Sprintf("rtmps://%s:%d/rtp/%s", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
-			mediaPlayUrl["flv"] = fmt.Sprintf("http://%s:%d/rtp/%s.live.flv", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
-			mediaPlayUrl["https_flv"] = fmt.Sprintf("https://%s:%d/rtp/%s.live.flv", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
-			mediaPlayUrl["ws_flv"] = fmt.Sprintf("ws://%s:%d/rtp/%s.live.flv", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
-			mediaPlayUrl["wss_flv"] = fmt.Sprintf("wss://%s:%d/rtp/%s.live.flv", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
-		}
-		if streamList["hls"] {
-			mediaPlayUrl["hls"] = fmt.Sprintf("http://%s:%d/rtp/%s/hls.m3u8", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
-			mediaPlayUrl["https_hls"] = fmt.Sprintf("https://%s:%d/rtp/%s/hls.m3u8", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
-		}
-		if streamList["hls.fmp4"] {
-			mediaPlayUrl["hls_fmp4"] = fmt.Sprintf("http://%s:%d/rtp/%s/hls.fmp4.m3u8", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
-			mediaPlayUrl["https_hls_fmp4"] = fmt.Sprintf("https://%s:%d/rtp/%s/hls.fmp4.m3u8", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
-		}
-		if streamList["ts"] {
-			mediaPlayUrl["ts"] = fmt.Sprintf("http://%s:%d/rtp/%s.live.ts", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
-			mediaPlayUrl["https_ts"] = fmt.Sprintf("https://%s:%d/rtp/%s.live.ts", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
-			mediaPlayUrl["ws_ts"] = fmt.Sprintf("ws://%s:%d/rtp/%s.live.ts", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
-			mediaPlayUrl["wss_ts"] = fmt.Sprintf("wss://%s:%d/rtp/%s.live.ts", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
-		}
-		if streamList["fmp4"] {
-			mediaPlayUrl["fmp4"] = fmt.Sprintf("http://%s:%d/rtp/%s.live.mp4", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
-			mediaPlayUrl["https_fmp4"] = fmt.Sprintf("https://%s:%d/rtp/%s.live.mp4", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
-			mediaPlayUrl["ws_fmp4"] = fmt.Sprintf("ws://%s:%d/rtp/%s.live.mp4", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
-			mediaPlayUrl["wss_fmp4"] = fmt.Sprintf("wss://%s:%d/rtp/%s.live.mp4", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
-		}
+		mediaPlayUrl["rtsp"] = fmt.Sprintf("rtsp://%s:%d/rtp/%s", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
+		mediaPlayUrl["rtsps"] = fmt.Sprintf("rtsps://%s:%d/rtp/%s", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
+		mediaPlayUrl["rtmp"] = fmt.Sprintf("rtmp://%s:%d/rtp/%s", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
+		mediaPlayUrl["rtmps"] = fmt.Sprintf("rtmps://%s:%d/rtp/%s", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
+		mediaPlayUrl["flv"] = fmt.Sprintf("http://%s:%d/rtp/%s.live.flv", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
+		mediaPlayUrl["https_flv"] = fmt.Sprintf("https://%s:%d/rtp/%s.live.flv", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
+		mediaPlayUrl["ws_flv"] = fmt.Sprintf("ws://%s:%d/rtp/%s.live.flv", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
+		mediaPlayUrl["wss_flv"] = fmt.Sprintf("wss://%s:%d/rtp/%s.live.flv", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
+		mediaPlayUrl["hls"] = fmt.Sprintf("http://%s:%d/rtp/%s/hls.m3u8", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
+		mediaPlayUrl["https_hls"] = fmt.Sprintf("https://%s:%d/rtp/%s/hls.m3u8", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
+		mediaPlayUrl["hls_fmp4"] = fmt.Sprintf("http://%s:%d/rtp/%s/hls.fmp4.m3u8", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
+		mediaPlayUrl["https_hls_fmp4"] = fmt.Sprintf("https://%s:%d/rtp/%s/hls.fmp4.m3u8", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
+		mediaPlayUrl["ts"] = fmt.Sprintf("http://%s:%d/rtp/%s.live.ts", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
+		mediaPlayUrl["https_ts"] = fmt.Sprintf("https://%s:%d/rtp/%s.live.ts", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
+		mediaPlayUrl["ws_ts"] = fmt.Sprintf("ws://%s:%d/rtp/%s.live.ts", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
+		mediaPlayUrl["wss_ts"] = fmt.Sprintf("wss://%s:%d/rtp/%s.live.ts", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
+		mediaPlayUrl["fmp4"] = fmt.Sprintf("http://%s:%d/rtp/%s.live.mp4", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
+		mediaPlayUrl["https_fmp4"] = fmt.Sprintf("https://%s:%d/rtp/%s.live.mp4", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
+		mediaPlayUrl["ws_fmp4"] = fmt.Sprintf("ws://%s:%d/rtp/%s.live.mp4", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
+		mediaPlayUrl["wss_fmp4"] = fmt.Sprintf("wss://%s:%d/rtp/%s.live.mp4", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
 	}
 
 	return mediaPlayUrl

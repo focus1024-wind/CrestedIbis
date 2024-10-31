@@ -943,6 +943,76 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/system/user/users": {
+            "get": {
+                "description": "搜索用户",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理 /system/user"
+                ],
+                "summary": "搜索用户",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "查询成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/user.SysUser"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "查询数据失败",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1083,6 +1153,12 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
                 "manufacturer": {
                     "type": "string"
                 },
@@ -1094,6 +1170,9 @@ const docTemplate = `{
                 },
                 "parent_id": {
                     "type": "string"
+                },
+                "ptz_type": {
+                    "type": "integer"
                 },
                 "state": {
                     "type": "integer"

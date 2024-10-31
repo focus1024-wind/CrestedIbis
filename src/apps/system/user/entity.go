@@ -2,6 +2,7 @@ package user
 
 import (
 	"CrestedIbis/src/global/model"
+	"encoding/json"
 )
 
 type SysUserLogin struct {
@@ -27,6 +28,15 @@ type SysUser struct {
 	SysUserId
 	SysUserLogin
 	SysUserFields
+}
+
+// MarshalJSON 通过 MarshalJSON 序列化用户，避免隐私数据暴露
+func (sysUser *SysUser) MarshalJSON() ([]byte, error) {
+	sysUser.Password = ""
+	if sysUser.Nickname == "" {
+		sysUser.Nickname = sysUser.Username
+	}
+	return json.Marshal(*sysUser)
 }
 
 type RoleGroup struct {

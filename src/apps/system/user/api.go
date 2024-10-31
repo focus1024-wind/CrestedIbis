@@ -71,3 +71,38 @@ func Register(c *gin.Context) {
 		}
 	}
 }
+
+// AdminGetAllUserByPages 搜索用户
+//
+//	@Summary		搜索用户
+//	@Version		0.0.1
+//	@Description	搜索用户
+//	@Tags			用户管理 /system/user
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string								false	"访问token"
+//	@Param			access_token	query		string								false	"访问token"
+//	@Success		200				{object}	model.HttpResponse{data=[]SysUser}	"查询成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}		"查询数据失败"
+//	@Router			/system/user/users [GET]
+func AdminGetAllUserByPages(c *gin.Context) {
+	if claims, exists := c.Get("claims"); exists {
+		claims := claims.(*utils.JwtToken)
+		isAdmin := false
+		for _, role := range claims.Roles {
+			if role == "admin" {
+				isAdmin = true
+				break
+			}
+		}
+		if isAdmin {
+			users, err := selectUsers()
+			if err != nil {
+				model.HttpResponse{}.FailGin(c, "搜索用户失败")
+			}
+			model.HttpResponse{}.OkGin(c, users)
+			return
+		}
+	}
+	model.HttpResponse{}.FailGin(c, "无权限")
+}
