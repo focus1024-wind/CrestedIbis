@@ -90,6 +90,7 @@ func ginRecovery() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
 			if err := recover(); err != nil {
+				global.Logger.Errorf("panic: %v", err)
 				switch response := err.(type) {
 				case model.HttpResponse:
 					c.JSON(response.Code, response)

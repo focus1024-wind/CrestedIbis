@@ -7,8 +7,8 @@ import (
 	"time"
 )
 
-// GetMediaInvitePort 调用 openRtpServer 接口，开启GB28181端口推流
-func GetMediaInvitePort(streamId string) (port int, err error) {
+// ApiClientOpenRtpServer 调用 openRtpServer 接口，开启GB28181端口推流
+func ApiClientOpenRtpServer(streamId string) (port int, err error) {
 	client := resty.New()
 
 	response := &struct {
@@ -36,6 +36,29 @@ func GetMediaInvitePort(streamId string) (port int, err error) {
 		return 0, err
 	}
 	port = response.Port
+	return
+}
+
+func ApiClientGetRtpInfo(streamId string) (exist bool, err error) {
+	client := resty.New()
+
+	response := &struct {
+		Code  int  `json:"code"`
+		Exist bool `json:"exist"`
+	}{}
+
+	_, err = client.R().SetQueryParams(map[string]string{
+		"secret":    globalGB28181Config.MediaServer.Secret,
+		"vhost":     "__defaultVhost__",
+		"app":       "rtp",
+		"stream_id": streamId,
+	}).SetResult(response).SetError(response).Get(fmt.Sprintf("%s/index/api/getRtpInfo", globalGB28181Config.MediaServer.server))
+
+	if err != nil {
+		logger.Errorf("获取RTP推流信息失败：%s", err.Error())
+		return false, err
+	}
+	exist = response.Exist
 	return
 }
 

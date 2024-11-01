@@ -70,7 +70,7 @@ func (channel *GB28181Channel) CreateSipRequest(method sip.RequestMethod) (req s
 
 		return req
 	} else {
-		return req
+		return sip.NewRequest("", method, nil, "SIP/2.0", nil, "", nil)
 	}
 }
 
@@ -93,7 +93,7 @@ func (channel *GB28181Channel) Invite(opt *InviteOptions) (err error) {
 		streamMode = "Play"
 	}
 
-	port, err := GetMediaInvitePort(streamPath)
+	port, err := ApiClientOpenRtpServer(streamPath)
 
 	if err != nil {
 		logger.Errorf("拉流失败: %v", err.Error())

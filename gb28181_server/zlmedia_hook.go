@@ -11,40 +11,11 @@ import (
 // Key: 流ID、Value: Set(流注册协议)
 var PublishStore sync.Map
 
-// PublishStoreStore PublishStore对应码流ID，处理注册信息
-func PublishStoreStore(streamId string, stream string) {
-	value, _ := PublishStore.Load(streamId)
-
-	var streamList map[string]bool
-	if value != nil {
-		// 流已存在
-		streamList = value.(map[string]bool)
-	} else {
-		// 流未存在
-		streamList = map[string]bool{}
-	}
-	streamList[stream] = true
-	PublishStore.Store(streamId, streamList)
-}
-
-// PublishStoreDelete PublishStore对应码流ID，处理注销信息
-func PublishStoreDelete(streamId string, stream string) {
-	value, _ := PublishStore.Load(streamId)
-
-	if value != nil {
-		streamList := value.(map[string]bool)
-		delete(streamList, stream)
-		PublishStore.Store(streamId, streamList)
-	}
-}
-
 // GetMediaPlayUrl 根据StreamId生成对应播放规则URL
 func GetMediaPlayUrl(streamId string) map[string]string {
 	mediaPlayUrl := make(map[string]string)
 
-	value, _ := PublishStore.Load(streamId)
-
-	if value != nil {
+	if exist, err := ApiClientGetRtpInfo(streamId); err != nil && exist {
 		mediaPlayUrl["rtsp"] = fmt.Sprintf("rtsp://%s:%d/rtp/%s", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
 		mediaPlayUrl["rtsps"] = fmt.Sprintf("rtsps://%s:%d/rtp/%s", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
 		mediaPlayUrl["rtmp"] = fmt.Sprintf("rtmp://%s:%d/rtp/%s", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
@@ -218,7 +189,6 @@ func ApiHookOnShellLogin(_ http.ResponseWriter, _ *http.Request) {
 }
 
 // ApiHookOnStreamChanged 流注册注销通知事件
-// 注册注销流同步 PublishStore
 func ApiHookOnStreamChanged(w http.ResponseWriter, r *http.Request) {
 	logger.Info("ApiHookOnStreamChanged")
 	var req = &struct {
@@ -239,10 +209,12 @@ func ApiHookOnStreamChanged(w http.ResponseWriter, r *http.Request) {
 
 	if req.Regist {
 		logger.Infof("%s %s 流注册", req.Stream, req.Schema)
-		PublishStoreStore(req.Stream, req.Schema)
+		PublishStore.Store(req.Stream, true)
 	} else {
 		logger.Infof("%s %s 流注销", req.Stream, req.Schema)
-		PublishStoreDelete(req.Stream, req.Schema)
+		if exist, err := ApiClientGetRtpInfo(req.Stream); err != nil && !exist {
+			PublishStore.Delete(req.Stream)
+		}
 	}
 
 	resp := &struct {
