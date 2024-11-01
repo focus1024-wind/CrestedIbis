@@ -183,9 +183,15 @@ func AutoInvite(deviceID string, opt *InviteOptions) {
 					// 流已存在，不重复拉流
 					logger.Info("[Stream] 已存在码流, streamPath", streamPath)
 				} else {
-					channel, exist := GlobalGB28181DeviceStore.LoadChannel(deviceID, channelID)
-					if exist {
-						_ = channel.Invite(opt)
+					if exist, err := ApiClientGetRtpInfo(streamPath); err == nil && exist {
+						// 流已存在，不重复拉流
+						logger.Info("[Stream] 已存在码流, streamPath", streamPath)
+					} else {
+						// 流不存在，重新拉流
+						channel, exist := GlobalGB28181DeviceStore.LoadChannel(deviceID, channelID)
+						if exist {
+							_ = channel.Invite(opt)
+						}
 					}
 				}
 			}

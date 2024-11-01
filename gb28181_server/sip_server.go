@@ -36,10 +36,13 @@ func (config *GB28181Config) startSipServer() {
 
 func startJob() {
 	keepaliveTicker := time.NewTicker(3 * time.Minute)
+	publishTicker := time.NewTicker(10 * time.Minute)
 	for {
 		select {
 		case <-keepaliveTicker.C:
 			deviceOffline()
+		case <-publishTicker.C:
+			publishOffline()
 		}
 	}
 }
@@ -54,6 +57,18 @@ func deviceOffline() {
 			DeviceKeepalive.Delete(key)
 			GlobalGB28181DeviceStore.DeviceOffline(deviceID)
 			logger.Infof("GB28181设备 %s 心跳超时，已下线", deviceID)
+		}
+		return true
+	})
+}
+
+func publishOffline() {
+	PublishStore.Range(func(key, v interface{}) bool {
+		streamId := key.(string)
+		if exist, err := ApiClientGetRtpInfo(streamId); err != nil || !exist {
+			// 流不存在
+			PublishStore.Delete(key)
+			logger.Infof("流 %s 已下线", streamId)
 		}
 		return true
 	})

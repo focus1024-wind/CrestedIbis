@@ -16,12 +16,15 @@ func Play(deviceID string, channelID string) map[string]string {
 		if exist {
 			_ = channel.Invite(&InviteOptions{})
 			// 等待流注册完毕或流注册超时后返回
+			ticker := time.NewTicker(time.Second)
 			timeout := time.After(3 * time.Second)
 			stream, _ := PublishStore.Load(streamPath)
 			for stream == nil {
-				stream, _ = PublishStore.Load(streamPath)
 				select {
+				case <-ticker.C:
+					stream, _ = PublishStore.Load(streamPath)
 				case <-timeout:
+					// break在for-select中无法跳出，采用goto跳出多层循环
 					goto Loop
 				}
 			}
