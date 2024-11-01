@@ -10,3 +10,12 @@ type Site struct {
 	Children []Site `gorm:"foreignkey:Pid" json:"children"`
 	model.BaseModel
 }
+
+type SiteIdQuery struct {
+	Id int64 `json:"id"`
+}
+
+type PostSiteQuery struct {
+	SiteIdQuery
+	Name string `json:"name"`
+}

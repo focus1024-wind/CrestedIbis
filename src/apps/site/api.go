@@ -43,6 +43,34 @@ func GetSites(c *gin.Context) {
 	}
 }
 
+// PostSite 修改区域
+//
+//	@Summary		修改区域
+//	@Version		1.0.0
+//	@Description	修改区域
+//	@Tags			区域管理 /site
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string					false	"访问token"
+//	@Param			access_token	query		string					false	"访问token"
+//	@Param			PostSiteQuery	body		PostSiteQuery			true	"区域信息"
+//	@Success		200				{object}	model.HttpResponse{}	"新建成功"
+//	@Failure		500				{object}	model.HttpResponse{}	"新建失败"
+//	@Router			/site [POST]
+func PostSite(c *gin.Context) {
+	var postSiteQuery PostSiteQuery
+	if err := c.ShouldBind(&postSiteQuery); err != nil {
+		panic(http.StatusBadRequest)
+	} else {
+		err = updateSiteName(postSiteQuery.Id, postSiteQuery.Name)
+		if err != nil {
+			model.HttpResponse{}.FailGin(c, "修改区域名称失败")
+		} else {
+			model.HttpResponse{}.OkGin(c, nil)
+		}
+	}
+}
+
 // PutSite 新建区域
 //
 //	@Summary		新建区域
@@ -67,6 +95,34 @@ func PutSite(c *gin.Context) {
 			model.HttpResponse{}.FailGin(c, err.Error())
 		} else {
 			model.HttpResponse{}.OkGin(c, site)
+		}
+	}
+}
+
+// DeleteSite 删除区域
+//
+//	@Summary		删除区域
+//	@Version		1.0.0
+//	@Description	删除区域
+//	@Tags			区域管理 /site
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string					false	"访问token"
+//	@Param			access_token	query		string					false	"访问token"
+//	@Param			SiteIdQuery		body		SiteIdQuery				true	"区域信息"
+//	@Success		200				{object}	model.HttpResponse{}	"删除成功"
+//	@Failure		500				{object}	model.HttpResponse{}	"删除失败"
+//	@Router			/site [DELETE]
+func DeleteSite(c *gin.Context) {
+	var siteIdQuery SiteIdQuery
+	if err := c.ShouldBind(&siteIdQuery); err != nil {
+		panic(http.StatusBadRequest)
+	} else {
+		err = deleteSite(siteIdQuery.Id)
+		if err != nil {
+			model.HttpResponse{}.FailGin(c, "修改区域名称失败")
+		} else {
+			model.HttpResponse{}.OkGin(c, nil)
 		}
 	}
 }

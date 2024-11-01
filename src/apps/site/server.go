@@ -27,6 +27,12 @@ func selectSites(pid *int64) (sites []Site, err error) {
 	return
 }
 
+func updateSiteName(id int64, name string) (err error) {
+	return global.Db.Model(&Site{}).Where(&Site{
+		Id: id,
+	}).Updates(map[string]interface{}{"name": name}).Error
+}
+
 func insertSite(site Site) (err error) {
 	if site.Pid == nil || *site.Pid == 0 {
 		site.Pid = nil
@@ -46,4 +52,10 @@ func insertSite(site Site) (err error) {
 		return errors.New("新建区域失败")
 	}
 	return
+}
+
+func deleteSite(id int64) (err error) {
+	return global.Db.Model(&Site{}).Where(&Site{
+		Id: id,
+	}).Delete(&Site{}).Error
 }

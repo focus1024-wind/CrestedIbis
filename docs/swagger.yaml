@@ -182,6 +182,13 @@ definitions:
       msg:
         type: string
     type: object
+  site.PostSiteQuery:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
   site.Site:
     properties:
       children:
@@ -200,6 +207,11 @@ definitions:
         type: integer
       updated_time:
         type: string
+    type: object
+  site.SiteIdQuery:
+    properties:
+      id:
+        type: integer
     type: object
   user.RoleGroup:
     properties:
@@ -758,6 +770,72 @@ paths:
       tags:
       - 设备点播 /ipc/media
   /site:
+    delete:
+      consumes:
+      - application/json
+      description: 删除区域
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 区域信息
+        in: body
+        name: SiteIdQuery
+        required: true
+        schema:
+          $ref: '#/definitions/site.SiteIdQuery'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 删除成功
+          schema:
+            $ref: '#/definitions/model.HttpResponse'
+        "500":
+          description: 删除失败
+          schema:
+            $ref: '#/definitions/model.HttpResponse'
+      summary: 删除区域
+      tags:
+      - 区域管理 /site
+    post:
+      consumes:
+      - application/json
+      description: 修改区域
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 区域信息
+        in: body
+        name: PostSiteQuery
+        required: true
+        schema:
+          $ref: '#/definitions/site.PostSiteQuery'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 新建成功
+          schema:
+            $ref: '#/definitions/model.HttpResponse'
+        "500":
+          description: 新建失败
+          schema:
+            $ref: '#/definitions/model.HttpResponse'
+      summary: 修改区域
+      tags:
+      - 区域管理 /site
     put:
       consumes:
       - application/json

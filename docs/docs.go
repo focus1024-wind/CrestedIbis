@@ -878,6 +878,106 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "description": "修改区域",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "区域管理 /site"
+                ],
+                "summary": "修改区域",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "description": "区域信息",
+                        "name": "PostSiteQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/site.PostSiteQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "新建成功",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "新建失败",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除区域",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "区域管理 /site"
+                ],
+                "summary": "删除区域",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "description": "区域信息",
+                        "name": "SiteIdQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/site.SiteIdQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "删除成功",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "删除失败",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse"
+                        }
+                    }
+                }
             }
         },
         "/site/sites": {
@@ -1420,6 +1520,17 @@ const docTemplate = `{
                 }
             }
         },
+        "site.PostSiteQuery": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "site.Site": {
             "type": "object",
             "properties": {
@@ -1446,6 +1557,14 @@ const docTemplate = `{
                 },
                 "updated_time": {
                     "type": "string"
+                }
+            }
+        },
+        "site.SiteIdQuery": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
                 }
             }
         },
