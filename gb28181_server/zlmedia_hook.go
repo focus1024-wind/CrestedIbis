@@ -15,7 +15,7 @@ var PublishStore sync.Map
 func GetMediaPlayUrl(streamId string) map[string]string {
 	mediaPlayUrl := make(map[string]string)
 
-	if exist, err := ApiClientGetRtpInfo(streamId); err != nil && exist {
+	if exist, err := ApiClientGetRtpInfo(streamId); err == nil && exist {
 		mediaPlayUrl["rtsp"] = fmt.Sprintf("rtsp://%s:%d/rtp/%s", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
 		mediaPlayUrl["rtsps"] = fmt.Sprintf("rtsps://%s:%d/rtp/%s", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)
 		mediaPlayUrl["rtmp"] = fmt.Sprintf("rtmp://%s:%d/rtp/%s", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port, streamId)

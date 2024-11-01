@@ -969,6 +969,18 @@ const docTemplate = `{
                         "description": "访问token",
                         "name": "access_token",
                         "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分页查询页码，默认值: 1",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页查询数量，默认值: 15",
+                        "name": "page_size",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -983,10 +995,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/user.SysUser"
-                                            }
+                                            "$ref": "#/definitions/user.SysUserPage"
                                         }
                                     }
                                 }
@@ -1379,6 +1388,26 @@ const docTemplate = `{
                 "username": {
                     "type": "string",
                     "example": "admin"
+                }
+            }
+        },
+        "user.SysUserPage": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/user.SysUser"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         }

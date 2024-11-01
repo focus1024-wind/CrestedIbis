@@ -241,6 +241,19 @@ definitions:
     - password
     - username
     type: object
+  user.SysUserPage:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/user.SysUser'
+        type: array
+      page:
+        type: integer
+      page_size:
+        type: integer
+      total:
+        type: integer
+    type: object
 info:
   contact:
     email: focus1024@foxmail.com
@@ -806,6 +819,14 @@ paths:
         in: query
         name: access_token
         type: string
+      - description: '分页查询页码，默认值: 1'
+        in: query
+        name: page
+        type: integer
+      - description: '每页查询数量，默认值: 15'
+        in: query
+        name: page_size
+        type: integer
       produces:
       - application/json
       responses:
@@ -816,9 +837,7 @@ paths:
             - $ref: '#/definitions/model.HttpResponse'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/user.SysUser'
-                  type: array
+                  $ref: '#/definitions/user.SysUserPage'
               type: object
         "500":
           description: 查询数据失败

@@ -50,7 +50,16 @@ func (SysUser) Insert(user SysUser) (err error) {
 	}
 }
 
-func selectUsers() (users []SysUser, err error) {
-	err = global.Db.Model(&SysUser{}).Find(&users).Error
+func selectUsersByPages(page int64, pageSize int64) (total int64, users []SysUser, err error) {
+	db := global.Db.Model(SysUser{})
+
+	if err = db.Count(&total).Error; err != nil {
+		return
+	}
+
+	offset := (page - 1) * pageSize
+	if err = db.Preload("RoleGroups").Offset(int(offset)).Limit(int(pageSize)).Find(&users).Error; err != nil {
+		return
+	}
 	return
 }

@@ -36,6 +36,7 @@ func (config *GB28181Config) SipMessageHandler(req sip.Request, tx sip.ServerTra
 		case "Keepalive":
 			AutoInvite(device.DeviceID, &InviteOptions{})
 			DeviceKeepalive.Store(device.DeviceID, time.Now())
+			device.Status = DeviceOnLineStatus
 			device.KeepaliveTime = time.Now()
 			GlobalGB28181DeviceStore.StoreDevice(device)
 		case "DeviceInfo":

@@ -20,7 +20,7 @@ type SysUserFields struct {
 	Email      string      `gorm:"type:varchar(32);comment:用户邮箱" json:"email"`
 	Avatar     string      `gorm:"type:varchar(255);comment:用户头像路径" json:"avatar"`
 	Sex        uint8       `gorm:"type:tinyint(1);comment:用户性别(1: 男性; 0: 女性; other: 未知);default:9" json:"sex"`
-	RoleGroups []RoleGroup `gorm:"many2many:user_role_groups;"`
+	RoleGroups []RoleGroup `gorm:"many2many:user_role_groups;" json:"role_groups"`
 	model.BaseModel
 }
 
@@ -44,4 +44,12 @@ type RoleGroup struct {
 	RoleName string    `json:"role_name"`
 	User     []SysUser `gorm:"many2many:user_role_groups;" json:"user"`
 	model.BaseModel
+}
+
+// SysUserPage 分页查询用户响应结构
+type SysUserPage struct {
+	Total    int64     `json:"total" desc:"总数量"`
+	Data     []SysUser `json:"data" desc:"用户列表"`
+	Page     int64     `json:"page" desc:"页码"`
+	PageSize int64     `json:"page_size" desc:"每页查询数量"`
 }

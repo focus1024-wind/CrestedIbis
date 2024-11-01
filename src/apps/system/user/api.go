@@ -2,10 +2,12 @@ package user
 
 import (
 	"CrestedIbis/src/apps/audit_log"
+	"CrestedIbis/src/global"
 	"CrestedIbis/src/global/model"
 	"CrestedIbis/src/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 // Login 用户登录
@@ -80,10 +82,12 @@ func Register(c *gin.Context) {
 //	@Tags			用户管理 /system/user
 //	@Accept			json
 //	@Produce		json
-//	@Param			Authorization	header		string								false	"访问token"
-//	@Param			access_token	query		string								false	"访问token"
-//	@Success		200				{object}	model.HttpResponse{data=[]SysUser}	"查询成功"
-//	@Failure		500				{object}	model.HttpResponse{data=string}		"查询数据失败"
+//	@Param			Authorization	header		string									false	"访问token"
+//	@Param			access_token	query		string									false	"访问token"
+//	@Param			page			query		integer									false	"分页查询页码，默认值: 1"
+//	@Param			page_size		query		integer									false	"每页查询数量，默认值: 15"
+//	@Success		200				{object}	model.HttpResponse{data=SysUserPage}	"查询成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}			"查询数据失败"
 //	@Router			/system/user/users [GET]
 func AdminGetAllUserByPages(c *gin.Context) {
 	if claims, exists := c.Get("claims"); exists {
@@ -96,12 +100,31 @@ func AdminGetAllUserByPages(c *gin.Context) {
 			}
 		}
 		if isAdmin {
-			users, err := selectUsers()
+			pageQuery := c.DefaultQuery("page", "1")
+			pageSizeQuery := c.DefaultQuery("page_size", "15")
+			page, err := strconv.ParseInt(pageQuery, 10, 0)
 			if err != nil {
-				model.HttpResponse{}.FailGin(c, "搜索用户失败")
+				panic(http.StatusBadRequest)
 			}
-			model.HttpResponse{}.OkGin(c, users)
-			return
+			pageSize, err := strconv.ParseInt(pageSizeQuery, 10, 0)
+			if err != nil {
+				panic(http.StatusBadRequest)
+			}
+
+			total, data, err := selectUsersByPages(page, pageSize)
+			if err != nil {
+				global.Logger.Errorf(err.Error())
+				model.HttpResponse{}.FailGin(c, "搜索用户失败")
+				return
+			} else {
+				model.HttpResponse{}.OkGin(c, &SysUserPage{
+					Total:    total,
+					Data:     data,
+					Page:     page,
+					PageSize: pageSize,
+				})
+				return
+			}
 		}
 	}
 	model.HttpResponse{}.FailGin(c, "无权限")
