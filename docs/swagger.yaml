@@ -182,6 +182,25 @@ definitions:
       msg:
         type: string
     type: object
+  site.Site:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/site.Site'
+        type: array
+      created_time:
+        type: string
+      id:
+        type: integer
+      level:
+        type: integer
+      name:
+        type: string
+      pid:
+        type: integer
+      updated_time:
+        type: string
+    type: object
   user.RoleGroup:
     properties:
       created_time:
@@ -212,7 +231,7 @@ definitions:
         type: string
       phone:
         type: string
-      roleGroups:
+      role_groups:
         items:
           $ref: '#/definitions/user.RoleGroup'
         type: array
@@ -738,6 +757,79 @@ paths:
       summary: Ipc设备点播
       tags:
       - 设备点播 /ipc/media
+  /site:
+    put:
+      consumes:
+      - application/json
+      description: 新建区域
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 区域信息
+        in: body
+        name: Site
+        required: true
+        schema:
+          $ref: '#/definitions/site.Site'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 新建成功
+          schema:
+            $ref: '#/definitions/model.HttpResponse'
+        "500":
+          description: 新建失败
+          schema:
+            $ref: '#/definitions/model.HttpResponse'
+      summary: 新建区域
+      tags:
+      - 区域管理 /site
+  /site/sites:
+    get:
+      consumes:
+      - application/json
+      description: 获取区域列表
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 父区域ID
+        in: query
+        name: pid
+        type: number
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 查询成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/site.Site'
+                  type: array
+              type: object
+        "500":
+          description: 查询失败
+          schema:
+            $ref: '#/definitions/model.HttpResponse'
+      summary: 获取区域列表
+      tags:
+      - 区域管理 /site
   /system/user/login:
     post:
       consumes:

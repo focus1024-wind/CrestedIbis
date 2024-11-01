@@ -828,6 +828,122 @@ const docTemplate = `{
                 }
             }
         },
+        "/site": {
+            "put": {
+                "description": "新建区域",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "区域管理 /site"
+                ],
+                "summary": "新建区域",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "description": "区域信息",
+                        "name": "Site",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/site.Site"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "新建成功",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "新建失败",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/site/sites": {
+            "get": {
+                "description": "获取区域列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "区域管理 /site"
+                ],
+                "summary": "获取区域列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "type": "number",
+                        "description": "父区域ID",
+                        "name": "pid",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "查询成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/site.Site"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "查询失败",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/system/user/login": {
             "post": {
                 "description": "用户登录并生成用户登录日志信息",
@@ -1304,6 +1420,35 @@ const docTemplate = `{
                 }
             }
         },
+        "site.Site": {
+            "type": "object",
+            "properties": {
+                "children": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/site.Site"
+                    }
+                },
+                "created_time": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "level": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "pid": {
+                    "type": "integer"
+                },
+                "updated_time": {
+                    "type": "string"
+                }
+            }
+        },
         "user.RoleGroup": {
             "type": "object",
             "properties": {
@@ -1353,7 +1498,7 @@ const docTemplate = `{
                 "phone": {
                     "type": "string"
                 },
-                "roleGroups": {
+                "role_groups": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/user.RoleGroup"

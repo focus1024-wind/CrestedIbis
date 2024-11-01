@@ -4,6 +4,7 @@ import (
 	"CrestedIbis/src/apps/audit_log"
 	"CrestedIbis/src/apps/ipc/ipc_alarm"
 	"CrestedIbis/src/apps/ipc/ipc_device"
+	"CrestedIbis/src/apps/site"
 	"CrestedIbis/src/apps/system/user"
 	"CrestedIbis/src/config/model"
 	"CrestedIbis/src/global"
@@ -93,5 +94,6 @@ func InitDbTable() {
 		&ipc_alarm.IpcRecord{},
 		&user.RoleGroup{},
 		&user.SysUser{},
-		&utils.CasbinRule{})
+		&utils.CasbinRule{},
+		&site.Site{})
 }

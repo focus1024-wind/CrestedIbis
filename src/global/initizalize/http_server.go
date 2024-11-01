@@ -3,6 +3,7 @@ package initizalize
 import (
 	"CrestedIbis/docs"
 	"CrestedIbis/src/apps/ipc"
+	"CrestedIbis/src/apps/site"
 	"CrestedIbis/src/apps/system"
 	"CrestedIbis/src/global"
 	"CrestedIbis/src/global/model"
@@ -35,6 +36,7 @@ func InitHttpServer() {
 	{
 		ipc.InitIpcRouter()
 		system.InitSystemRouter()
+		site.InitSiteRouter()
 	}
 	global.HttpEngine.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
