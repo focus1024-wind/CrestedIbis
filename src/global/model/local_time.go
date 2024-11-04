@@ -18,6 +18,9 @@ func (t *LocalTime) UnmarshalJSON(data []byte) error {
 	if data[0] == '"' && data[len(data)-1] == '"' {
 		data = data[1 : len(data)-1]
 	}
+	if data[0] == '{' && data[len(data)-1] == '}' {
+		return nil
+	}
 	location, err := time.ParseInLocation(time.DateTime, string(data), time.Local)
 	if err != nil {
 		global.Logger.Errorf("%s 转 LocalTime 格式转换失败: %s", string(data), err.Error())
@@ -37,9 +40,11 @@ func (t LocalTime) Value() (driver.Value, error) {
 	}
 	return tlt, nil
 }
+
 func (t *LocalTime) Scan(v interface{}) error {
 	if value, ok := v.(time.Time); ok {
 		*t = LocalTime(value)
+
 		return nil
 	}
 	return fmt.Errorf("can not convert %v to timestamp", v)

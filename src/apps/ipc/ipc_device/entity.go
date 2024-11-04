@@ -17,9 +17,9 @@ type IpcDevice struct {
 	KeepaliveTime model.LocalTime `json:"keepalive_time" desc:"设备最新心跳时间"`
 	SiteId        int64           `json:"site_id"`
 	Site          site.Site       `json:"-" desc:"设备所属区域"`
-	Site1         string          `gorm:"-" json:"site1" desc:"一级区域"`
-	Site2         string          `gorm:"-" json:"site2" desc:"二级区域"`
-	Site3         string          `gorm:"-" json:"site3" desc:"三级区域"`
+	Site1         int64           `gorm:"-" json:"site1" desc:"一级区域"`
+	Site2         int64           `gorm:"-" json:"site2" desc:"二级区域"`
+	Site3         int64           `gorm:"-" json:"site3" desc:"三级区域"`
 	model.BaseHardDeleteModel
 }
 
@@ -28,13 +28,13 @@ func (ipcDevice *IpcDevice) MarshalJSON() ([]byte, error) {
 		siteModel := ipcDevice.Site
 		for {
 			if siteModel.Level == 1 {
-				ipcDevice.Site1 = siteModel.Name
+				ipcDevice.Site1 = siteModel.Id
 			}
 			if siteModel.Level == 2 {
-				ipcDevice.Site2 = siteModel.Name
+				ipcDevice.Site2 = siteModel.Id
 			}
 			if siteModel.Level == 3 {
-				ipcDevice.Site3 = siteModel.Name
+				ipcDevice.Site3 = siteModel.Id
 			}
 			if siteModel.Pid == nil {
 				break
@@ -46,6 +46,7 @@ func (ipcDevice *IpcDevice) MarshalJSON() ([]byte, error) {
 			}
 		}
 	}
+
 	return json.Marshal(*ipcDevice)
 }
 
