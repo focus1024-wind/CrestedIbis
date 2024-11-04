@@ -12,6 +12,13 @@ func expandSitePreload(db *gorm.DB) *gorm.DB {
 	return db.Preload(clause.Associations, expandSitePreload)
 }
 
+func SelectSiteById(id int64) (site Site, err error) {
+	err = global.Db.Model(&Site{}).Where(&Site{
+		Id: id,
+	}).First(&site).Error
+	return
+}
+
 func selectSites(pid *int64) (sites []Site, err error) {
 	if pid == nil {
 		// Gorm 默认过滤空值，所以采用 Level 来搜索 pid 为 NULL 的情况

@@ -68,5 +68,4 @@ func main() {
 		rootCmd.PrintErrf("CrestedIbis root cmd execute: %s", err)
 		os.Exit(-1)
 	}
-
 }

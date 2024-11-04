@@ -2,7 +2,9 @@ package ipc_device
 
 import (
 	"CrestedIbis/gb28181_server"
+	"CrestedIbis/src/apps/site"
 	"CrestedIbis/src/global/model"
+	"encoding/json"
 )
 
 type IpcDevice struct {
@@ -13,7 +15,38 @@ type IpcDevice struct {
 	ChannelNum    int64           `json:"channel_num" desc:"设备通道数"`
 	RegisterTime  model.LocalTime `json:"register_time" desc:"设备最新注册时间"`
 	KeepaliveTime model.LocalTime `json:"keepalive_time" desc:"设备最新心跳时间"`
+	SiteId        int64           `json:"site_id"`
+	Site          site.Site       `json:"-" desc:"设备所属区域"`
+	Site1         string          `gorm:"-" json:"site1" desc:"一级区域"`
+	Site2         string          `gorm:"-" json:"site2" desc:"二级区域"`
+	Site3         string          `gorm:"-" json:"site3" desc:"三级区域"`
 	model.BaseHardDeleteModel
+}
+
+func (ipcDevice *IpcDevice) MarshalJSON() ([]byte, error) {
+	if ipcDevice.Site.Id != 0 {
+		siteModel := ipcDevice.Site
+		for {
+			if siteModel.Level == 1 {
+				ipcDevice.Site1 = siteModel.Name
+			}
+			if siteModel.Level == 2 {
+				ipcDevice.Site2 = siteModel.Name
+			}
+			if siteModel.Level == 3 {
+				ipcDevice.Site3 = siteModel.Name
+			}
+			if siteModel.Pid == nil {
+				break
+			}
+			var err error
+			siteModel, err = site.SelectSiteById(*siteModel.Pid)
+			if err != nil {
+				break
+			}
+		}
+	}
+	return json.Marshal(*ipcDevice)
 }
 
 type IpcChannel struct {

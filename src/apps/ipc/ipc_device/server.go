@@ -50,7 +50,7 @@ func selectIpcDevicesByPages(page int64, pageSize int64) (total int64, ipcDevice
 	}
 
 	offset := (page - 1) * pageSize
-	if err = db.Preload("IpcChannels").Order("id DESC").Offset(int(offset)).Limit(int(pageSize)).Find(&ipcDevices).Error; err != nil {
+	if err = db.Preload("IpcChannels").Preload("Site").Order("id DESC").Offset(int(offset)).Limit(int(pageSize)).Find(&ipcDevices).Error; err != nil {
 		return
 	}
 	return
