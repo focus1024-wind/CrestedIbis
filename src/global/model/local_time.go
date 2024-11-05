@@ -9,8 +9,11 @@ import (
 
 type LocalTime time.Time
 
-func (t *LocalTime) MarshalJSON() ([]byte, error) {
-	tTime := time.Time(*t)
+func (t LocalTime) MarshalJSON() ([]byte, error) {
+	tTime := time.Time(t)
+	if tTime.IsZero() {
+		return []byte("null"), nil
+	}
 	return []byte(fmt.Sprintf("\"%v\"", tTime.Format(time.DateTime))), nil
 }
 
