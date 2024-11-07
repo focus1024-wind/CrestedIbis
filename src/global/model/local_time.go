@@ -18,6 +18,9 @@ func (t LocalTime) MarshalJSON() ([]byte, error) {
 }
 
 func (t *LocalTime) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		return nil
+	}
 	if data[0] == '"' && data[len(data)-1] == '"' {
 		data = data[1 : len(data)-1]
 	}
