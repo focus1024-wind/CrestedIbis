@@ -14,4 +14,8 @@ func InitSystemUserRouter() {
 		systemAdminRouter.POST("/password", AdminChangePassword)
 		systemAdminRouter.DELETE("/user", AdminDeleteUser)
 	}
+	systemRoleRouter := global.HttpEngine.Group("/system/role")
+	{
+		systemRoleRouter.GET("/roles", GetAllRoles)
+	}
 }

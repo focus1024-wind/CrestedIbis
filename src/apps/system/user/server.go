@@ -76,3 +76,8 @@ func deleteUser(username string) (err error) {
 	}
 	return global.Db.Where("username = ?", username).Delete(&SysUser{}).Error
 }
+
+func selectAllRoles() (roles []RoleGroup, err error) {
+	err = global.Db.Model(&RoleGroup{}).Find(&roles).Error
+	return
+}

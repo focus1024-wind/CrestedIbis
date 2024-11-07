@@ -185,3 +185,25 @@ func AdminDeleteUser(c *gin.Context) {
 		}
 	}
 }
+
+// GetAllRoles 获取所有权限组
+//
+//	@Summary		获取所有权限组
+//	@Version		0.0.1
+//	@Description	获取所有权限组
+//	@Tags			权限管理 /system/role
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string									false	"访问token"
+//	@Param			access_token	query		string									false	"访问token"
+//	@Success		200				{object}	model.HttpResponse{data=[]RoleGroup}	"获取权限组列表成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}			"获取权限组列表失败"
+//	@Router			/system/role/roles [GET]
+func GetAllRoles(c *gin.Context) {
+	roles, err := selectAllRoles()
+	if err != nil {
+		model.HttpResponse{}.FailGin(c, "修改用户密码失败")
+	} else {
+		model.HttpResponse{}.OkGin(c, roles)
+	}
+}

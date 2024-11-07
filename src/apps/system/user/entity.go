@@ -39,13 +39,6 @@ func (sysUser *SysUser) MarshalJSON() ([]byte, error) {
 	return json.Marshal(*sysUser)
 }
 
-type RoleGroup struct {
-	RoleId   int64     `gorm:"primary_key;AUTO_INCREMENT;comment:权限ID" json:"role_id"`
-	RoleName string    `json:"role_name"`
-	User     []SysUser `gorm:"many2many:user_role_groups;" json:"user"`
-	model.BaseModel
-}
-
 // SysUserPage 分页查询用户响应结构
 type SysUserPage struct {
 	Total    int64     `json:"total" desc:"总数量"`
@@ -56,4 +49,11 @@ type SysUserPage struct {
 
 type SysUsername struct {
 	Username string `json:"username" example:"admin"`
+}
+
+type RoleGroup struct {
+	RoleId   int64     `gorm:"primary_key;AUTO_INCREMENT;comment:权限ID" json:"role_id"`
+	RoleName string    `json:"role_name"`
+	User     []SysUser `gorm:"many2many:user_role_groups;" json:"user"`
+	model.BaseModel
 }
