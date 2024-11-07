@@ -138,6 +138,14 @@ definitions:
         type: string
       register_time:
         type: string
+      site_id:
+        type: integer
+      site1:
+        type: integer
+      site2:
+        type: integer
+      site3:
+        type: integer
       sn:
         type: integer
       status:
@@ -284,6 +292,12 @@ definitions:
         type: integer
       total:
         type: integer
+    type: object
+  user.SysUsername:
+    properties:
+      username:
+        example: admin
+        type: string
     type: object
 info:
   contact:
@@ -908,6 +922,130 @@ paths:
       summary: 获取区域列表
       tags:
       - 区域管理 /site
+  /system/admin/password:
+    post:
+      consumes:
+      - application/json
+      description: 搜索用户
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 用户名、密码
+        in: body
+        name: SysUserLogin
+        required: true
+        schema:
+          $ref: '#/definitions/user.SysUserLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 修改用户密码成功
+          schema:
+            $ref: '#/definitions/model.HttpResponse'
+        "500":
+          description: 修改用户密码失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 修改用户密码
+      tags:
+      - 超级用户操作 /system/admin
+  /system/admin/user:
+    delete:
+      consumes:
+      - application/json
+      description: 删除用户
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 用户名
+        in: body
+        name: SysUsername
+        required: true
+        schema:
+          $ref: '#/definitions/user.SysUsername'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 删除用户成功
+          schema:
+            $ref: '#/definitions/model.HttpResponse'
+        "500":
+          description: 删除用户失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 删除用户
+      tags:
+      - 超级用户操作 /system/admin
+  /system/admin/users:
+    get:
+      consumes:
+      - application/json
+      description: 搜索用户
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: '分页查询页码，默认值: 1'
+        in: query
+        name: page
+        type: integer
+      - description: '每页查询数量，默认值: 15'
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 查询成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/user.SysUserPage'
+              type: object
+        "500":
+          description: 查询数据失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 搜索用户
+      tags:
+      - 超级用户操作 /system/admin
   /system/user/login:
     post:
       consumes:
@@ -973,52 +1111,6 @@ paths:
                   type: string
               type: object
       summary: 注册用户
-      tags:
-      - 用户管理 /system/user
-  /system/user/users:
-    get:
-      consumes:
-      - application/json
-      description: 搜索用户
-      parameters:
-      - description: 访问token
-        in: header
-        name: Authorization
-        type: string
-      - description: 访问token
-        in: query
-        name: access_token
-        type: string
-      - description: '分页查询页码，默认值: 1'
-        in: query
-        name: page
-        type: integer
-      - description: '每页查询数量，默认值: 15'
-        in: query
-        name: page_size
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 查询成功
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/user.SysUserPage'
-              type: object
-        "500":
-          description: 查询数据失败
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpResponse'
-            - properties:
-                data:
-                  type: string
-              type: object
-      summary: 搜索用户
       tags:
       - 用户管理 /system/user
 swagger: "2.0"

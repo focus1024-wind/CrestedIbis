@@ -79,7 +79,7 @@ func Register(c *gin.Context) {
 //	@Summary		搜索用户
 //	@Version		0.0.1
 //	@Description	搜索用户
-//	@Tags			用户管理 /system/user
+//	@Tags			超级用户操作 /system/admin
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string									false	"访问token"
@@ -88,7 +88,7 @@ func Register(c *gin.Context) {
 //	@Param			page_size		query		integer									false	"每页查询数量，默认值: 15"
 //	@Success		200				{object}	model.HttpResponse{data=SysUserPage}	"查询成功"
 //	@Failure		500				{object}	model.HttpResponse{data=string}			"查询数据失败"
-//	@Router			/system/user/users [GET]
+//	@Router			/system/admin/users [GET]
 func AdminGetAllUserByPages(c *gin.Context) {
 	if claims, exists := c.Get("claims"); exists {
 		claims := claims.(*utils.JwtToken)
@@ -128,4 +128,60 @@ func AdminGetAllUserByPages(c *gin.Context) {
 		}
 	}
 	model.HttpResponse{}.FailGin(c, "无权限")
+}
+
+// AdminChangePassword 修改用户密码
+//
+//	@Summary		修改用户密码
+//	@Version		0.0.1
+//	@Description	搜索用户
+//	@Tags			超级用户操作 /system/admin
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string							false	"访问token"
+//	@Param			access_token	query		string							false	"访问token"
+//	@Param			SysUserLogin	body		SysUserLogin					true	"用户名、密码"
+//	@Success		200				{object}	model.HttpResponse{}			"修改用户密码成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}	"修改用户密码失败"
+//	@Router			/system/admin/password [POST]
+func AdminChangePassword(c *gin.Context) {
+	var sysUserLogin SysUserLogin
+	if err := c.ShouldBind(&sysUserLogin); err != nil {
+		panic(http.StatusBadRequest)
+	} else {
+		err = updateUserPassword(sysUserLogin.Username, sysUserLogin.Password)
+		if err != nil {
+			model.HttpResponse{}.FailGin(c, "修改用户密码失败")
+		} else {
+			model.HttpResponse{}.OkGin(c, nil)
+		}
+	}
+}
+
+// AdminDeleteUser 删除用户
+//
+//	@Summary		删除用户
+//	@Version		0.0.1
+//	@Description	删除用户
+//	@Tags			超级用户操作 /system/admin
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string							false	"访问token"
+//	@Param			access_token	query		string							false	"访问token"
+//	@Param			SysUsername		body		SysUsername						true	"用户名"
+//	@Success		200				{object}	model.HttpResponse{}			"删除用户成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}	"删除用户失败"
+//	@Router			/system/admin/user [DELETE]
+func AdminDeleteUser(c *gin.Context) {
+	var sysUsername SysUsername
+	if err := c.ShouldBind(&sysUsername); err != nil {
+		panic(http.StatusBadRequest)
+	} else {
+		err = deleteUser(sysUsername.Username)
+		if err != nil {
+			model.HttpResponse{}.FailGin(c, err.Error())
+		} else {
+			model.HttpResponse{}.OkGin(c, nil)
+		}
+	}
 }

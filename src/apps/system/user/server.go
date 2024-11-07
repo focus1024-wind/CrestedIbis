@@ -63,3 +63,16 @@ func selectUsersByPages(page int64, pageSize int64) (total int64, users []SysUse
 	}
 	return
 }
+
+func updateUserPassword(username string, password string) (err error) {
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	err = global.Db.Model(&SysUser{}).Where("username = ?", username).Update("password", string(hashedPassword)).Error
+	return
+}
+
+func deleteUser(username string) (err error) {
+	if username == "admin" {
+		return errors.New("admin 用户不允许删除")
+	}
+	return global.Db.Where("username = ?", username).Delete(&SysUser{}).Error
+}

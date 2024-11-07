@@ -53,3 +53,7 @@ type SysUserPage struct {
 	Page     int64     `json:"page" desc:"页码"`
 	PageSize int64     `json:"page_size" desc:"每页查询数量"`
 }
+
+type SysUsername struct {
+	Username string `json:"username" example:"admin"`
+}
