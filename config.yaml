@@ -6,7 +6,7 @@ http-server:
   # public-host: public network host, resolve the inconsistency between the host bound in the proxy and container, provide a public network accessible interface
   # default: http://${ip}:${host}
   # public-host will affect the generation of upload interfaces for image capture
-  public-host: http://192.168.1.11:8848
+  public-host: http://192.168.10.47:8848
 
 datasource:
   # require: currently, only MySQL and PostgreSQL are supported
@@ -50,7 +50,7 @@ gb28181:
     mode: udp
   media-server:
     secret: Uva5PKPA1aGOoBiQHglYExH2kMi2cX2S
-    ip: 192.168.10.49
+    ip: 192.168.10.47
     port: 80
     mode: tcp
   http-server:
