@@ -699,6 +699,44 @@ paths:
       summary: 分页查询IpcDevice设备录像信息
       tags:
       - IPC设备 /ipc/device
+  /ipc/device/status:
+    get:
+      consumes:
+      - application/json
+      description: 获取设备状态信息，总设备量，在线设备量，离线设备量
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 查询数据成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: 查询数据失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 获取设备状态信息
+      tags:
+      - IPC设备 /ipc/device
   /ipc/device/upload_image:
     post:
       consumes:

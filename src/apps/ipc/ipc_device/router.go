@@ -8,6 +8,7 @@ func InitIpcDeviceRouter() {
 		ipcDeviceRouter.GET("", GetIpcDevice)
 		ipcDeviceRouter.POST("", PostIpcDevice)
 		ipcDeviceRouter.DELETE("", DeleteIpcDevice)
+		ipcDeviceRouter.GET("/status", GetIpcDevicesStatus)
 		ipcDeviceRouter.GET("/devices", GetIpcDevicesByPages)
 		ipcDeviceRouter.POST("/channel", PostIpcChannel)
 		ipcDeviceRouter.GET("/channels", GetIpcChannels)

@@ -1,6 +1,7 @@
 package ipc_device
 
 import (
+	"CrestedIbis/gb28181_server"
 	"CrestedIbis/src/global"
 	"CrestedIbis/src/global/model"
 	"CrestedIbis/src/utils"
@@ -93,6 +94,51 @@ func DeleteIpcDevice(c *gin.Context) {
 	} else {
 		model.HttpResponse{}.OkGin(c, "删除设备成功")
 	}
+}
+
+// GetIpcDevicesStatus 获取设备状态信息
+//
+//	@Summary		获取设备状态信息
+//	@Version		0.0.1
+//	@Description	获取设备状态信息，总设备量，在线设备量，离线设备量
+//	@Tags			IPC设备 /ipc/device
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string							false	"访问token"
+//	@Param			access_token	query		string							false	"访问token"
+//	@Success		200				{object}	model.HttpResponse{data=string}	"查询数据成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}	"查询数据失败"
+//	@Router			/ipc/device/status [GET]
+func GetIpcDevicesStatus(c *gin.Context) {
+	var (
+		total     int64
+		online    int64
+		offline   int64
+		ipcDevice IpcDevice
+	)
+
+	global.Db.Model(IpcDevice{}).Count(&total)
+	ipcDevice.Status = gb28181_server.DeviceOnLineStatus
+	global.Db.Model(IpcDevice{}).Where(IpcDevice{
+		GB28181Device: gb28181_server.GB28181Device{
+			Status: gb28181_server.DeviceOnLineStatus,
+		},
+	}).Count(&online)
+	global.Db.Model(IpcDevice{}).Where(IpcDevice{
+		GB28181Device: gb28181_server.GB28181Device{
+			Status: gb28181_server.DeviceOffLineStatus,
+		},
+	}).Count(&offline)
+
+	model.HttpResponse{}.OkGin(c, &struct {
+		Total   int64 `json:"total"`
+		Online  int64 `json:"online"`
+		Offline int64 `json:"offline"`
+	}{
+		Total:   total,
+		Online:  online,
+		Offline: offline,
+	})
 }
 
 // GetIpcDevicesByPages 分页查询IpcDevice设备
