@@ -7,9 +7,9 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-// expandSitePreload Preload 自引用预加载，级联查询
-func expandSitePreload(db *gorm.DB) *gorm.DB {
-	return db.Preload(clause.Associations, expandSitePreload)
+// ExpandSitePreload Preload 自引用预加载，级联查询
+func ExpandSitePreload(db *gorm.DB) *gorm.DB {
+	return db.Preload(clause.Associations, ExpandSitePreload)
 }
 
 func SelectSiteById(id int64) (site Site, err error) {
@@ -23,11 +23,11 @@ func selectSites(pid *int64) (sites []Site, err error) {
 	if pid == nil {
 		// Gorm 默认过滤空值，所以采用 Level 来搜索 pid 为 NULL 的情况
 		// 采用级联查询，Preload默认只能搜索1层
-		err = global.Db.Debug().Model(&Site{}).Preload(clause.Associations, expandSitePreload).Where(&Site{
+		err = global.Db.Debug().Model(&Site{}).Preload(clause.Associations, ExpandSitePreload).Where(&Site{
 			Level: 1,
 		}).Find(&sites).Error
 	} else {
-		err = global.Db.Debug().Model(&Site{}).Preload(clause.Associations, expandSitePreload).Where(&Site{
+		err = global.Db.Debug().Model(&Site{}).Preload(clause.Associations, ExpandSitePreload).Where(&Site{
 			Pid: pid,
 		}).Find(&sites).Error
 	}

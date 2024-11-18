@@ -9,17 +9,17 @@ import (
 
 type IpcDevice struct {
 	gb28181_server.GB28181Device
-	ID            int64           `gorm:"primary_key;auto_increment" json:"id"`
-	DeviceID      string          `gorm:"uniqueIndex;column:device_id" json:"device_id"`
-	IpcChannels   []IpcChannel    `gorm:"foreignKey:ParentID;references:DeviceID" json:"ipc_channels"`
-	ChannelNum    int64           `json:"channel_num" desc:"设备通道数"`
-	RegisterTime  model.LocalTime `json:"register_time" desc:"设备最新注册时间"`
-	KeepaliveTime model.LocalTime `json:"keepalive_time" desc:"设备最新心跳时间"`
-	SiteId        *int64          `json:"site_id"`
-	Site          site.Site       `json:"-" desc:"设备所属区域"`
-	Site1         int64           `gorm:"-" json:"site1" desc:"一级区域"`
-	Site2         int64           `gorm:"-" json:"site2" desc:"二级区域"`
-	Site3         int64           `gorm:"-" json:"site3" desc:"三级区域"`
+	ID            int64                 `gorm:"primary_key;auto_increment" json:"id"`
+	DeviceID      string                `gorm:"uniqueIndex;column:device_id" json:"device_id"`
+	IpcChannels   []IpcChannel          `gorm:"foreignKey:ParentID;references:DeviceID" json:"ipc_channels"`
+	ChannelNum    int64                 `json:"channel_num" desc:"设备通道数"`
+	RegisterTime  model.LocalTime       `json:"register_time" desc:"设备最新注册时间"`
+	KeepaliveTime model.LocalTime       `json:"keepalive_time" desc:"设备最新心跳时间"`
+	SiteId        *int64                `json:"site_id"`
+	Site          *site.SiteParentModel `json:"-" desc:"设备所属区域"`
+	Site1         int64                 `gorm:"-" json:"site1" desc:"一级区域"`
+	Site2         int64                 `gorm:"-" json:"site2" desc:"二级区域"`
+	Site3         int64                 `gorm:"-" json:"site3" desc:"三级区域"`
 	model.BaseHardDeleteModel
 }
 
@@ -39,9 +39,8 @@ func (ipcDevice *IpcDevice) MarshalJSON() ([]byte, error) {
 			if siteModel.Pid == nil {
 				break
 			}
-			var err error
-			siteModel, err = site.SelectSiteById(*siteModel.Pid)
-			if err != nil {
+			siteModel = siteModel.Parent
+			if siteModel == nil {
 				break
 			}
 		}

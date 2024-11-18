@@ -1,6 +1,7 @@
 package ipc_device
 
 import (
+	"CrestedIbis/src/apps/site"
 	"CrestedIbis/src/global"
 	"CrestedIbis/src/utils"
 	"errors"
@@ -50,7 +51,7 @@ func selectIpcDevicesByPages(page int64, pageSize int64) (total int64, ipcDevice
 	}
 
 	offset := (page - 1) * pageSize
-	if err = db.Preload("IpcChannels").Preload("Site").Order("id").Offset(int(offset)).Limit(int(pageSize)).Find(&ipcDevices).Error; err != nil {
+	if err = db.Debug().Preload("IpcChannels").Preload("Site", site.ExpandSitePreload).Order("id").Offset(int(offset)).Limit(int(pageSize)).Find(&ipcDevices).Error; err != nil {
 		return
 	}
 	return
