@@ -45,7 +45,7 @@ func (channel *GB28181Channel) CreateSipRequest(method sip.RequestMethod) (req s
 			},
 			Params: sip.NewParams().Add("tag", sip.String{Str: utils.RandNumString(9)}),
 		}
-		toAddress, _ := device.getToAddress()
+		toAddress, _ := device.fmtToAddress(fmt.Sprintf("sip:%s@%s", channel.DeviceID, device.DeviceAddr))
 
 		req = sip.NewRequest(
 			"",

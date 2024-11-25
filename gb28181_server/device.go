@@ -64,17 +64,17 @@ func (gb28181Device *GB28181Device) storeDevice(req sip.Request, register bool) 
 	GlobalGB28181DeviceStore.StoreDevice(*gb28181Device)
 }
 
-// getToAddress 根据device.FromAddress信息获取服务端发起请求时ToAddress信息
-func (gb28181Device *GB28181Device) getToAddress() (sip.Address, error) {
+// fmtToAddress 根据device.FromAddress信息获取服务端发起请求时ToAddress信息
+func (gb28181Device *GB28181Device) fmtToAddress(toAddress string) (sip.Address, error) {
 	var (
 		uri               sip.SipUri
 		uriRegExpNoUser   = regexp.MustCompile("^([A-Za-z]+):([^\\s;]+)(.*)$")
 		uriRegExpWithUser = regexp.MustCompile("^([A-Za-z]+):([^@]+)@([^\\s;]+)(.*)$")
 	)
 
-	result := uriRegExpWithUser.FindStringSubmatch(gb28181Device.FromAddress)
+	result := uriRegExpWithUser.FindStringSubmatch(toAddress)
 	if len(result) != 5 {
-		noUserResult := uriRegExpNoUser.FindStringSubmatch(gb28181Device.FromAddress)
+		noUserResult := uriRegExpNoUser.FindStringSubmatch(toAddress)
 		if len(noUserResult) != 4 {
 			return sip.Address{}, errors.New("sip: uri format error")
 		} else {
@@ -117,7 +117,7 @@ func (gb28181Device *GB28181Device) createSipRequest(method sip.RequestMethod) (
 		},
 		Params: sip.NewParams().Add("tag", sip.String{Str: utils.RandNumString(9)}),
 	}
-	toAddress, _ := gb28181Device.getToAddress()
+	toAddress, _ := gb28181Device.fmtToAddress(gb28181Device.FromAddress)
 
 	req = sip.NewRequest(
 		"",

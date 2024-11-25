@@ -24,7 +24,7 @@ type IpcDevice struct {
 }
 
 func (ipcDevice *IpcDevice) MarshalJSON() ([]byte, error) {
-	if ipcDevice.Site.Id != 0 {
+	if ipcDevice.SiteId != nil {
 		siteModel := ipcDevice.Site
 		for {
 			if siteModel.Level == 1 {
