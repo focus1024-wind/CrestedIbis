@@ -30,7 +30,7 @@ func selectIpcAlarmsByPages(page int64, pageSize int64, deviceID string, channel
 	return
 }
 
-func selectIpcRecordsByPages(page int64, pageSize int64, deviceID string, channelID string, start string, end string) (total int64, ipcDevices []IpcRecord, err error) {
+func selectIpcRecordsByPages(page int64, pageSize int64, deviceID string, channelID string, start int64, end int64) (total int64, ipcDevices []IpcRecord, err error) {
 	db := global.Db.Model(IpcRecord{})
 	var stream string
 	if deviceID != "" && channelID != "" {
@@ -41,7 +41,7 @@ func selectIpcRecordsByPages(page int64, pageSize int64, deviceID string, channe
 		Record: gb28181_server.Record{
 			Stream: stream,
 		},
-	}).Where("created_time BETWEEN ? AND ? ", start, end).Count(&total).Error; err != nil {
+	}).Where("start_time BETWEEN ? AND ? ", start, end).Count(&total).Error; err != nil {
 		return
 	}
 

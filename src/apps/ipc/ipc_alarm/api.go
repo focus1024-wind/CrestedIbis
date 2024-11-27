@@ -108,7 +108,16 @@ func GetIpcRecords(c *gin.Context) {
 	start := c.DefaultQuery("start", time.DateTime)
 	end := c.DefaultQuery("end", time.Now().Format(time.DateTime))
 
-	total, data, err := selectIpcRecordsByPages(page, pageSize, deviceId, channelId, start, end)
+	startTime, err := time.ParseInLocation(time.DateTime, start, time.Local)
+	if err != nil {
+		panic(http.StatusBadRequest)
+	}
+	endTime, err := time.ParseInLocation(time.DateTime, end, time.Local)
+	if err != nil {
+		panic(http.StatusBadRequest)
+	}
+
+	total, data, err := selectIpcRecordsByPages(page, pageSize, deviceId, channelId, startTime.Unix(), endTime.Unix())
 	if err != nil {
 		model.HttpResponse{}.FailGin(c, "查询数据失败")
 		return

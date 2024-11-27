@@ -7,6 +7,11 @@ import (
 	"encoding/json"
 )
 
+type simpleSite struct {
+	Id   int64  `gorm:"-" json:"id"`
+	Name string `gorm:"-" json:"name"`
+}
+
 type IpcDevice struct {
 	gb28181_server.GB28181Device
 	ID            int64                 `gorm:"primary_key;auto_increment" json:"id"`
@@ -17,9 +22,9 @@ type IpcDevice struct {
 	KeepaliveTime model.LocalTime       `json:"keepalive_time" desc:"设备最新心跳时间"`
 	SiteId        *int64                `json:"site_id"`
 	Site          *site.SiteParentModel `json:"-" desc:"设备所属区域"`
-	Site1         int64                 `gorm:"-" json:"site1" desc:"一级区域"`
-	Site2         int64                 `gorm:"-" json:"site2" desc:"二级区域"`
-	Site3         int64                 `gorm:"-" json:"site3" desc:"三级区域"`
+	Site1         simpleSite            `gorm:"-" json:"site1" desc:"一级区域"`
+	Site2         simpleSite            `gorm:"-" json:"site2" desc:"二级区域"`
+	Site3         simpleSite            `gorm:"-" json:"site3" desc:"三级区域"`
 	model.BaseHardDeleteModel
 }
 
@@ -28,13 +33,16 @@ func (ipcDevice *IpcDevice) MarshalJSON() ([]byte, error) {
 		siteModel := ipcDevice.Site
 		for {
 			if siteModel.Level == 1 {
-				ipcDevice.Site1 = siteModel.Id
+				ipcDevice.Site1.Id = siteModel.Id
+				ipcDevice.Site1.Name = siteModel.Name
 			}
 			if siteModel.Level == 2 {
-				ipcDevice.Site2 = siteModel.Id
+				ipcDevice.Site2.Id = siteModel.Id
+				ipcDevice.Site2.Name = siteModel.Name
 			}
 			if siteModel.Level == 3 {
-				ipcDevice.Site3 = siteModel.Id
+				ipcDevice.Site3.Id = siteModel.Id
+				ipcDevice.Site3.Name = siteModel.Name
 			}
 			if siteModel.Pid == nil {
 				break

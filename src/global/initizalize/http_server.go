@@ -96,6 +96,10 @@ func ginRecovery() gin.HandlerFunc {
 				switch response := err.(type) {
 				case model.HttpResponse:
 					c.JSON(response.Code, response)
+				case int:
+					if response == http.StatusBadRequest {
+						c.JSON(http.StatusBadRequest, model.HttpResponse{Code: http.StatusBadRequest, Msg: "error", Data: "参数错误"})
+					}
 				}
 			}
 			c.Abort()
