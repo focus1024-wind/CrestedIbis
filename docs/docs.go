@@ -580,6 +580,80 @@ const docTemplate = `{
                 }
             }
         },
+        "/ipc/device/devices/site_id": {
+            "get": {
+                "description": "分页查询GB28181 IpcDevice设备",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "IPC设备 /ipc/device"
+                ],
+                "summary": "根据区域ID查询IpcDevice设备",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "区域ID",
+                        "name": "site_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "查询成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/ipc_device.IpcDevicePage"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "查询数据失败",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/ipc/device/records": {
             "get": {
                 "description": "分页查询IpcDevice设备录像信息",
@@ -1718,13 +1792,13 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "site1": {
-                    "type": "integer"
+                    "$ref": "#/definitions/ipc_device.simpleSite"
                 },
                 "site2": {
-                    "type": "integer"
+                    "$ref": "#/definitions/ipc_device.simpleSite"
                 },
                 "site3": {
-                    "type": "integer"
+                    "$ref": "#/definitions/ipc_device.simpleSite"
                 },
                 "site_id": {
                     "type": "integer"
@@ -1765,6 +1839,17 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
+                }
+            }
+        },
+        "ipc_device.simpleSite": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },

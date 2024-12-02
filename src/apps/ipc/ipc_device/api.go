@@ -182,6 +182,40 @@ func GetIpcDevicesByPages(c *gin.Context) {
 	}
 }
 
+// GetIpcDevicesBySite 根据区域ID查询IpcDevice设备
+//
+//	@Summary		根据区域ID查询IpcDevice设备
+//	@Version		0.0.1
+//	@Description	分页查询GB28181 IpcDevice设备
+//	@Tags			IPC设备 /ipc/device
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string									false	"访问token"
+//	@Param			access_token	query		string									false	"访问token"
+//	@Param			site_id			query		integer									true	"区域ID"
+//	@Success		200				{object}	model.HttpResponse{data=IpcDevicePage}	"查询成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}			"查询数据失败"
+//	@Router			/ipc/device/devices/site_id [GET]
+func GetIpcDevicesBySite(c *gin.Context) {
+	siteIdQuery := c.Query("site_id")
+	if siteIdQuery == "" {
+		panic(http.StatusBadRequest)
+	}
+
+	siteId, err := strconv.ParseInt(siteIdQuery, 10, 0)
+	if err != nil {
+		panic(http.StatusBadRequest)
+	}
+
+	data, err := selectIpcDevicesBySiteId(&siteId)
+	if err != nil {
+		model.HttpResponse{}.FailGin(c, "查询数据失败")
+		return
+	} else {
+		model.HttpResponse{}.OkGin(c, data)
+	}
+}
+
 // PostIpcChannel 更新IPC通道
 //
 //	@Summary		更新IPC通道

@@ -141,11 +141,11 @@ definitions:
       site_id:
         type: integer
       site1:
-        type: integer
+        $ref: '#/definitions/ipc_device.simpleSite'
       site2:
-        type: integer
+        $ref: '#/definitions/ipc_device.simpleSite'
       site3:
-        type: integer
+        $ref: '#/definitions/ipc_device.simpleSite'
       sn:
         type: integer
       status:
@@ -170,6 +170,13 @@ definitions:
         type: integer
       total:
         type: integer
+    type: object
+  ipc_device.simpleSite:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
     type: object
   ipc_media.IpcMediaPlayModel:
     properties:
@@ -635,6 +642,49 @@ paths:
                   type: string
               type: object
       summary: 分页查询IpcDevice设备
+      tags:
+      - IPC设备 /ipc/device
+  /ipc/device/devices/site_id:
+    get:
+      consumes:
+      - application/json
+      description: 分页查询GB28181 IpcDevice设备
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 区域ID
+        in: query
+        name: site_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 查询成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/ipc_device.IpcDevicePage'
+              type: object
+        "500":
+          description: 查询数据失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 根据区域ID查询IpcDevice设备
       tags:
       - IPC设备 /ipc/device
   /ipc/device/records:

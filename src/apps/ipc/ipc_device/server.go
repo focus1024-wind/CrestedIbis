@@ -57,6 +57,14 @@ func selectIpcDevicesByPages(page int64, pageSize int64) (total int64, ipcDevice
 	return
 }
 
+func selectIpcDevicesBySiteId(site_id *int64) (ipcDevices []IpcDevice, err error) {
+	err = global.Db.Model(&IpcDevice{}).Where(&IpcDevice{
+		SiteId: site_id,
+	}).Preload("IpcChannels").Preload("Site", site.ExpandSitePreload).
+		Order("id").Find(&ipcDevices).Error
+	return
+}
+
 func updateIpcChannel(channel IpcChannel) (err error) {
 	if channel.ParentID == "" || channel.DeviceID == "" {
 		return errors.New("parent_id or device_id is empty")
