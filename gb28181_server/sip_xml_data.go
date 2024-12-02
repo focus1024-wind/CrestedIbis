@@ -42,6 +42,14 @@ var (
 <DeviceID>%s</DeviceID>
 <Interval>%d</Interval>
 </Query>`
+
+	PtzCmdXML = `<?xml version="1.0"?>
+<Control>
+<CmdType>DeviceControl</CmdType>
+<SN>%d</SN>
+<DeviceID>%s</DeviceID>
+<PTZCmd>%s</PTZCmd>
+</Control>`
 )
 
 // BuildDeviceInfoXML 获取设备详情指令
@@ -63,4 +71,9 @@ func BuildSnapShotXML(sn int, id string, snapNum int, interval int) string {
 // BuildMobilePositionXML 移动位置订阅
 func BuildMobilePositionXML(sn int, id string, interval int) string {
 	return fmt.Sprintf(MobilePositionXML, sn, id, interval)
+}
+
+// BuildPtzXML 云台控制
+func BuildPtzXML(sn int, id string, ptzCmd string) string {
+	return fmt.Sprintf(PtzCmdXML, sn, id, ptzCmd)
 }

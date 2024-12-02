@@ -211,3 +211,20 @@ func (channel *GB28181Channel) Bye() int {
 
 	return int(resp.StatusCode())
 }
+
+func (channel *GB28181Channel) PtzControl(ptzCmd string) int {
+	request := channel.CreateSipRequest(sip.MESSAGE)
+	contentType := sip.ContentType("Application/MANSCDP+xml")
+	request.AppendHeader(&contentType)
+
+	body := BuildPtzXML(1, channel.ParentID, ptzCmd)
+
+	request.SetBody(body, true)
+
+	resp, err := globalSipServer.RequestWithContext(context.Background(), request)
+	if err != nil {
+		return http.StatusInternalServerError
+	} else {
+		return int(resp.StatusCode())
+	}
+}
