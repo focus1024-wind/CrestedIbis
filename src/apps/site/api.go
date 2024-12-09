@@ -122,7 +122,35 @@ func DeleteSite(c *gin.Context) {
 	} else {
 		err = deleteSite(siteIdQuery.Id)
 		if err != nil {
-			model.HttpResponse{}.FailGin(c, "修改区域名称失败")
+			model.HttpResponse{}.FailGin(c, "删除区域失败")
+		} else {
+			model.HttpResponse{}.OkGin(c, nil)
+		}
+	}
+}
+
+// DeleteSites 批量删除区域
+//
+//	@Summary		批量删除区域
+//	@Version		1.0.0
+//	@Description	批量删除区域
+//	@Tags			区域管理 /site
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string					false	"访问token"
+//	@Param			access_token	query		string					false	"访问token"
+//	@Param			SiteIdQuery		body		SiteIdQuery				true	"区域信息"
+//	@Success		200				{object}	model.HttpResponse{}	"删除成功"
+//	@Failure		500				{object}	model.HttpResponse{}	"删除失败"
+//	@Router			/site/sites [DELETE]
+func DeleteSites(c *gin.Context) {
+	var siteIdQuery SiteIdQuery
+	if err := c.ShouldBind(&siteIdQuery); err != nil {
+		panic(http.StatusBadRequest)
+	} else {
+		err = deleteSites(siteIdQuery.Ids)
+		if err != nil {
+			model.HttpResponse{}.FailGin(c, "删除区域失败")
 		} else {
 			model.HttpResponse{}.OkGin(c, nil)
 		}

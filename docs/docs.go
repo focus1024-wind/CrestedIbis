@@ -1189,6 +1189,56 @@ const docTemplate = `{
                         }
                     }
                 }
+            },
+            "delete": {
+                "description": "批量删除区域",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "区域管理 /site"
+                ],
+                "summary": "批量删除区域",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "description": "区域信息",
+                        "name": "SiteIdQuery",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/site.SiteIdQuery"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "删除成功",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "删除失败",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse"
+                        }
+                    }
+                }
             }
         },
         "/system/admin/password": {
@@ -1894,6 +1944,12 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
                 "name": {
                     "type": "string"
                 }
@@ -1933,6 +1989,12 @@ const docTemplate = `{
             "properties": {
                 "id": {
                     "type": "integer"
+                },
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },

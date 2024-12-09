@@ -12,7 +12,8 @@ type Site struct {
 }
 
 type SiteIdQuery struct {
-	Id int64 `json:"id"`
+	Id  int64   `json:"id"`
+	Ids []int64 `json:"ids"`
 }
 
 type PostSiteQuery struct {

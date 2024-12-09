@@ -3,6 +3,7 @@ package site
 import (
 	"CrestedIbis/src/global"
 	"errors"
+	"fmt"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -67,4 +68,9 @@ func deleteSite(id int64) (err error) {
 	return global.Db.Model(&Site{}).Where(&Site{
 		Id: id,
 	}).Delete(&Site{}).Error
+}
+
+func deleteSites(ids []int64) (err error) {
+	fmt.Println(ids)
+	return global.Db.Model(&Site{}).Delete(&Site{}, ids).Error
 }

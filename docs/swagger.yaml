@@ -201,6 +201,10 @@ definitions:
     properties:
       id:
         type: integer
+      ids:
+        items:
+          type: integer
+        type: array
       name:
         type: string
     type: object
@@ -227,6 +231,10 @@ definitions:
     properties:
       id:
         type: integer
+      ids:
+        items:
+          type: integer
+        type: array
     type: object
   user.RoleGroup:
     properties:
@@ -972,6 +980,39 @@ paths:
       tags:
       - 区域管理 /site
   /site/sites:
+    delete:
+      consumes:
+      - application/json
+      description: 批量删除区域
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 区域信息
+        in: body
+        name: SiteIdQuery
+        required: true
+        schema:
+          $ref: '#/definitions/site.SiteIdQuery'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 删除成功
+          schema:
+            $ref: '#/definitions/model.HttpResponse'
+        "500":
+          description: 删除失败
+          schema:
+            $ref: '#/definitions/model.HttpResponse'
+      summary: 批量删除区域
+      tags:
+      - 区域管理 /site
     get:
       consumes:
       - application/json

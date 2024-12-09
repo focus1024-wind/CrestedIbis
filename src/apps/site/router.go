@@ -9,5 +9,6 @@ func InitSiteRouter() {
 		siteRouter.PUT("", PutSite)
 		siteRouter.DELETE("", DeleteSite)
 		siteRouter.GET("/sites", GetSites)
+		siteRouter.DELETE("/sites", DeleteSites)
 	}
 }
