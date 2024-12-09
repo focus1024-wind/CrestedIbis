@@ -18,5 +18,6 @@ func InitSystemUserRouter() {
 	{
 		systemRoleRouter.GET("/roles", GetAllRoles)
 		systemRoleRouter.POST("", PostRole)
+		systemRoleRouter.PUT("", PutRole)
 	}
 }
