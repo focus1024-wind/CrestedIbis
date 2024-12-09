@@ -81,3 +81,9 @@ func selectAllRoles() (roles []RoleGroup, err error) {
 	err = global.Db.Model(&RoleGroup{}).Find(&roles).Error
 	return
 }
+
+func updateRole(roleId int64, roleName string) (err error) {
+	return global.Db.Where(&RoleGroup{
+		RoleId: roleId,
+	}).Update("role_name", roleName).Error
+}

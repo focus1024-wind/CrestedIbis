@@ -207,3 +207,31 @@ func GetAllRoles(c *gin.Context) {
 		model.HttpResponse{}.OkGin(c, roles)
 	}
 }
+
+// PostRole 更新权限组
+//
+//	@Summary		更新权限组
+//	@Version		0.0.1
+//	@Description	更新权限组
+//	@Tags			权限管理 /system/role
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string									false	"访问token"
+//	@Param			access_token	query		string									false	"访问token"
+//	@Param			RoleGroup		body		RoleGroup								true	"用户权限信息"
+//	@Success		200				{object}	model.HttpResponse{data=[]RoleGroup}	"获取权限组列表成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}			"获取权限组列表失败"
+//	@Router			/system/role [POST]
+func PostRole(c *gin.Context) {
+	var role RoleGroup
+	if err := c.ShouldBind(&role); err != nil {
+		panic(http.StatusBadRequest)
+	} else {
+		err = updateRole(role.RoleId, role.RoleName)
+		if err != nil {
+			model.HttpResponse{}.FailGin(c, "更新角色成功")
+		} else {
+			model.HttpResponse{}.OkGin(c, nil)
+		}
+	}
+}

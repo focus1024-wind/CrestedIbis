@@ -1179,6 +1179,52 @@ paths:
       summary: 搜索用户
       tags:
       - 超级用户操作 /system/admin
+  /system/role:
+    post:
+      consumes:
+      - application/json
+      description: 更新权限组
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 用户权限信息
+        in: body
+        name: RoleGroup
+        required: true
+        schema:
+          $ref: '#/definitions/user.RoleGroup'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取权限组列表成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/user.RoleGroup'
+                  type: array
+              type: object
+        "500":
+          description: 获取权限组列表失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 更新权限组
+      tags:
+      - 权限管理 /system/role
   /system/role/roles:
     get:
       consumes:

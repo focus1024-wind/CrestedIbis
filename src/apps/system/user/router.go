@@ -17,5 +17,6 @@ func InitSystemUserRouter() {
 	systemRoleRouter := global.HttpEngine.Group("/system/role")
 	{
 		systemRoleRouter.GET("/roles", GetAllRoles)
+		systemRoleRouter.POST("", PostRole)
 	}
 }
