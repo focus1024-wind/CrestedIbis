@@ -989,6 +989,10 @@ paths:
         in: query
         name: pid
         type: number
+      - description: 模糊区域名称信息
+        in: query
+        name: keywords
+        type: string
       produces:
       - application/json
       responses:

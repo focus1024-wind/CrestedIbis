@@ -19,17 +19,19 @@ func SelectSiteById(id int64) (site Site, err error) {
 	return
 }
 
-func selectSites(pid *int64) (sites []Site, err error) {
-	if pid == nil {
+func selectSites(pid *int64, keywords string) (sites []Site, err error) {
+	if pid == nil && keywords == "" {
 		// Gorm 默认过滤空值，所以采用 Level 来搜索 pid 为 NULL 的情况
 		// 采用级联查询，Preload默认只能搜索1层
 		err = global.Db.Debug().Model(&Site{}).Preload(clause.Associations, ExpandSitePreload).Where(&Site{
 			Level: 1,
-		}).Find(&sites).Error
+		}).Where("name LIKE ?", "%"+keywords+"%").Find(&sites).Error
+	} else if pid == nil {
+		err = global.Db.Debug().Model(&Site{}).Preload(clause.Associations, ExpandSitePreload).Where("name LIKE ?", "%"+keywords+"%").Find(&sites).Error
 	} else {
 		err = global.Db.Debug().Model(&Site{}).Preload(clause.Associations, ExpandSitePreload).Where(&Site{
 			Pid: pid,
-		}).Find(&sites).Error
+		}).Where("name LIKE ?", "%"+keywords+"%").Find(&sites).Error
 	}
 	return
 }

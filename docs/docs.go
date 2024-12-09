@@ -1152,6 +1152,12 @@ const docTemplate = `{
                         "description": "父区域ID",
                         "name": "pid",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "模糊区域名称信息",
+                        "name": "keywords",
+                        "in": "query"
                     }
                 ],
                 "responses": {

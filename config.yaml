@@ -11,7 +11,7 @@ http-server:
 datasource:
   # require: currently, only MySQL and PostgreSQL are supported
   type: mysql
-  host: 192.168.1.223
+  host: 192.168.10.49
   port: 3306
   username: root
   password: CrestedIbis

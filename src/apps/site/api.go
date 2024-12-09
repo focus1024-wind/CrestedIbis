@@ -18,12 +18,14 @@ import (
 //	@Param			Authorization	header		string							false	"访问token"
 //	@Param			access_token	query		string							false	"访问token"
 //	@Param			pid				query		number							false	"父区域ID"
+//	@Param			keywords		query		string							false	"模糊区域名称信息"
 //	@Success		200				{object}	model.HttpResponse{data=[]Site}	"查询成功"
 //	@Failure		500				{object}	model.HttpResponse{}			"查询失败"
 //	@Router			/site/sites [GET]
 func GetSites(c *gin.Context) {
 	var pid *int64
 	pidQuery := c.Query("pid")
+	keywords := c.DefaultQuery("keywords", "")
 	if pidQuery == "" {
 		pid = nil
 	} else {
@@ -35,7 +37,7 @@ func GetSites(c *gin.Context) {
 		}
 	}
 
-	sites, err := selectSites(pid)
+	sites, err := selectSites(pid, keywords)
 	if err != nil {
 		model.HttpResponse{}.FailGin(c, "查询失败")
 	} else {
