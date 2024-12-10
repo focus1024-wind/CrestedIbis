@@ -25,7 +25,7 @@ store:
 
 jwt:
   key: CrestedIbis
-  expire-time: 3600
+  expire-time: 36000
 
 log:
   file: CrestedIbis.log

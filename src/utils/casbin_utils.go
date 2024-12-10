@@ -8,11 +8,11 @@ import (
 )
 
 type CasbinRule struct {
-	ID      uint `gorm:"primaryKey;autoIncrement"`
+	ID      uint `gorm:"primaryKey;autoIncrement" json:"id"`
 	Ptype   string
-	RoleKey string `gorm:"column:v0"`
-	Path    string `gorm:"column:v1"`
-	Method  string `gorm:"column:v2"`
+	RoleKey string `gorm:"column:v0" json:"role_key"`
+	Path    string `gorm:"column:v1" json:"path"`
+	Method  string `gorm:"column:v2" json:"method"`
 }
 
 func (CasbinRule) TableName() string {

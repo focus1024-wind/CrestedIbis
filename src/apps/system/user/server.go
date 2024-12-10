@@ -2,6 +2,7 @@ package user
 
 import (
 	"CrestedIbis/src/global"
+	"CrestedIbis/src/utils"
 	"errors"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -77,6 +78,26 @@ func deleteUser(username string) (err error) {
 	return global.Db.Where("username = ?", username).Delete(&SysUser{}).Error
 }
 
+func checkRole(id int64) (err error) {
+	var role RoleGroup
+	err = global.Db.Model(&RoleGroup{}).Where(&RoleGroup{
+		RoleId: id,
+	}).First(&role).Error
+	if err == nil {
+		if role.RoleName == "admin" || role.RoleName == "guest" {
+			return errors.New("不允许对admin、guest权限组进行修改")
+		}
+	}
+	return
+}
+
+func getRoleById(id int64) (role RoleGroup, err error) {
+	err = global.Db.Model(&RoleGroup{}).Where(&RoleGroup{
+		RoleId: id,
+	}).First(&role).Error
+	return
+}
+
 func selectAllRoles() (roles []RoleGroup, err error) {
 	err = global.Db.Model(&RoleGroup{}).Find(&roles).Error
 	return
@@ -102,4 +123,35 @@ func deleteRole(roleId int64) (err error) {
 
 func deleteRoles(ids []int64) (err error) {
 	return global.Db.Model(&RoleGroup{}).Delete(&RoleGroup{}, ids).Error
+}
+
+func getCasbinRuleByName(name string) (rules []utils.CasbinRule, err error) {
+	err = global.Db.Debug().Model(&utils.CasbinRule{}).Where(&utils.CasbinRule{
+		RoleKey: name,
+	}).Or(&utils.CasbinRule{
+		RoleKey: "guest",
+	}).Find(&rules).Error
+	return
+}
+
+func updateRoleRules(roleName string, rules []utils.CasbinRule) (err error) {
+	if roleName == "admin" || roleName == "guest" {
+		return errors.New("不允许对admin、guest权限组进行修改")
+	} else {
+		err = global.Db.Model(&utils.CasbinRule{}).Where(&utils.CasbinRule{
+			RoleKey: roleName,
+		}).Delete(&utils.CasbinRule{}).Error
+
+		if len(rules) == 0 {
+			return
+		}
+
+		for i := range rules {
+			rules[i].Ptype = "p"
+			rules[i].RoleKey = roleName
+		}
+
+		err = global.Db.Model(&utils.CasbinRule{}).Create(&rules).Error
+		return
+	}
 }

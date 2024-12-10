@@ -1751,6 +1751,160 @@ const docTemplate = `{
                 }
             }
         },
+        "/system/role/rules": {
+            "get": {
+                "description": "获取权限组对应权限",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "权限管理 /system/role"
+                ],
+                "summary": "获取权限组对应权限",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户权限组名称",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "获取权限组列表成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/user.RoleGroup"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "获取权限组列表失败",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "更新权限组对应权限",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "权限管理 /system/role"
+                ],
+                "summary": "更新权限组对应权限",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "description": "用户权限组名称",
+                        "name": "RoleRuleUpdateEntity",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.RoleRuleUpdateEntity"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "获取权限组列表成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/user.RoleGroup"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "获取权限组列表失败",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/system/user/login": {
             "post": {
                 "description": "用户登录并生成用户登录日志信息",
@@ -2265,6 +2419,20 @@ const docTemplate = `{
                 }
             }
         },
+        "user.RoleRuleUpdateEntity": {
+            "type": "object",
+            "properties": {
+                "role_id": {
+                    "type": "integer"
+                },
+                "rules": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/utils.CasbinRule"
+                    }
+                }
+            }
+        },
         "user.SysUser": {
             "type": "object",
             "required": [
@@ -2355,6 +2523,26 @@ const docTemplate = `{
                 "username": {
                     "type": "string",
                     "example": "admin"
+                }
+            }
+        },
+        "utils.CasbinRule": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "method": {
+                    "type": "string"
+                },
+                "path": {
+                    "type": "string"
+                },
+                "ptype": {
+                    "type": "string"
+                },
+                "role_key": {
+                    "type": "string"
                 }
             }
         }

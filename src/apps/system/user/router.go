@@ -22,4 +22,9 @@ func InitSystemUserRouter() {
 		systemRoleRouter.PUT("", PutRole)
 		systemRoleRouter.DELETE("/", DeleteRole)
 	}
+	systemRoleRuleRouter := global.HttpEngine.Group("/system/role/rules")
+	{
+		systemRoleRuleRouter.GET("", GetRoleRules)
+		systemRoleRuleRouter.POST("", UpdateRoleRules)
+	}
 }

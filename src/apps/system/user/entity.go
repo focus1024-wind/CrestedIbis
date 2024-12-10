@@ -2,6 +2,7 @@ package user
 
 import (
 	"CrestedIbis/src/global/model"
+	"CrestedIbis/src/utils"
 	"encoding/json"
 )
 
@@ -60,4 +61,9 @@ type RoleGroup struct {
 
 type RoleIdsEntity struct {
 	Ids []int64 `json:"ids"`
+}
+
+type RoleRuleUpdateEntity struct {
+	RoleId int64              `json:"role_id"`
+	Rules  []utils.CasbinRule `json:"rules"`
 }
