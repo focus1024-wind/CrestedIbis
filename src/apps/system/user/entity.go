@@ -57,3 +57,7 @@ type RoleGroup struct {
 	User     []SysUser `gorm:"many2many:user_role_groups;" json:"user"`
 	model.BaseModel
 }
+
+type RoleIdsEntity struct {
+	Ids []int64 `json:"ids"`
+}

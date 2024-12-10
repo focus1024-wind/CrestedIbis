@@ -93,3 +93,13 @@ func insertRole(roleName string) (err error) {
 		RoleName: roleName,
 	}).Error
 }
+
+func deleteRole(roleId int64) (err error) {
+	return global.Db.Model(&RoleGroup{}).Where(&RoleGroup{
+		RoleId: roleId,
+	}).Delete(&RoleGroup{}).Error
+}
+
+func deleteRoles(ids []int64) (err error) {
+	return global.Db.Model(&RoleGroup{}).Delete(&RoleGroup{}, ids).Error
+}

@@ -251,6 +251,13 @@ definitions:
           $ref: '#/definitions/user.SysUser'
         type: array
     type: object
+  user.RoleIdsEntity:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
   user.SysUser:
     properties:
       avatar:
@@ -1180,6 +1187,51 @@ paths:
       tags:
       - 超级用户操作 /system/admin
   /system/role:
+    delete:
+      consumes:
+      - application/json
+      description: 删除权限组
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 用户权限信息
+        in: body
+        name: RoleIdsEntity
+        required: true
+        schema:
+          $ref: '#/definitions/user.RoleIdsEntity'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取权限组列表成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/user.RoleGroup'
+                  type: array
+              type: object
+        "500":
+          description: 获取权限组列表失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 删除权限组
+      tags:
+      - 权限管理 /system/role
     post:
       consumes:
       - application/json

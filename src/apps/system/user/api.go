@@ -263,3 +263,59 @@ func PutRole(c *gin.Context) {
 		}
 	}
 }
+
+// DeleteRole 删除权限组
+//
+//	@Summary		删除权限组
+//	@Version		0.0.1
+//	@Description	删除权限组
+//	@Tags			权限管理 /system/role
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string									false	"访问token"
+//	@Param			access_token	query		string									false	"访问token"
+//	@Param			RoleGroup		body		RoleGroup								true	"用户权限信息"
+//	@Success		200				{object}	model.HttpResponse{data=[]RoleGroup}	"获取权限组列表成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}			"获取权限组列表失败"
+//	@Router			/system/role [DELETE]
+func DeleteRole(c *gin.Context) {
+	var role RoleGroup
+	if err := c.ShouldBind(&role); err != nil {
+		panic(http.StatusBadRequest)
+	} else {
+		err = deleteRole(role.RoleId)
+		if err != nil {
+			model.HttpResponse{}.FailGin(c, "删除角色失败")
+		} else {
+			model.HttpResponse{}.OkGin(c, nil)
+		}
+	}
+}
+
+// DeleteRoles 删除权限组
+//
+//	@Summary		删除权限组
+//	@Version		0.0.1
+//	@Description	删除权限组
+//	@Tags			权限管理 /system/role
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string									false	"访问token"
+//	@Param			access_token	query		string									false	"访问token"
+//	@Param			RoleIdsEntity	body		RoleIdsEntity							true	"用户权限信息"
+//	@Success		200				{object}	model.HttpResponse{data=[]RoleGroup}	"获取权限组列表成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}			"获取权限组列表失败"
+//	@Router			/system/role [DELETE]
+func DeleteRoles(c *gin.Context) {
+	var role RoleIdsEntity
+	if err := c.ShouldBind(&role); err != nil {
+		panic(http.StatusBadRequest)
+	} else {
+		err = deleteRoles(role.Ids)
+		if err != nil {
+			model.HttpResponse{}.FailGin(c, "删除角色失败")
+		} else {
+			model.HttpResponse{}.OkGin(c, nil)
+		}
+	}
+}

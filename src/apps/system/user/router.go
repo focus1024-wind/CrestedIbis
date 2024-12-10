@@ -17,7 +17,9 @@ func InitSystemUserRouter() {
 	systemRoleRouter := global.HttpEngine.Group("/system/role")
 	{
 		systemRoleRouter.GET("/roles", GetAllRoles)
+		systemRoleRouter.DELETE("/roles", DeleteRoles)
 		systemRoleRouter.POST("", PostRole)
 		systemRoleRouter.PUT("", PutRole)
+		systemRoleRouter.DELETE("/", DeleteRole)
 	}
 }
