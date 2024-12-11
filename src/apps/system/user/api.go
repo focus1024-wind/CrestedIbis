@@ -74,7 +74,7 @@ func Register(c *gin.Context) {
 	}
 }
 
-// AdminGetAllUserByPages 搜索用户
+// GetAllUserByPages 搜索用户
 //
 //	@Summary		搜索用户
 //	@Version		0.0.1
@@ -88,46 +88,33 @@ func Register(c *gin.Context) {
 //	@Param			page_size		query		integer									false	"每页查询数量，默认值: 15"
 //	@Success		200				{object}	model.HttpResponse{data=SysUserPage}	"查询成功"
 //	@Failure		500				{object}	model.HttpResponse{data=string}			"查询数据失败"
-//	@Router			/system/admin/users [GET]
-func AdminGetAllUserByPages(c *gin.Context) {
-	if claims, exists := c.Get("claims"); exists {
-		claims := claims.(*utils.JwtToken)
-		isAdmin := false
-		for _, role := range claims.Roles {
-			if role == "admin" {
-				isAdmin = true
-				break
-			}
-		}
-		if isAdmin {
-			pageQuery := c.DefaultQuery("page", "1")
-			pageSizeQuery := c.DefaultQuery("page_size", "15")
-			page, err := strconv.ParseInt(pageQuery, 10, 0)
-			if err != nil {
-				panic(http.StatusBadRequest)
-			}
-			pageSize, err := strconv.ParseInt(pageSizeQuery, 10, 0)
-			if err != nil {
-				panic(http.StatusBadRequest)
-			}
-
-			total, data, err := selectUsersByPages(page, pageSize)
-			if err != nil {
-				global.Logger.Errorf(err.Error())
-				model.HttpResponse{}.FailGin(c, "搜索用户失败")
-				return
-			} else {
-				model.HttpResponse{}.OkGin(c, &SysUserPage{
-					Total:    total,
-					Data:     data,
-					Page:     page,
-					PageSize: pageSize,
-				})
-				return
-			}
-		}
+//	@Router			/system/user/users [GET]
+func GetAllUserByPages(c *gin.Context) {
+	pageQuery := c.DefaultQuery("page", "1")
+	pageSizeQuery := c.DefaultQuery("page_size", "15")
+	page, err := strconv.ParseInt(pageQuery, 10, 0)
+	if err != nil {
+		panic(http.StatusBadRequest)
 	}
-	model.HttpResponse{}.FailGin(c, "无权限")
+	pageSize, err := strconv.ParseInt(pageSizeQuery, 10, 0)
+	if err != nil {
+		panic(http.StatusBadRequest)
+	}
+
+	total, data, err := selectUsersByPages(page, pageSize)
+	if err != nil {
+		global.Logger.Errorf(err.Error())
+		model.HttpResponse{}.FailGin(c, "搜索用户失败")
+		return
+	} else {
+		model.HttpResponse{}.OkGin(c, &SysUserPage{
+			Total:    total,
+			Data:     data,
+			Page:     page,
+			PageSize: pageSize,
+		})
+		return
+	}
 }
 
 // AdminChangePassword 修改用户密码
