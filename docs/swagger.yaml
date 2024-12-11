@@ -296,7 +296,6 @@ definitions:
         example: admin
         type: string
     required:
-    - password
     - username
     type: object
   user.SysUserLogin:
@@ -308,7 +307,6 @@ definitions:
         example: admin
         type: string
     required:
-    - password
     - username
     type: object
   user.SysUserPage:
@@ -1162,52 +1160,6 @@ paths:
       summary: 删除用户
       tags:
       - 超级用户操作 /system/admin
-  /system/admin/users:
-    get:
-      consumes:
-      - application/json
-      description: 搜索用户
-      parameters:
-      - description: 访问token
-        in: header
-        name: Authorization
-        type: string
-      - description: 访问token
-        in: query
-        name: access_token
-        type: string
-      - description: '分页查询页码，默认值: 1'
-        in: query
-        name: page
-        type: integer
-      - description: '每页查询数量，默认值: 15'
-        in: query
-        name: page_size
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 查询成功
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/user.SysUserPage'
-              type: object
-        "500":
-          description: 查询数据失败
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpResponse'
-            - properties:
-                data:
-                  type: string
-              type: object
-      summary: 搜索用户
-      tags:
-      - 超级用户操作 /system/admin
   /system/role:
     delete:
       consumes:
@@ -1474,6 +1426,37 @@ paths:
       summary: 更新权限组对应权限
       tags:
       - 权限管理 /system/role
+  /system/user:
+    post:
+      consumes:
+      - application/json
+      description: 更新用户
+      parameters:
+      - description: 用户更新信息
+        in: body
+        name: SysUser
+        required: true
+        schema:
+          $ref: '#/definitions/user.SysUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 注册成功
+          schema:
+            $ref: '#/definitions/model.HttpResponse'
+        "500":
+          description: 注册失败，响应失败信息
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 更新用户
+      tags:
+      - 用户管理 /system/user
   /system/user/login:
     post:
       consumes:
@@ -1541,4 +1524,50 @@ paths:
       summary: 注册用户
       tags:
       - 用户管理 /system/user
+  /system/user/users:
+    get:
+      consumes:
+      - application/json
+      description: 搜索用户
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: '分页查询页码，默认值: 1'
+        in: query
+        name: page
+        type: integer
+      - description: '每页查询数量，默认值: 15'
+        in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 查询成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/user.SysUserPage'
+              type: object
+        "500":
+          description: 查询数据失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 搜索用户
+      tags:
+      - 超级用户操作 /system/admin
 swagger: "2.0"

@@ -8,11 +8,7 @@ import (
 
 type SysUserLogin struct {
 	Username string `gorm:"uniqueIndex;type:varchar(64);comment:用户名" json:"username" binding:"required" example:"admin"`
-	Password string `gorm:"type:varchar(128);comment:用户密码" json:"password"  binding:"required" example:"CrestedIbis"`
-}
-
-type SysUserId struct {
-	UserId int64 `gorm:"primary_key;auto_increment;comment:用户ID" json:"user_id"`
+	Password string `gorm:"type:varchar(128);comment:用户密码" json:"password"  example:"CrestedIbis"`
 }
 
 type SysUserFields struct {
@@ -26,7 +22,7 @@ type SysUserFields struct {
 }
 
 type SysUser struct {
-	SysUserId
+	UserId int64 `gorm:"primary_key;auto_increment;comment:用户ID" json:"user_id"`
 	SysUserLogin
 	SysUserFields
 }

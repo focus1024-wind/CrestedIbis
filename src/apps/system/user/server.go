@@ -51,6 +51,38 @@ func (SysUser) Insert(user SysUser) (err error) {
 	}
 }
 
+// Update 更新用户
+func (SysUser) Update(user SysUser) (err error) {
+	// 记录更新用户的权限ID信息，用户删除权限组
+	roleIds := make(map[int64]bool)
+	for _, role := range user.RoleGroups {
+		// map默认为false，所以用true记录
+		roleIds[role.RoleId] = true
+	}
+
+	// 更新数据
+	// 在更新时，会自动添加新增的role信息，所以后续只需要删除对应的role即可
+	err = global.Db.Updates(&user).Error
+
+	err = global.Db.Where(&SysUser{
+		UserId: user.UserId,
+	}).Preload("RoleGroups").First(&user).Error
+
+	// 删除对应外键关系
+	for _, role := range user.RoleGroups {
+		if !roleIds[role.RoleId] {
+			// admin特殊权限，不允许删除
+			if user.Username == "admin" && role.RoleName == "admin" {
+				continue
+			}
+			err = global.Db.Model(&user).Association("RoleGroups").Delete(&RoleGroup{
+				RoleId: role.RoleId,
+			})
+		}
+	}
+	return
+}
+
 func selectUsersByPages(page int64, pageSize int64) (total int64, users []SysUser, err error) {
 	db := global.Db.Model(SysUser{})
 

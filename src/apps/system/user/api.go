@@ -5,6 +5,7 @@ import (
 	"CrestedIbis/src/global"
 	"CrestedIbis/src/global/model"
 	"CrestedIbis/src/utils"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -66,6 +67,33 @@ func Register(c *gin.Context) {
 		panic(http.StatusBadRequest)
 	} else {
 		err = SysUser{}.Insert(sysUser)
+		if err != nil {
+			model.HttpResponse{}.FailGin(c, err.Error())
+		} else {
+			model.HttpResponse{}.OkGin(c, nil)
+		}
+	}
+}
+
+// UpdateUser 更新用户
+//
+//	@Summary		更新用户
+//	@Version		1.0.0
+//	@Description	更新用户
+//	@Tags			用户管理 /system/user
+//	@Accept			json
+//	@Produce		json
+//	@Param			SysUser	body		SysUser							true	"用户更新信息"
+//	@Success		200		{object}	model.HttpResponse{}			"注册成功"
+//	@Failure		500		{object}	model.HttpResponse{data=string}	"注册失败，响应失败信息"
+//	@Router			/system/user [POST]
+func UpdateUser(c *gin.Context) {
+	var sysUser SysUser
+	if err := c.ShouldBind(&sysUser); err != nil {
+		fmt.Println(err.Error())
+		panic(http.StatusBadRequest)
+	} else {
+		err = SysUser{}.Update(sysUser)
 		if err != nil {
 			model.HttpResponse{}.FailGin(c, err.Error())
 		} else {

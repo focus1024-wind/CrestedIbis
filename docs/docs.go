@@ -1369,85 +1369,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/system/admin/users": {
-            "get": {
-                "description": "搜索用户",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "超级用户操作 /system/admin"
-                ],
-                "summary": "搜索用户",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "访问token",
-                        "name": "Authorization",
-                        "in": "header"
-                    },
-                    {
-                        "type": "string",
-                        "description": "访问token",
-                        "name": "access_token",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "分页查询页码，默认值: 1",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "每页查询数量，默认值: 15",
-                        "name": "page_size",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "查询成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/user.SysUserPage"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "查询数据失败",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
         "/system/role": {
             "put": {
                 "description": "新增权限组",
@@ -1905,6 +1826,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/system/user": {
+            "post": {
+                "description": "更新用户",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "用户管理 /system/user"
+                ],
+                "summary": "更新用户",
+                "parameters": [
+                    {
+                        "description": "用户更新信息",
+                        "name": "SysUser",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/user.SysUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "注册成功",
+                        "schema": {
+                            "$ref": "#/definitions/model.HttpResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "注册失败，响应失败信息",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/system/user/login": {
             "post": {
                 "description": "用户登录并生成用户登录日志信息",
@@ -2002,6 +1975,85 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "注册失败，响应失败信息",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/system/user/users": {
+            "get": {
+                "description": "搜索用户",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "超级用户操作 /system/admin"
+                ],
+                "summary": "搜索用户",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "分页查询页码，默认值: 1",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "每页查询数量，默认值: 15",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "查询成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/user.SysUserPage"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "查询数据失败",
                         "schema": {
                             "allOf": [
                                 {
@@ -2436,7 +2488,6 @@ const docTemplate = `{
         "user.SysUser": {
             "type": "object",
             "required": [
-                "password",
                 "username"
             ],
             "properties": {
@@ -2483,7 +2534,6 @@ const docTemplate = `{
         "user.SysUserLogin": {
             "type": "object",
             "required": [
-                "password",
                 "username"
             ],
             "properties": {

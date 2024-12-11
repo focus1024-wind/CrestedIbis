@@ -8,6 +8,7 @@ func InitSystemUserRouter() {
 		systemUserRouter.POST("/login", Login)
 		systemUserRouter.POST("/register", Register)
 		systemUserRouter.GET("/users", GetAllUserByPages)
+		systemUserRouter.POST("", UpdateUser)
 	}
 	systemAdminRouter := global.HttpEngine.Group("/system/admin")
 	{
