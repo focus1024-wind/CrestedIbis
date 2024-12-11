@@ -102,6 +102,58 @@ func UpdateUser(c *gin.Context) {
 	}
 }
 
+// DeleteUser 删除用户
+//
+//	@Summary		删除用户
+//	@Version		1.0.0
+//	@Description	删除用户
+//	@Tags			用户管理 /system/user
+//	@Accept			json
+//	@Produce		json
+//	@Param			UserIdsEntity	body		UserIdsEntity					true	"用户更新信息"
+//	@Success		200				{object}	model.HttpResponse{}			"注册成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}	"注册失败，响应失败信息"
+//	@Router			/system/user [DELETE]
+func DeleteUser(c *gin.Context) {
+	var userIdsEntity UserIdsEntity
+	if err := c.ShouldBind(&userIdsEntity); err != nil {
+		panic(http.StatusBadRequest)
+	} else {
+		err = SysUser{}.Delete(userIdsEntity.Id)
+		if err != nil {
+			model.HttpResponse{}.FailGin(c, err.Error())
+		} else {
+			model.HttpResponse{}.OkGin(c, nil)
+		}
+	}
+}
+
+// DeleteUsers 批量删除用户
+//
+//	@Summary		删除用户
+//	@Version		1.0.0
+//	@Description	删除用户
+//	@Tags			用户管理 /system/user
+//	@Accept			json
+//	@Produce		json
+//	@Param			UserIdsEntity	body		UserIdsEntity					true	"用户更新信息"
+//	@Success		200				{object}	model.HttpResponse{}			"注册成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}	"注册失败，响应失败信息"
+//	@Router			/system/user/users [DELETE]
+func DeleteUsers(c *gin.Context) {
+	var userIdsEntity UserIdsEntity
+	if err := c.ShouldBind(&userIdsEntity); err != nil {
+		panic(http.StatusBadRequest)
+	} else {
+		err = SysUser{}.Deletes(userIdsEntity.Ids)
+		if err != nil {
+			model.HttpResponse{}.FailGin(c, err.Error())
+		} else {
+			model.HttpResponse{}.OkGin(c, nil)
+		}
+	}
+}
+
 // GetAllUserByPages 搜索用户
 //
 //	@Summary		搜索用户

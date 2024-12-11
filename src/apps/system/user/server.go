@@ -83,6 +83,41 @@ func (SysUser) Update(user SysUser) (err error) {
 	return
 }
 
+func (SysUser) Delete(userId int64) (err error) {
+	var user SysUser
+	err = global.Db.Where(&SysUser{
+		UserId: userId,
+	}).First(&user).Error
+
+	if err != nil {
+		return
+	} else if user.Username == "admin" {
+		return errors.New("admin 用户不允许删除")
+	}
+
+	return global.Db.Where(&SysUser{
+		UserId: userId,
+	}).Delete(&SysUser{}).Error
+}
+
+func (SysUser) Deletes(userIds []int64) (err error) {
+	var user SysUser
+	err = global.Db.Where(&SysUser{
+		SysUserLogin: SysUserLogin{
+			Username: "admin",
+		},
+	}).First(&user).Error
+
+	for i := range userIds {
+		if userIds[i] == user.UserId {
+			userIds = append(userIds[:i], userIds[i+1:]...)
+			break
+		}
+	}
+
+	return global.Db.Model(&SysUser{}).Delete(&SysUser{}, userIds).Error
+}
+
 func selectUsersByPages(page int64, pageSize int64) (total int64, users []SysUser, err error) {
 	db := global.Db.Model(SysUser{})
 

@@ -328,6 +328,15 @@ definitions:
         example: admin
         type: string
     type: object
+  user.UserIdsEntity:
+    properties:
+      id:
+        type: integer
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
   utils.CasbinRule:
     properties:
       id:
@@ -1427,6 +1436,36 @@ paths:
       tags:
       - 权限管理 /system/role
   /system/user:
+    delete:
+      consumes:
+      - application/json
+      description: 删除用户
+      parameters:
+      - description: 用户更新信息
+        in: body
+        name: UserIdsEntity
+        required: true
+        schema:
+          $ref: '#/definitions/user.UserIdsEntity'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 注册成功
+          schema:
+            $ref: '#/definitions/model.HttpResponse'
+        "500":
+          description: 注册失败，响应失败信息
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 删除用户
+      tags:
+      - 用户管理 /system/user
     post:
       consumes:
       - application/json
@@ -1525,6 +1564,36 @@ paths:
       tags:
       - 用户管理 /system/user
   /system/user/users:
+    delete:
+      consumes:
+      - application/json
+      description: 删除用户
+      parameters:
+      - description: 用户更新信息
+        in: body
+        name: UserIdsEntity
+        required: true
+        schema:
+          $ref: '#/definitions/user.UserIdsEntity'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 注册成功
+          schema:
+            $ref: '#/definitions/model.HttpResponse'
+        "500":
+          description: 注册失败，响应失败信息
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 删除用户
+      tags:
+      - 用户管理 /system/user
     get:
       consumes:
       - application/json

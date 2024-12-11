@@ -9,6 +9,8 @@ func InitSystemUserRouter() {
 		systemUserRouter.POST("/register", Register)
 		systemUserRouter.GET("/users", GetAllUserByPages)
 		systemUserRouter.POST("", UpdateUser)
+		systemUserRouter.DELETE("", DeleteUser)
+		systemUserRouter.DELETE("/users", DeleteUsers)
 	}
 	systemAdminRouter := global.HttpEngine.Group("/system/admin")
 	{
