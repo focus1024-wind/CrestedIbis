@@ -166,12 +166,14 @@ func DeleteUsers(c *gin.Context) {
 //	@Param			access_token	query		string									false	"访问token"
 //	@Param			page			query		integer									false	"分页查询页码，默认值: 1"
 //	@Param			page_size		query		integer									false	"每页查询数量，默认值: 15"
+//	@Param			keywords		query		string									false	"模糊区域名称信息"
 //	@Success		200				{object}	model.HttpResponse{data=SysUserPage}	"查询成功"
 //	@Failure		500				{object}	model.HttpResponse{data=string}			"查询数据失败"
 //	@Router			/system/user/users [GET]
 func GetAllUserByPages(c *gin.Context) {
 	pageQuery := c.DefaultQuery("page", "1")
 	pageSizeQuery := c.DefaultQuery("page_size", "15")
+	keywords := c.DefaultQuery("keywords", "")
 	page, err := strconv.ParseInt(pageQuery, 10, 0)
 	if err != nil {
 		panic(http.StatusBadRequest)
@@ -181,7 +183,7 @@ func GetAllUserByPages(c *gin.Context) {
 		panic(http.StatusBadRequest)
 	}
 
-	total, data, err := selectUsersByPages(page, pageSize)
+	total, data, err := selectUsersByPages(page, pageSize, keywords)
 	if err != nil {
 		global.Logger.Errorf(err.Error())
 		model.HttpResponse{}.FailGin(c, "搜索用户失败")
@@ -263,11 +265,13 @@ func AdminDeleteUser(c *gin.Context) {
 //	@Produce		json
 //	@Param			Authorization	header		string									false	"访问token"
 //	@Param			access_token	query		string									false	"访问token"
+//	@Param			keywords		query		string									false	"模糊区域名称信息"
 //	@Success		200				{object}	model.HttpResponse{data=[]RoleGroup}	"获取权限组列表成功"
 //	@Failure		500				{object}	model.HttpResponse{data=string}			"获取权限组列表失败"
 //	@Router			/system/role/roles [GET]
 func GetAllRoles(c *gin.Context) {
-	roles, err := selectAllRoles()
+	keywords := c.DefaultQuery("keywords", "")
+	roles, err := selectAllRoles(keywords)
 	if err != nil {
 		model.HttpResponse{}.FailGin(c, "修改用户密码失败")
 	} else {

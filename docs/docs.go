@@ -1627,6 +1627,12 @@ const docTemplate = `{
                         "description": "访问token",
                         "name": "access_token",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "模糊区域名称信息",
+                        "name": "keywords",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -2080,6 +2086,12 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "每页查询数量，默认值: 15",
                         "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "模糊区域名称信息",
+                        "name": "keywords",
                         "in": "query"
                     }
                 ],

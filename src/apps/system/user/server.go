@@ -4,6 +4,7 @@ import (
 	"CrestedIbis/src/global"
 	"CrestedIbis/src/utils"
 	"errors"
+	"fmt"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -118,7 +119,7 @@ func (SysUser) Deletes(userIds []int64) (err error) {
 	return global.Db.Model(&SysUser{}).Delete(&SysUser{}, userIds).Error
 }
 
-func selectUsersByPages(page int64, pageSize int64) (total int64, users []SysUser, err error) {
+func selectUsersByPages(page int64, pageSize int64, keywords string) (total int64, users []SysUser, err error) {
 	db := global.Db.Model(SysUser{})
 
 	if err = db.Count(&total).Error; err != nil {
@@ -126,9 +127,20 @@ func selectUsersByPages(page int64, pageSize int64) (total int64, users []SysUse
 	}
 
 	offset := (page - 1) * pageSize
-	if err = db.Preload("RoleGroups").Offset(int(offset)).Limit(int(pageSize)).Find(&users).Error; err != nil {
-		return
+	if keywords == "" {
+		if err = db.Preload("RoleGroups").Offset(int(offset)).Limit(int(pageSize)).Find(&users).Error; err != nil {
+			return
+		}
+	} else {
+		fmt.Println(fmt.Sprintf("A%sA", keywords))
+		if err = db.Preload("RoleGroups").Where("username LIKE ?", "%"+keywords+"%").
+			Or("nickname LIKE ?", "%"+keywords+"%").
+			Or("email LIKE ?", "%"+keywords+"%").
+			Or("phone LIKE ?", "%"+keywords+"%").Offset(int(offset)).Limit(int(pageSize)).Find(&users).Error; err != nil {
+			return
+		}
 	}
+
 	return
 }
 
@@ -165,8 +177,13 @@ func getRoleById(id int64) (role RoleGroup, err error) {
 	return
 }
 
-func selectAllRoles() (roles []RoleGroup, err error) {
-	err = global.Db.Model(&RoleGroup{}).Find(&roles).Error
+func selectAllRoles(keywords string) (roles []RoleGroup, err error) {
+	if keywords == "" {
+		err = global.Db.Model(&RoleGroup{}).Find(&roles).Error
+	} else {
+		err = global.Db.Model(&RoleGroup{}).Where("role_name LIKE ?", "%"+keywords+"%").Find(&roles).Error
+	}
+
 	return
 }
 
