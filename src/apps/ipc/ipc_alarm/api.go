@@ -145,7 +145,7 @@ func GetIpcRecords(c *gin.Context) {
 //	@Produce		json
 //	@Param			Authorization	header		string									false	"访问token"
 //	@Param			access_token	query		string									false	"访问token"
-//	@Param			url			query			string									true	"视频地址"
+//	@Param			url				query		string									true	"视频地址"
 //	@Success		200				{object}	model.HttpResponse{data=IpcRecordPage}	"分页查询成功"
 //	@Failure		500				{object}	model.HttpResponse{data=string}			"查询数据失败"
 //	@Router			/ipc/device/record [GET]
@@ -189,5 +189,62 @@ func DownloadRecord(c *gin.Context) {
 	if _, err := io.Copy(c.Writer, resp.Body); err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
+	}
+}
+
+// DeleteRecord 删除录像文件
+//
+//	@Summary		删除录像文件
+//	@Version		0.0.1
+//	@Description	删除录像文件
+//	@Tags			IPC设备 /ipc/device
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization		header		string									false	"访问token"
+//	@Param			access_token		query		string									false	"访问token"
+//	@Param			IpcRecordIdEntity	body		IpcRecordIdEntity						true	"视频地址"
+//	@Success		200					{object}	model.HttpResponse{data=IpcRecordPage}	"分页查询成功"
+//	@Failure		500					{object}	model.HttpResponse{data=string}			"查询数据失败"
+//	@Router			/ipc/device/record [DELETE]
+func DeleteRecord(c *gin.Context) {
+	var idEntity IpcRecordIdEntity
+
+	if err := c.ShouldBind(&idEntity); err != nil {
+		panic(http.StatusBadRequest)
+	} else {
+		err = DeleteRecordServer(idEntity.ID)
+		if err != nil {
+			model.HttpResponse{}.FailGin(c, err.Error())
+		} else {
+			model.HttpResponse{}.OkGin(c, "删除文件成功")
+		}
+	}
+}
+
+// DeleteRecords 删除录像文件
+//
+//	@Summary		删除录像文件
+//	@Version		0.0.1
+//	@Description	删除录像文件
+//	@Tags			IPC设备 /ipc/device
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization		header		string									false	"访问token"
+//	@Param			access_token		query		string									false	"访问token"
+//	@Param			IpcRecordIdEntity	body		IpcRecordIdEntity						true	"视频地址"
+//	@Success		200					{object}	model.HttpResponse{data=IpcRecordPage}	"分页查询成功"
+//	@Failure		500					{object}	model.HttpResponse{data=string}			"查询数据失败"
+//	@Router			/ipc/device/records [DELETE]
+func DeleteRecords(c *gin.Context) {
+	var idEntity IpcRecordIdEntity
+
+	if err := c.ShouldBind(&idEntity); err != nil {
+		panic(http.StatusBadRequest)
+	} else {
+		for _, id := range idEntity.Ids {
+			DeleteRecordServer(id)
+		}
+
+		model.HttpResponse{}.OkGin(c, "删除文件成功")
 	}
 }

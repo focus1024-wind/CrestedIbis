@@ -137,3 +137,37 @@ func DelStreamProxy(key string) (ok bool, err error) {
 		return false, err
 	}
 }
+
+// DelRecord 删除回放
+func DelRecord(app string, stream string, period string, name string) (ok bool, err error) {
+	client := resty.New()
+
+	response := &struct {
+		Code int `json:"code"`
+	}{}
+
+	if name == "" {
+		_, err = client.R().SetQueryParams(map[string]string{
+			"secret": globalGB28181Config.MediaServer.Secret,
+			"vhost":  "__defaultVhost__",
+			"app":    app,
+			"stream": stream,
+			"period": period,
+		}).SetResult(response).SetError(response).Get(fmt.Sprintf("%s/index/api/deleteRecordDirectory", globalGB28181Config.MediaServer.server))
+	} else {
+		_, err = client.R().SetQueryParams(map[string]string{
+			"secret": globalGB28181Config.MediaServer.Secret,
+			"vhost":  "__defaultVhost__",
+			"app":    app,
+			"stream": stream,
+			"period": period,
+			"name":   name,
+		}).SetResult(response).SetError(response).Get(fmt.Sprintf("%s/index/api/deleteRecordDirectory", globalGB28181Config.MediaServer.server))
+	}
+
+	if response.Code == 0 {
+		return true, err
+	} else {
+		return false, err
+	}
+}

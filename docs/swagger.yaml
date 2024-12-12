@@ -68,6 +68,15 @@ definitions:
       url:
         type: string
     type: object
+  ipc_alarm.IpcRecordIdEntity:
+    properties:
+      id:
+        type: integer
+      ids:
+        items:
+          type: integer
+        type: array
+    type: object
   ipc_alarm.IpcRecordPage:
     properties:
       data:
@@ -732,6 +741,49 @@ paths:
       tags:
       - IPC设备 /ipc/device
   /ipc/device/record:
+    delete:
+      consumes:
+      - application/json
+      description: 删除录像文件
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 视频地址
+        in: body
+        name: IpcRecordIdEntity
+        required: true
+        schema:
+          $ref: '#/definitions/ipc_alarm.IpcRecordIdEntity'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 分页查询成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/ipc_alarm.IpcRecordPage'
+              type: object
+        "500":
+          description: 查询数据失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 删除录像文件
+      tags:
+      - IPC设备 /ipc/device
     get:
       consumes:
       - application/json
@@ -775,6 +827,49 @@ paths:
       tags:
       - IPC设备 /ipc/device
   /ipc/device/records:
+    delete:
+      consumes:
+      - application/json
+      description: 删除录像文件
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 视频地址
+        in: body
+        name: IpcRecordIdEntity
+        required: true
+        schema:
+          $ref: '#/definitions/ipc_alarm.IpcRecordIdEntity'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 分页查询成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/ipc_alarm.IpcRecordPage'
+              type: object
+        "500":
+          description: 查询数据失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 删除录像文件
+      tags:
+      - IPC设备 /ipc/device
     get:
       consumes:
       - application/json

@@ -18,3 +18,8 @@ type IpcRecord struct {
 	AlarmID *int64 `json:"alarm_id"`
 	model.BaseModel
 }
+
+type IpcRecordIdEntity struct {
+	ID  int64   `json:"id"`
+	Ids []int64 `json:"ids"`
+}

@@ -12,6 +12,8 @@ func InitIpcAlarmRouter() {
 	global.HttpEngine.GET("/ipc/device/alarms", GetIpcAlarms)
 	global.HttpEngine.GET("/ipc/device/records", GetIpcRecords)
 	global.HttpEngine.GET("/ipc/device/record", DownloadRecord)
+	global.HttpEngine.DELETE("/ipc/device/record", DeleteRecord)
+	global.HttpEngine.DELETE("/ipc/device/records", DeleteRecords)
 	global.HttpEngine.Any("/record/*name", proxyRecordHandler)
 }
 
