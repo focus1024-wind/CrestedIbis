@@ -14,7 +14,7 @@ type IpcAlarm struct {
 
 type IpcRecord struct {
 	gb28181_server.Record
-	ID      int64 `gorm:"primary_key;auto_increment" json:"id"`
-	AlarmID *int64
+	ID      int64  `gorm:"primary_key;auto_increment" json:"id"`
+	AlarmID *int64 `json:"alarm_id"`
 	model.BaseModel
 }

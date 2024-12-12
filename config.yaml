@@ -50,7 +50,7 @@ gb28181:
     mode: udp
   media-server:
     secret: Uva5PKPA1aGOoBiQHglYExH2kMi2cX2S
-    ip: 192.168.1.223
+    ip: 192.168.10.49
     port: 8080
     mode: tcp
   http-server:

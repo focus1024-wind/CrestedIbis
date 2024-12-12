@@ -1,10 +1,14 @@
 package ipc_alarm
 
 import (
+	"CrestedIbis/src/global"
 	"CrestedIbis/src/global/model"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"io"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -128,5 +132,62 @@ func GetIpcRecords(c *gin.Context) {
 			Page:     page,
 			PageSize: pageSize,
 		})
+	}
+}
+
+// DownloadRecord 下载录像文件
+//
+//	@Summary		下载录像文件
+//	@Version		0.0.1
+//	@Description	下载录像文件
+//	@Tags			IPC设备 /ipc/device
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string									false	"访问token"
+//	@Param			access_token	query		string									false	"访问token"
+//	@Param			url			query			string									true	"视频地址"
+//	@Success		200				{object}	model.HttpResponse{data=IpcRecordPage}	"分页查询成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}			"查询数据失败"
+//	@Router			/ipc/device/record [GET]
+func DownloadRecord(c *gin.Context) {
+	remoteURL := c.Query("url")
+	if remoteURL == "" {
+		panic(http.StatusBadRequest)
+	}
+
+	remoteURL = fmt.Sprintf("http://%s:%d/%s", global.Conf.GB28181.MediaServer.IP, global.Conf.GB28181.MediaServer.Port, remoteURL)
+	// 发起 HTTP 请求获取远程文件
+	resp, err := http.Get(remoteURL)
+	if err != nil {
+		model.HttpResponse{}.FailGin(c, "无法获取远程文件")
+		return
+	}
+	defer resp.Body.Close()
+
+	// 检查响应状态码
+	if resp.StatusCode != http.StatusOK {
+		model.HttpResponse{}.FailGin(c, "远程服务器返回错误")
+		return
+	}
+
+	parts := strings.Split(remoteURL, "/")
+	var filename string
+	if len(parts) <= 1 {
+		filename = fmt.Sprintf("%s", parts[len(parts)-1])
+	} else {
+		filename = fmt.Sprintf("%s %s", parts[len(parts)-2], parts[len(parts)-1])
+	}
+
+	// 设置响应头
+	c.Header("Content-Description", "File Transfer")
+	c.Header("Content-Transfer-Encoding", "binary")
+	c.Header("Content-Disposition", "attachment; filename="+filename)
+	c.Header("Content-Type", resp.Header.Get("Content-Type"))
+	c.Header("Content-Length", resp.Header.Get("Content-Length"))
+
+	// 流式传输文件
+	if _, err := io.Copy(c.Writer, resp.Body); err != nil {
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
 	}
 }

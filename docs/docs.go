@@ -654,6 +654,80 @@ const docTemplate = `{
                 }
             }
         },
+        "/ipc/device/record": {
+            "get": {
+                "description": "下载录像文件",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "IPC设备 /ipc/device"
+                ],
+                "summary": "下载录像文件",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "视频地址",
+                        "name": "url",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "分页查询成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/ipc_alarm.IpcRecordPage"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "查询数据失败",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/ipc/device/records": {
             "get": {
                 "description": "分页查询IpcDevice设备录像信息",
@@ -2257,7 +2331,7 @@ const docTemplate = `{
         "ipc_alarm.IpcRecord": {
             "type": "object",
             "properties": {
-                "alarmID": {
+                "alarm_id": {
                     "type": "integer"
                 },
                 "app": {

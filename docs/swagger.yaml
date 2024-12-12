@@ -45,7 +45,7 @@ definitions:
     type: object
   ipc_alarm.IpcRecord:
     properties:
-      alarmID:
+      alarm_id:
         type: integer
       app:
         type: string
@@ -729,6 +729,49 @@ paths:
                   type: string
               type: object
       summary: 根据区域ID查询IpcDevice设备
+      tags:
+      - IPC设备 /ipc/device
+  /ipc/device/record:
+    get:
+      consumes:
+      - application/json
+      description: 下载录像文件
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 视频地址
+        in: query
+        name: url
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 分页查询成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/ipc_alarm.IpcRecordPage'
+              type: object
+        "500":
+          description: 查询数据失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 下载录像文件
       tags:
       - IPC设备 /ipc/device
   /ipc/device/records:
