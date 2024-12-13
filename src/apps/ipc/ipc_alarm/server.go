@@ -33,18 +33,18 @@ func selectIpcAlarmsByPages(page int64, pageSize int64, deviceID string, channel
 	return
 }
 
-func selectIpcRecordsByPages(page int64, pageSize int64, deviceID string, channelID string, start int64, end int64) (total int64, ipcDevices []IpcRecord, err error) {
+func selectIpcRecordsByPages(page int64, pageSize int64, deviceID string, channelID string, start int64, end int64, keywords string) (total int64, ipcDevices []IpcRecord, err error) {
 	db := global.Db.Model(IpcRecord{})
 	var stream string
 	if deviceID != "" && channelID != "" {
 		stream = fmt.Sprintf("%s/%s", deviceID, channelID)
 	}
 
-	if err = db.Where(IpcRecord{
+	if err = db.Debug().Where(IpcRecord{
 		Record: gb28181_server.Record{
 			Stream: stream,
 		},
-	}).Where("start_time BETWEEN ? AND ? ", start, end).Count(&total).Error; err != nil {
+	}).Where("start_time BETWEEN ? AND ? ", start, end).Where("stream LIKE ?", "%"+keywords+"%").Count(&total).Error; err != nil {
 		return
 	}
 
@@ -53,7 +53,7 @@ func selectIpcRecordsByPages(page int64, pageSize int64, deviceID string, channe
 		Record: gb28181_server.Record{
 			Stream: stream,
 		},
-	}).Order("id DESC").Offset(int(offset)).Limit(int(pageSize)).Find(&ipcDevices).Error; err != nil {
+	}).Where("start_time BETWEEN ? AND ? ", start, end).Where("stream LIKE ?", "%"+keywords+"%").Order("id DESC").Offset(int(offset)).Limit(int(pageSize)).Find(&ipcDevices).Error; err != nil {
 		return
 	}
 	return

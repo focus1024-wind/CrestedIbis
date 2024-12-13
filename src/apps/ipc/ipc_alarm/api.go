@@ -90,6 +90,7 @@ func GetIpcAlarms(c *gin.Context) {
 //	@Param			page_size		query		integer									false	"每页查询数量，默认值: 15"
 //	@Param			device_id		query		string									false	"设备ID"
 //	@Param			channel_id		query		string									false	"通道ID"
+//	@Param			keywords		query		string									false	"设备/通道 模糊值"
 //	@Param			start			query		string									false	"开始时间，默认值: 2006-01-02 15:04:05"
 //	@Param			end				query		string									false	"结束时间，默认值: 当前时间"
 //	@Success		200				{object}	model.HttpResponse{data=IpcRecordPage}	"分页查询成功"
@@ -109,6 +110,7 @@ func GetIpcRecords(c *gin.Context) {
 
 	deviceId := c.Query("device_id")
 	channelId := c.Query("channel_id")
+	keywords := c.DefaultQuery("keywords", "")
 	start := c.DefaultQuery("start", time.DateTime)
 	end := c.DefaultQuery("end", time.Now().Format(time.DateTime))
 
@@ -121,7 +123,7 @@ func GetIpcRecords(c *gin.Context) {
 		panic(http.StatusBadRequest)
 	}
 
-	total, data, err := selectIpcRecordsByPages(page, pageSize, deviceId, channelId, startTime.Unix(), endTime.Unix())
+	total, data, err := selectIpcRecordsByPages(page, pageSize, deviceId, channelId, startTime.Unix(), endTime.Unix(), keywords)
 	if err != nil {
 		model.HttpResponse{}.FailGin(c, "查询数据失败")
 		return
