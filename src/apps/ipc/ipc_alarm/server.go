@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func selectIpcAlarmsByPages(page int64, pageSize int64, deviceID string, channelID string, start string, end string) (total int64, ipcDevices []IpcAlarm, err error) {
+func selectIpcAlarmsByPages(page int64, pageSize int64, deviceID string, channelID string, start string, end string, keywords string) (total int64, ipcDevices []IpcAlarm, err error) {
 	db := global.Db.Model(IpcAlarm{})
 
 	if err = db.Where(IpcAlarm{
@@ -17,7 +17,9 @@ func selectIpcAlarmsByPages(page int64, pageSize int64, deviceID string, channel
 			DeviceID:  deviceID,
 			ChannelID: channelID,
 		},
-	}).Where("created_time BETWEEN ? AND ? ", start, end).Count(&total).Error; err != nil {
+	}).Where("created_time BETWEEN ? AND ? ", start, end).
+		Where("device_id LIKE ? OR channel_id LIKE ?", "%"+keywords+"%", "%"+keywords+"%").
+		Count(&total).Error; err != nil {
 		return
 	}
 
@@ -27,7 +29,9 @@ func selectIpcAlarmsByPages(page int64, pageSize int64, deviceID string, channel
 			DeviceID:  deviceID,
 			ChannelID: channelID,
 		},
-	}).Preload("IpcRecords").Order("id DESC").Offset(int(offset)).Limit(int(pageSize)).Find(&ipcDevices).Error; err != nil {
+	}).
+		Where("device_id LIKE ? OR channel_id LIKE ?", "%"+keywords+"%", "%"+keywords+"%").
+		Preload("IpcRecords").Order("id DESC").Offset(int(offset)).Limit(int(pageSize)).Find(&ipcDevices).Error; err != nil {
 		return
 	}
 	return
