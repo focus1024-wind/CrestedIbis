@@ -61,10 +61,12 @@ func DeleteIpcAlarmByIds(ids []int64) (err error) {
 
 	for _, ipcAlarm := range ipcAlarms {
 		if len(ipcAlarm.IpcRecords) > 0 {
+			// 存在录像视频的提前删除
 			DeleteIpcAlarmById(ipcAlarm.ID)
 		}
 	}
 
+	// 批量删除
 	err = global.Db.Delete(&ipcAlarms).Error
 
 	return
