@@ -78,6 +78,64 @@ func GetIpcAlarms(c *gin.Context) {
 	}
 }
 
+// DeleteIpcAlarm 删除告警记录
+//
+//	@Summary		删除告警记录
+//	@Version		0.0.1
+//	@Description	删除告警记录
+//	@Tags			IPC设备 /ipc/device
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization		header		string									false	"访问token"
+//	@Param			access_token		query		string									false	"访问token"
+//	@Param			IpcRecordIdEntity	body		IpcRecordIdEntity						true	"视频地址"
+//	@Success		200					{object}	model.HttpResponse{data=IpcRecordPage}	"分页查询成功"
+//	@Failure		500					{object}	model.HttpResponse{data=string}			"查询数据失败"
+//	@Router			/ipc/device/alarm [DELETE]
+func DeleteIpcAlarm(c *gin.Context) {
+	var idEntity IpcRecordIdEntity
+
+	if err := c.ShouldBind(&idEntity); err != nil {
+		panic(http.StatusBadRequest)
+	} else {
+		err = DeleteIpcAlarmById(idEntity.ID)
+		if err != nil {
+			model.HttpResponse{}.FailGin(c, err.Error())
+		} else {
+			model.HttpResponse{}.OkGin(c, "删除文件成功")
+		}
+	}
+}
+
+// DeleteIpcAlarms 删除告警记录
+//
+//	@Summary		删除告警记录
+//	@Version		0.0.1
+//	@Description	删除告警记录
+//	@Tags			IPC设备 /ipc/device
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization		header		string									false	"访问token"
+//	@Param			access_token		query		string									false	"访问token"
+//	@Param			IpcRecordIdEntity	body		IpcRecordIdEntity						true	"视频地址"
+//	@Success		200					{object}	model.HttpResponse{data=IpcRecordPage}	"分页查询成功"
+//	@Failure		500					{object}	model.HttpResponse{data=string}			"查询数据失败"
+//	@Router			/ipc/device/alarm/alarms [DELETE]
+func DeleteIpcAlarms(c *gin.Context) {
+	var idEntity IpcRecordIdEntity
+
+	if err := c.ShouldBind(&idEntity); err != nil {
+		panic(http.StatusBadRequest)
+	} else {
+		err = DeleteIpcAlarmByIds(idEntity.Ids)
+		if err != nil {
+			model.HttpResponse{}.FailGin(c, err.Error())
+		} else {
+			model.HttpResponse{}.OkGin(c, "删除文件成功")
+		}
+	}
+}
+
 // GetIpcRecords 分页查询IpcDevice设备录像信息
 //
 //	@Summary		分页查询IpcDevice设备录像信息

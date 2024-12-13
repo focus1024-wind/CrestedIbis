@@ -37,6 +37,39 @@ func selectIpcAlarmsByPages(page int64, pageSize int64, deviceID string, channel
 	return
 }
 
+func DeleteIpcAlarmById(id int64) (err error) {
+	var ipcAlarm IpcAlarm
+	if err = global.Db.Model(&IpcAlarm{}).Preload("IpcRecords").Where("id = ?", id).First(&ipcAlarm).Error; err != nil {
+		return
+	}
+
+	for _, record := range ipcAlarm.IpcRecords {
+		fmt.Println(record.ID)
+		// 删除对应历史回放信息
+		DeleteRecordServer(record.ID)
+	}
+
+	err = global.Db.Delete(&ipcAlarm).Error
+	return
+}
+
+func DeleteIpcAlarmByIds(ids []int64) (err error) {
+	var ipcAlarms []IpcAlarm
+	if err = global.Db.Model(&IpcAlarm{}).Preload("IpcRecords").Find(&ipcAlarms, ids).Error; err != nil {
+		return
+	}
+
+	for _, ipcAlarm := range ipcAlarms {
+		if len(ipcAlarm.IpcRecords) > 0 {
+			DeleteIpcAlarmById(ipcAlarm.ID)
+		}
+	}
+
+	err = global.Db.Delete(&ipcAlarms).Error
+
+	return
+}
+
 func selectIpcRecordsByPages(page int64, pageSize int64, deviceID string, channelID string, start int64, end int64, keywords string) (total int64, ipcDevices []IpcRecord, err error) {
 	db := global.Db.Model(IpcRecord{})
 	var stream string

@@ -237,6 +237,158 @@
                 }
             }
         },
+        "/ipc/device/alarm": {
+            "delete": {
+                "description": "删除告警记录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "IPC设备 /ipc/device"
+                ],
+                "summary": "删除告警记录",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "description": "视频地址",
+                        "name": "IpcRecordIdEntity",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ipc_alarm.IpcRecordIdEntity"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "分页查询成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/ipc_alarm.IpcRecordPage"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "查询数据失败",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/ipc/device/alarm/alarms": {
+            "delete": {
+                "description": "删除告警记录",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "IPC设备 /ipc/device"
+                ],
+                "summary": "删除告警记录",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "description": "视频地址",
+                        "name": "IpcRecordIdEntity",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ipc_alarm.IpcRecordIdEntity"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "分页查询成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/ipc_alarm.IpcRecordPage"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "查询数据失败",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/ipc/device/alarms": {
             "get": {
                 "description": "分页查询IpcDevice设备报警信息",
@@ -285,6 +437,12 @@
                         "type": "string",
                         "description": "通道ID",
                         "name": "channel_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "设备/通道 模糊值",
+                        "name": "keywords",
                         "in": "query"
                     },
                     {
@@ -842,6 +1000,12 @@
                         "type": "string",
                         "description": "通道ID",
                         "name": "channel_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "设备/通道 模糊值",
+                        "name": "keywords",
                         "in": "query"
                     },
                     {

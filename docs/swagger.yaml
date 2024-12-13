@@ -500,6 +500,94 @@ paths:
       summary: 更新IPC设备
       tags:
       - IPC设备 /ipc/device
+  /ipc/device/alarm:
+    delete:
+      consumes:
+      - application/json
+      description: 删除告警记录
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 视频地址
+        in: body
+        name: IpcRecordIdEntity
+        required: true
+        schema:
+          $ref: '#/definitions/ipc_alarm.IpcRecordIdEntity'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 分页查询成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/ipc_alarm.IpcRecordPage'
+              type: object
+        "500":
+          description: 查询数据失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 删除告警记录
+      tags:
+      - IPC设备 /ipc/device
+  /ipc/device/alarm/alarms:
+    delete:
+      consumes:
+      - application/json
+      description: 删除告警记录
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 视频地址
+        in: body
+        name: IpcRecordIdEntity
+        required: true
+        schema:
+          $ref: '#/definitions/ipc_alarm.IpcRecordIdEntity'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 分页查询成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/ipc_alarm.IpcRecordPage'
+              type: object
+        "500":
+          description: 查询数据失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 删除告警记录
+      tags:
+      - IPC设备 /ipc/device
   /ipc/device/alarms:
     get:
       consumes:
@@ -529,6 +617,10 @@ paths:
       - description: 通道ID
         in: query
         name: channel_id
+        type: string
+      - description: 设备/通道 模糊值
+        in: query
+        name: keywords
         type: string
       - description: '开始时间，默认值: 2006-01-02 15:04:05'
         in: query
@@ -898,6 +990,10 @@ paths:
       - description: 通道ID
         in: query
         name: channel_id
+        type: string
+      - description: 设备/通道 模糊值
+        in: query
+        name: keywords
         type: string
       - description: '开始时间，默认值: 2006-01-02 15:04:05'
         in: query
