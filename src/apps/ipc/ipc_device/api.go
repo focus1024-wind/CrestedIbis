@@ -187,6 +187,9 @@ func GetIpcDevicesStatus(c *gin.Context) {
 func GetIpcDevicesByPages(c *gin.Context) {
 	pageQuery := c.DefaultQuery("page", "1")
 	pageSizeQuery := c.DefaultQuery("page_size", "15")
+	statusQuery := c.DefaultQuery("status", "ALL")
+	keywords := c.DefaultQuery("keywords", "")
+
 	page, err := strconv.ParseInt(pageQuery, 10, 0)
 	if err != nil {
 		panic(http.StatusBadRequest)
@@ -196,7 +199,7 @@ func GetIpcDevicesByPages(c *gin.Context) {
 		panic(http.StatusBadRequest)
 	}
 
-	total, data, err := selectIpcDevicesByPages(page, pageSize)
+	total, data, err := selectIpcDevicesByPages(page, pageSize, statusQuery, keywords)
 	if err != nil {
 		model.HttpResponse{}.FailGin(c, "查询数据失败")
 		return

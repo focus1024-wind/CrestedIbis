@@ -1,6 +1,7 @@
 package ipc_device
 
 import (
+	"CrestedIbis/gb28181_server"
 	"CrestedIbis/src/apps/site"
 	"CrestedIbis/src/global"
 	"CrestedIbis/src/utils"
@@ -50,7 +51,7 @@ func deleteIpcDevices(deviceIDs []string) (err error) {
 
 // selectIpcDeviceByPages 分页搜索IpcDevices
 // page: 页码，pageSize: 每页的数量
-func selectIpcDevicesByPages(page int64, pageSize int64) (total int64, ipcDevices []IpcDevice, err error) {
+func selectIpcDevicesByPages(page int64, pageSize int64, status string, keywords string) (total int64, ipcDevices []IpcDevice, err error) {
 	db := global.Db.Model(IpcDevice{})
 
 	if err = db.Count(&total).Error; err != nil {
@@ -58,6 +59,12 @@ func selectIpcDevicesByPages(page int64, pageSize int64) (total int64, ipcDevice
 	}
 
 	offset := (page - 1) * pageSize
+	if keywords != "" {
+		db = db.Where("device_id LIKE ?", "%"+keywords+"%")
+	}
+	if status == gb28181_server.DeviceOnLineStatus || status == gb28181_server.DeviceOffLineStatus {
+		db = db.Where("status LIKE ?", status)
+	}
 	if err = db.Debug().Preload("IpcChannels").Preload("Site", site.ExpandSitePreload).Order("id").Offset(int(offset)).Limit(int(pageSize)).Find(&ipcDevices).Error; err != nil {
 		return
 	}
