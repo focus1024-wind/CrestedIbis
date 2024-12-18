@@ -7,6 +7,7 @@ import (
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 )
 
+// CasbinRule 适配 Casbin 权限配置，参考：https://github.com/casbin/gorm-adapter
 type CasbinRule struct {
 	ID      uint `gorm:"primaryKey;autoIncrement" json:"id"`
 	Ptype   string
@@ -15,8 +16,8 @@ type CasbinRule struct {
 	Method  string `gorm:"column:v2" json:"method"`
 }
 
+// TableName gorm-adapter 根据`casbin_rule`表名获取Policy，所以必须手动指定表名，避免gorm生成表名不一致
 func (CasbinRule) TableName() string {
-	// gormadapter 根据`casbin_rule`表名获取Policy，所以必须手动指定表名，避免gorm生成表名不一致
 	return "casbin_rule"
 }
 
@@ -39,19 +40,19 @@ m = r.sub == p.sub && keyMatch(r.obj, p.obj) && regexMatch(r.act, p.act) || r.su
 
 	casbinAdapter, err := gormadapter.NewAdapterByDBWithCustomTable(global.Db, &CasbinRule{})
 	if err != nil {
-		global.Logger.Errorf("[casbin]: Init adapter error: {%s}", err.Error())
+		global.Logger.Errorf("[casbin]: 初始化 CasbinAdapter 失败: %s", err.Error())
 		return nil
 	}
 
 	casbinEnforcer, err := casbin.NewEnforcer(casbinModel, casbinAdapter)
 	if err != nil {
-		global.Logger.Errorf("[casbin]: Init enforcer error: {%s}", err.Error())
+		global.Logger.Errorf("[casbin]: 初始化 CasbinEnforcer 失败: %s", err.Error())
 		return nil
 	}
 
 	err = casbinEnforcer.LoadPolicy()
 	if err != nil {
-		global.Logger.Errorf("[casbin]: casbin loadPolicy error: {%s}", err.Error())
+		global.Logger.Errorf("[casbin]: CasbinEnforcer 加载策略失败: %s", err.Error())
 		return nil
 	}
 	return casbinEnforcer

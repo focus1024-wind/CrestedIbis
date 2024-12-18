@@ -77,3 +77,8 @@ type IpcDevicePage struct {
 type IpcDeviceID struct {
 	DeviceID string `json:"device_id"`
 }
+
+// IpcDeviceIDs 请求体设备ID包装结构
+type IpcDeviceIDs struct {
+	DeviceIDs []string `json:"device_ids"`
+}

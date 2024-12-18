@@ -41,6 +41,13 @@ func deleteIpcDevice(deviceID string) (err error) {
 	return
 }
 
+func deleteIpcDevices(deviceIDs []string) (err error) {
+	for _, deviceID := range deviceIDs {
+		deleteIpcDevice(deviceID)
+	}
+	return
+}
+
 // selectIpcDeviceByPages 分页搜索IpcDevices
 // page: 页码，pageSize: 每页的数量
 func selectIpcDevicesByPages(page int64, pageSize int64) (total int64, ipcDevices []IpcDevice, err error) {

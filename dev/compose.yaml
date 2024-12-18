@@ -1,6 +1,6 @@
 services:
   CrestedIbis-DB:
-    image: mysql:8.0.39
+    image: mysql:8.0.40
     hostname: CrestedIbis-DB
     container_name: CrestedIbis-DB
     ports:

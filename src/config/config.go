@@ -21,6 +21,7 @@ type Config struct {
 // InitConfig 读取配置文件，生成配置
 func InitConfig(configFilePath string) *Config {
 	switch filepath.Ext(configFilePath) {
+	// 目前仅支持 yaml 类型配置文件
 	case ".yml", ".yaml":
 		return initYamlConfig(configFilePath)
 	default:
@@ -35,24 +36,25 @@ func initYamlConfig(configFilePath string) *Config {
 	// 获取配置文件绝对路径
 	configFilePath, err := filepath.Abs(configFilePath)
 	if err != nil {
-		panic(fmt.Sprintf("get config file abs path error: %s", err))
+		panic(fmt.Sprintf("获取配置文件失败: %s", err.Error()))
 	}
 
 	// 读取配置文件
 	data, err := os.ReadFile(configFilePath)
 	if err != nil {
-		panic(fmt.Sprintf("read config file error: %s", err))
+		panic(fmt.Sprintf("读取配置文件失败: %s", err.Error()))
 	}
 
 	// yaml解析配置文件
 	err = yaml.Unmarshal(data, config)
 	if err != nil {
-		panic(fmt.Sprintf("read yaml data from config file error: %s", err))
+		panic(fmt.Sprintf("解析 yaml 格式失败: %s", err.Error()))
 	}
 
 	if config.HttpServer.PublicHost == "" {
 		config.HttpServer.PublicHost = fmt.Sprintf("http://%s:%s", config.HttpServer.IP, config.HttpServer.Port)
 	}
+
 	config.Store.Init()
 	return config
 }

@@ -12,7 +12,7 @@ type JwtToken struct {
 	jwt.RegisteredClaims
 }
 
-// GenToken 生成token信息
+// GenToken 生成token信息，根据配置文件参数，设置过期时间
 func (JwtToken) GenToken(username string, roles []string) (string, error) {
 	claims := JwtToken{
 		username,
@@ -31,6 +31,7 @@ func (JwtToken) GenToken(username string, roles []string) (string, error) {
 	return jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(global.Conf.Jwt.Key))
 }
 
+// GenTempAccessToken 生成token信息，根据参数设置过期时间
 func (JwtToken) GenTempAccessToken(username string, roles []string, expireTime uint) (string, error) {
 	claims := JwtToken{
 		username,
@@ -49,6 +50,7 @@ func (JwtToken) GenTempAccessToken(username string, roles []string, expireTime u
 	return jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(global.Conf.Jwt.Key))
 }
 
+// ParseToken 验证JWT信息并获取JWT结构
 func (JwtToken) ParseToken(tokenString string) (*JwtToken, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &JwtToken{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(global.Conf.Jwt.Key), nil

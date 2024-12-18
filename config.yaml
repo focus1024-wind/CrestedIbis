@@ -11,7 +11,7 @@ http-server:
 datasource:
   # require: currently, only MySQL and PostgreSQL are supported
   type: mysql
-  host: 192.168.10.49
+  host: 192.168.1.223
   port: 3306
   username: root
   password: CrestedIbis
@@ -44,13 +44,13 @@ gb28181:
   log-level: Info
   sip-server:
     # default: 0.0.0.0
-    ip: 192.168.1.11
+    ip: 192.168.10.47
     # default: 5060
     port: 5060
     mode: udp
   media-server:
     secret: Uva5PKPA1aGOoBiQHglYExH2kMi2cX2S
-    ip: 192.168.10.49
+    ip: 192.168.10.47
     port: 8080
     mode: tcp
   http-server:
