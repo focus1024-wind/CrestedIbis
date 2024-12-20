@@ -63,7 +63,7 @@ func (SysUser) Update(user SysUser) (err error) {
 
 	// 更新数据
 	// 在更新时，会自动添加新增的role信息，所以后续只需要删除对应的role即可
-	err = global.Db.Updates(&user).Error
+	err = global.Db.Select("sex").Updates(&user).Error
 
 	err = global.Db.Where(&SysUser{
 		UserId: user.UserId,

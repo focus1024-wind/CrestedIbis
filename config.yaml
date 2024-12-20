@@ -11,7 +11,7 @@ http-server:
 datasource:
   # require: currently, only MySQL and PostgreSQL are supported
   type: mysql
-  host: 192.168.1.223
+  host: 192.168.10.49
   port: 3306
   username: root
   password: CrestedIbis
@@ -25,7 +25,7 @@ store:
 
 jwt:
   key: CrestedIbis
-  expire-time: 36000
+  expire-time: 604800
 
 log:
   file: CrestedIbis.log
@@ -50,7 +50,7 @@ gb28181:
     mode: udp
   media-server:
     secret: Uva5PKPA1aGOoBiQHglYExH2kMi2cX2S
-    ip: 192.168.10.47
+    ip: 192.168.10.49
     port: 8080
     mode: tcp
   http-server:

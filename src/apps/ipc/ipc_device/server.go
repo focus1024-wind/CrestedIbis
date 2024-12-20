@@ -86,7 +86,7 @@ func updateIpcChannel(channel IpcChannel) (err error) {
 	err = global.Db.Debug().Model(&IpcChannel{}).Where(&IpcChannel{
 		ParentID: channel.ParentID,
 		DeviceID: channel.DeviceID,
-	}).Updates(&channel).Error
+	}).Select("ptz_type").Updates(&channel).Error
 	if err != nil {
 		global.Logger.Errorf("更新 %s/%s 设备失败：%s", channel.ParentID, channel.DeviceID, err.Error())
 		return errors.New("update device error")
