@@ -228,17 +228,6 @@ definitions:
           type: integer
         type: array
     type: object
-  site.PostSiteQuery:
-    properties:
-      id:
-        type: integer
-      ids:
-        items:
-          type: integer
-        type: array
-      name:
-        type: string
-    type: object
   site.Site:
     properties:
       children:
@@ -257,15 +246,6 @@ definitions:
         type: integer
       updated_time:
         type: string
-    type: object
-  site.SiteIdQuery:
-    properties:
-      id:
-        type: integer
-      ids:
-        items:
-          type: integer
-        type: array
     type: object
   user.RoleGroup:
     properties:
@@ -1190,7 +1170,7 @@ paths:
     delete:
       consumes:
       - application/json
-      description: 删除区域
+      description: 删除区域站点
       parameters:
       - description: 访问token
         in: header
@@ -1200,30 +1180,30 @@ paths:
         in: query
         name: access_token
         type: string
-      - description: 区域信息
+      - description: 区域站点ID
         in: body
-        name: SiteIdQuery
+        name: model.IDModel
         required: true
         schema:
-          $ref: '#/definitions/site.SiteIdQuery'
+          $ref: '#/definitions/model.IDModel'
       produces:
       - application/json
       responses:
         "200":
-          description: 删除成功
+          description: 删除区域站点成功
           schema:
             $ref: '#/definitions/model.HttpResponse'
         "500":
-          description: 删除失败
+          description: 删除区域站点失败
           schema:
             $ref: '#/definitions/model.HttpResponse'
-      summary: 删除区域
+      summary: 删除区域站点
       tags:
       - 区域管理 /site
     post:
       consumes:
       - application/json
-      description: 修改区域
+      description: 修改区域信息
       parameters:
       - description: 访问token
         in: header
@@ -1235,22 +1215,32 @@ paths:
         type: string
       - description: 区域信息
         in: body
-        name: PostSiteQuery
+        name: Site
         required: true
         schema:
-          $ref: '#/definitions/site.PostSiteQuery'
+          $ref: '#/definitions/site.Site'
       produces:
       - application/json
       responses:
         "200":
           description: 新建成功
           schema:
-            $ref: '#/definitions/model.HttpResponse'
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
         "500":
           description: 新建失败
           schema:
-            $ref: '#/definitions/model.HttpResponse'
-      summary: 修改区域
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 修改区域信息
       tags:
       - 区域管理 /site
     put:
@@ -1278,11 +1268,21 @@ paths:
         "200":
           description: 新建成功
           schema:
-            $ref: '#/definitions/model.HttpResponse'
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/site.Site'
+              type: object
         "500":
           description: 新建失败
           schema:
-            $ref: '#/definitions/model.HttpResponse'
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
       summary: 新建区域
       tags:
       - 区域管理 /site
@@ -1300,23 +1300,33 @@ paths:
         in: query
         name: access_token
         type: string
-      - description: 区域信息
+      - description: 区域ID列表
         in: body
-        name: SiteIdQuery
+        name: model.IDsModel
         required: true
         schema:
-          $ref: '#/definitions/site.SiteIdQuery'
+          $ref: '#/definitions/model.IDsModel'
       produces:
       - application/json
       responses:
         "200":
           description: 删除成功
           schema:
-            $ref: '#/definitions/model.HttpResponse'
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
         "500":
           description: 删除失败
           schema:
-            $ref: '#/definitions/model.HttpResponse'
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
       summary: 批量删除区域
       tags:
       - 区域管理 /site

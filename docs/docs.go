@@ -1469,19 +1469,43 @@ const docTemplate = `{
                     "200": {
                         "description": "新建成功",
                         "schema": {
-                            "$ref": "#/definitions/model.HttpResponse"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/site.Site"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {
                         "description": "新建失败",
                         "schema": {
-                            "$ref": "#/definitions/model.HttpResponse"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
             },
             "post": {
-                "description": "修改区域",
+                "description": "修改区域信息",
                 "consumes": [
                     "application/json"
                 ],
@@ -1491,7 +1515,7 @@ const docTemplate = `{
                 "tags": [
                     "区域管理 /site"
                 ],
-                "summary": "修改区域",
+                "summary": "修改区域信息",
                 "parameters": [
                     {
                         "type": "string",
@@ -1507,11 +1531,11 @@ const docTemplate = `{
                     },
                     {
                         "description": "区域信息",
-                        "name": "PostSiteQuery",
+                        "name": "Site",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/site.PostSiteQuery"
+                            "$ref": "#/definitions/site.Site"
                         }
                     }
                 ],
@@ -1519,19 +1543,43 @@ const docTemplate = `{
                     "200": {
                         "description": "新建成功",
                         "schema": {
-                            "$ref": "#/definitions/model.HttpResponse"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {
                         "description": "新建失败",
                         "schema": {
-                            "$ref": "#/definitions/model.HttpResponse"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
             },
             "delete": {
-                "description": "删除区域",
+                "description": "删除区域站点",
                 "consumes": [
                     "application/json"
                 ],
@@ -1541,7 +1589,7 @@ const docTemplate = `{
                 "tags": [
                     "区域管理 /site"
                 ],
-                "summary": "删除区域",
+                "summary": "删除区域站点",
                 "parameters": [
                     {
                         "type": "string",
@@ -1556,24 +1604,24 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "description": "区域信息",
-                        "name": "SiteIdQuery",
+                        "description": "区域站点ID",
+                        "name": "model.IDModel",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/site.SiteIdQuery"
+                            "$ref": "#/definitions/model.IDModel"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "删除成功",
+                        "description": "删除区域站点成功",
                         "schema": {
                             "$ref": "#/definitions/model.HttpResponse"
                         }
                     },
                     "500": {
-                        "description": "删除失败",
+                        "description": "删除区域站点失败",
                         "schema": {
                             "$ref": "#/definitions/model.HttpResponse"
                         }
@@ -1676,12 +1724,12 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "description": "区域信息",
-                        "name": "SiteIdQuery",
+                        "description": "区域ID列表",
+                        "name": "model.IDsModel",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/site.SiteIdQuery"
+                            "$ref": "#/definitions/model.IDsModel"
                         }
                     }
                 ],
@@ -1689,13 +1737,37 @@ const docTemplate = `{
                     "200": {
                         "description": "删除成功",
                         "schema": {
-                            "$ref": "#/definitions/model.HttpResponse"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {
                         "description": "删除失败",
                         "schema": {
-                            "$ref": "#/definitions/model.HttpResponse"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -3106,23 +3178,6 @@ const docTemplate = `{
                 }
             }
         },
-        "site.PostSiteQuery": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "ids": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
         "site.Site": {
             "type": "object",
             "properties": {
@@ -3149,20 +3204,6 @@ const docTemplate = `{
                 },
                 "updated_time": {
                     "type": "string"
-                }
-            }
-        },
-        "site.SiteIdQuery": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "ids": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
                 }
             }
         },

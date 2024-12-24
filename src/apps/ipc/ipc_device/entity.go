@@ -33,15 +33,15 @@ func (ipcDevice *IpcDevice) MarshalJSON() ([]byte, error) {
 		siteModel := ipcDevice.Site
 		for {
 			if siteModel.Level == 1 {
-				ipcDevice.Site1.Id = siteModel.Id
+				ipcDevice.Site1.Id = siteModel.IDModel.ID
 				ipcDevice.Site1.Name = siteModel.Name
 			}
 			if siteModel.Level == 2 {
-				ipcDevice.Site2.Id = siteModel.Id
+				ipcDevice.Site2.Id = siteModel.IDModel.ID
 				ipcDevice.Site2.Name = siteModel.Name
 			}
 			if siteModel.Level == 3 {
-				ipcDevice.Site3.Id = siteModel.Id
+				ipcDevice.Site3.Id = siteModel.IDModel.ID
 				ipcDevice.Site3.Name = siteModel.Name
 			}
 			if siteModel.Pid == nil {
