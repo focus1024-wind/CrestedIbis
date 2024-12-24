@@ -1815,7 +1815,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "获取权限组列表成功",
+                        "description": "新增权限组成功",
                         "schema": {
                             "allOf": [
                                 {
@@ -1825,10 +1825,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/user.RoleGroup"
-                                            }
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1836,7 +1833,7 @@ const docTemplate = `{
                         }
                     },
                     "500": {
-                        "description": "获取权限组列表失败",
+                        "description": "新增权限组失败",
                         "schema": {
                             "allOf": [
                                 {
@@ -1892,7 +1889,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "获取权限组列表成功",
+                        "description": "更新权限组成功",
                         "schema": {
                             "allOf": [
                                 {
@@ -1902,10 +1899,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/user.RoleGroup"
-                                            }
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -1913,7 +1907,7 @@ const docTemplate = `{
                         }
                     },
                     "500": {
-                        "description": "获取权限组列表失败",
+                        "description": "更新权限组列表失败",
                         "schema": {
                             "allOf": [
                                 {
@@ -1958,13 +1952,86 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "description": "用户权限信息",
-                        "name": "RoleIdsEntity",
+                        "description": "用户权限ID",
+                        "name": "model.IDModel",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/user.RoleIdsEntity"
+                            "$ref": "#/definitions/model.IDModel"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "删除权限组成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "删除权限组失败",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/system/role/roles": {
+            "get": {
+                "description": "获取权限组列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "权限管理 /system/role"
+                ],
+                "summary": "获取权限组列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "模糊权限组名称信息",
+                        "name": "keywords",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -2008,11 +2075,9 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/system/role/roles": {
-            "get": {
-                "description": "获取所有权限组",
+            },
+            "delete": {
+                "description": "批量删除权限组",
                 "consumes": [
                     "application/json"
                 ],
@@ -2022,7 +2087,7 @@ const docTemplate = `{
                 "tags": [
                     "权限管理 /system/role"
                 ],
-                "summary": "获取所有权限组",
+                "summary": "批量删除权限组",
                 "parameters": [
                     {
                         "type": "string",
@@ -2037,15 +2102,18 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "string",
-                        "description": "模糊区域名称信息",
-                        "name": "keywords",
-                        "in": "query"
+                        "description": "权限组ID列表",
+                        "name": "model.IDsModel",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.IDsModel"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "获取权限组列表成功",
+                        "description": "批量删除权限组列表成功",
                         "schema": {
                             "allOf": [
                                 {
@@ -2055,10 +2123,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/user.RoleGroup"
-                                            }
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -2066,7 +2131,7 @@ const docTemplate = `{
                         }
                     },
                     "500": {
-                        "description": "获取权限组列表失败",
+                        "description": "批量删除权限组列表失败",
                         "schema": {
                             "allOf": [
                                 {
@@ -2188,7 +2253,7 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "description": "用户权限组名称",
+                        "description": "用户权限组ID和对应权限",
                         "name": "RoleRuleUpdateEntity",
                         "in": "body",
                         "required": true,
@@ -2199,7 +2264,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "获取权限组列表成功",
+                        "description": "更新权限组对应权限成功",
                         "schema": {
                             "allOf": [
                                 {
@@ -2209,10 +2274,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/user.RoleGroup"
-                                            }
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -2220,7 +2282,7 @@ const docTemplate = `{
                         }
                     },
                     "500": {
-                        "description": "获取权限组列表失败",
+                        "description": "更新权限组对应权限失败",
                         "schema": {
                             "allOf": [
                                 {
@@ -3110,7 +3172,7 @@ const docTemplate = `{
                 "created_time": {
                     "type": "string"
                 },
-                "role_id": {
+                "id": {
                     "type": "integer"
                 },
                 "role_name": {
@@ -3127,21 +3189,10 @@ const docTemplate = `{
                 }
             }
         },
-        "user.RoleIdsEntity": {
-            "type": "object",
-            "properties": {
-                "ids": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                }
-            }
-        },
         "user.RoleRuleUpdateEntity": {
             "type": "object",
             "properties": {
-                "role_id": {
+                "id": {
                     "type": "integer"
                 },
                 "rules": {

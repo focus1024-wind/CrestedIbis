@@ -271,7 +271,7 @@ definitions:
     properties:
       created_time:
         type: string
-      role_id:
+      id:
         type: integer
       role_name:
         type: string
@@ -282,16 +282,9 @@ definitions:
           $ref: '#/definitions/user.SysUser'
         type: array
     type: object
-  user.RoleIdsEntity:
-    properties:
-      ids:
-        items:
-          type: integer
-        type: array
-    type: object
   user.RoleRuleUpdateEntity:
     properties:
-      role_id:
+      id:
         type: integer
       rules:
         items:
@@ -1427,28 +1420,26 @@ paths:
         in: query
         name: access_token
         type: string
-      - description: 用户权限信息
+      - description: 用户权限ID
         in: body
-        name: RoleIdsEntity
+        name: model.IDModel
         required: true
         schema:
-          $ref: '#/definitions/user.RoleIdsEntity'
+          $ref: '#/definitions/model.IDModel'
       produces:
       - application/json
       responses:
         "200":
-          description: 获取权限组列表成功
+          description: 删除权限组成功
           schema:
             allOf:
             - $ref: '#/definitions/model.HttpResponse'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/user.RoleGroup'
-                  type: array
+                  type: object
               type: object
         "500":
-          description: 获取权限组列表失败
+          description: 删除权限组失败
           schema:
             allOf:
             - $ref: '#/definitions/model.HttpResponse'
@@ -1482,18 +1473,16 @@ paths:
       - application/json
       responses:
         "200":
-          description: 获取权限组列表成功
+          description: 更新权限组成功
           schema:
             allOf:
             - $ref: '#/definitions/model.HttpResponse'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/user.RoleGroup'
-                  type: array
+                  type: object
               type: object
         "500":
-          description: 获取权限组列表失败
+          description: 更新权限组列表失败
           schema:
             allOf:
             - $ref: '#/definitions/model.HttpResponse'
@@ -1527,18 +1516,16 @@ paths:
       - application/json
       responses:
         "200":
-          description: 获取权限组列表成功
+          description: 新增权限组成功
           schema:
             allOf:
             - $ref: '#/definitions/model.HttpResponse'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/user.RoleGroup'
-                  type: array
+                  type: object
               type: object
         "500":
-          description: 获取权限组列表失败
+          description: 新增权限组失败
           schema:
             allOf:
             - $ref: '#/definitions/model.HttpResponse'
@@ -1550,10 +1537,10 @@ paths:
       tags:
       - 权限管理 /system/role
   /system/role/roles:
-    get:
+    delete:
       consumes:
       - application/json
-      description: 获取所有权限组
+      description: 批量删除权限组
       parameters:
       - description: 访问token
         in: header
@@ -1563,7 +1550,50 @@ paths:
         in: query
         name: access_token
         type: string
-      - description: 模糊区域名称信息
+      - description: 权限组ID列表
+        in: body
+        name: model.IDsModel
+        required: true
+        schema:
+          $ref: '#/definitions/model.IDsModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 批量删除权限组列表成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: 批量删除权限组列表失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 批量删除权限组
+      tags:
+      - 权限管理 /system/role
+    get:
+      consumes:
+      - application/json
+      description: 获取权限组列表
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 模糊权限组名称信息
         in: query
         name: keywords
         type: string
@@ -1590,7 +1620,7 @@ paths:
                 data:
                   type: string
               type: object
-      summary: 获取所有权限组
+      summary: 获取权限组列表
       tags:
       - 权限管理 /system/role
   /system/role/rules:
@@ -1651,7 +1681,7 @@ paths:
         in: query
         name: access_token
         type: string
-      - description: 用户权限组名称
+      - description: 用户权限组ID和对应权限
         in: body
         name: RoleRuleUpdateEntity
         required: true
@@ -1661,18 +1691,16 @@ paths:
       - application/json
       responses:
         "200":
-          description: 获取权限组列表成功
+          description: 更新权限组对应权限成功
           schema:
             allOf:
             - $ref: '#/definitions/model.HttpResponse'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/user.RoleGroup'
-                  type: array
+                  type: object
               type: object
         "500":
-          description: 获取权限组列表失败
+          description: 更新权限组对应权限失败
           schema:
             allOf:
             - $ref: '#/definitions/model.HttpResponse'

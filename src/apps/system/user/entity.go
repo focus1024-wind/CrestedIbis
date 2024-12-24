@@ -6,6 +6,10 @@ import (
 	"encoding/json"
 )
 
+/**
+用户相关Entity
+*/
+
 type SysUserLogin struct {
 	Username string `gorm:"uniqueIndex;type:varchar(64);comment:用户名" json:"username" binding:"required" example:"admin"`
 	Password string `gorm:"type:varchar(128);comment:用户密码" json:"password"  example:"CrestedIbis"`
@@ -41,30 +45,18 @@ func (sysUser *SysUser) MarshalJSON() ([]byte, error) {
 	return json.Marshal(*sysUser)
 }
 
-// SysUserPage 分页查询用户响应结构
-type SysUserPage struct {
-	Total    int64     `json:"total" desc:"总数量"`
-	Data     []SysUser `json:"data" desc:"用户列表"`
-	Page     int64     `json:"page" desc:"页码"`
-	PageSize int64     `json:"page_size" desc:"每页查询数量"`
-}
-
-type SysUsername struct {
-	Username string `json:"username" example:"admin"`
-}
+/**
+权限组相关Entity
+*/
 
 type RoleGroup struct {
-	RoleId   int64     `gorm:"primary_key;AUTO_INCREMENT;comment:权限ID" json:"role_id"`
+	model.IDModel
 	RoleName string    `json:"role_name"`
 	User     []SysUser `gorm:"many2many:user_role_groups;" json:"user"`
 	model.BaseModel
 }
 
-type RoleIdsEntity struct {
-	Ids []int64 `json:"ids"`
-}
-
 type RoleRuleUpdateEntity struct {
-	RoleId int64              `json:"role_id"`
-	Rules  []utils.CasbinRule `json:"rules"`
+	ID    int64              `json:"id"`
+	Rules []utils.CasbinRule `json:"rules"`
 }

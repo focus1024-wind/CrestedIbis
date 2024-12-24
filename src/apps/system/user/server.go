@@ -21,7 +21,7 @@ func (SysUser) Update(sysUser SysUser) (err error) {
 	roleIds := make(map[int64]bool)
 	for _, role := range sysUser.RoleGroups {
 		// map默认为false，所以用true记录
-		roleIds[role.RoleId] = true
+		roleIds[role.ID] = true
 	}
 
 	if sysUser.Password != "" {
@@ -44,13 +44,15 @@ func (SysUser) Update(sysUser SysUser) (err error) {
 
 	// 删除对应外键关系
 	for _, role := range sysUser.RoleGroups {
-		if !roleIds[role.RoleId] {
+		if !roleIds[role.ID] {
 			// admin特殊权限，不允许删除
 			if sysUser.Username == "admin" && role.RoleName == "admin" {
 				continue
 			}
 			err = global.Db.Model(&sysUser).Association("RoleGroups").Delete(&RoleGroup{
-				RoleId: role.RoleId,
+				IDModel: model.IDModel{
+					ID: role.ID,
+				},
 			})
 		}
 	}
@@ -70,9 +72,7 @@ func (SysUser) Delete(idModel model.IDModel) (err error) {
 	if user.Username == "admin" {
 		return errors.New("admin 用户不允许删除")
 	} else {
-		return global.Db.Where(&SysUser{
-			IDModel: idModel,
-		}).Delete(&SysUser{}).Error
+		return global.Db.Delete(&SysUser{}, idModel.ID).Error
 	}
 }
 
@@ -114,6 +114,7 @@ func (SysUser) Insert(sysUser SysUser) (err error) {
 	}
 }
 
+// SelectUsers 根据查询条件获取用户列表
 func (SysUser) SelectUsers(page int64, pageSize int64, keywords string) (total int64, sysUsers []SysUser, err error) {
 	db := global.Db.Model(SysUser{}).Preload("RoleGroups")
 
@@ -151,13 +152,16 @@ func (SysUser) Deletes(idsModel model.IDsModel) (err error) {
 		}
 	}
 
-	return global.Db.Model(&SysUser{}).Delete(&SysUser{}, idsModel.IDs).Error
+	return global.Db.Delete(&SysUser{}, idsModel.IDs).Error
 }
 
-func checkRole(id int64) (err error) {
+// check 校验是否为特殊权限组
+func (RoleGroup) check(id int64) (err error) {
 	var role RoleGroup
 	err = global.Db.Model(&RoleGroup{}).Where(&RoleGroup{
-		RoleId: id,
+		IDModel: model.IDModel{
+			ID: id,
+		},
 	}).First(&role).Error
 	if err == nil {
 		if role.RoleName == "admin" || role.RoleName == "guest" {
@@ -167,47 +171,59 @@ func checkRole(id int64) (err error) {
 	return
 }
 
-func getRoleById(id int64) (role RoleGroup, err error) {
-	err = global.Db.Model(&RoleGroup{}).Where(&RoleGroup{
-		RoleId: id,
-	}).First(&role).Error
-	return
-}
-
-func selectAllRoles(keywords string) (roles []RoleGroup, err error) {
-	if keywords == "" {
-		err = global.Db.Model(&RoleGroup{}).Find(&roles).Error
-	} else {
-		err = global.Db.Model(&RoleGroup{}).Where("role_name LIKE ?", "%"+keywords+"%").Find(&roles).Error
-	}
-
-	return
-}
-
-func updateRole(roleId int64, roleName string) (err error) {
-	return global.Db.Model(&RoleGroup{}).Where(&RoleGroup{
-		RoleId: roleId,
-	}).Update("role_name", roleName).Error
-}
-
-func insertRole(roleName string) (err error) {
+// Insert 新增权限组
+func (RoleGroup) Insert(roleName string) (err error) {
 	return global.Db.Model(&RoleGroup{}).Create(&RoleGroup{
 		RoleName: roleName,
 	}).Error
 }
 
-func deleteRole(roleId int64) (err error) {
-	return global.Db.Model(&RoleGroup{}).Where(&RoleGroup{
-		RoleId: roleId,
-	}).Delete(&RoleGroup{}).Error
+// Update 更新权限组
+func (RoleGroup) Update(roleGroup RoleGroup) (err error) {
+	if err = roleGroup.check(roleGroup.ID); err != nil {
+		return
+	} else {
+		return global.Db.Updates(&roleGroup).Error
+	}
 }
 
-func deleteRoles(ids []int64) (err error) {
-	return global.Db.Model(&RoleGroup{}).Delete(&RoleGroup{}, ids).Error
+// Delete 删除权限组
+func (RoleGroup) Delete(idModel model.IDModel) (err error) {
+	err = RoleGroup{}.check(idModel.ID)
+	if err != nil {
+		return
+	} else {
+		return global.Db.Delete(&RoleGroup{}, idModel.ID).Error
+	}
 }
 
-func getCasbinRuleByName(name string) (rules []utils.CasbinRule, err error) {
-	err = global.Db.Debug().Model(&utils.CasbinRule{}).Where(&utils.CasbinRule{
+// Select 根据查询条件，搜索权限组
+func (RoleGroup) Select(keywords string) (roles []RoleGroup, err error) {
+	db := global.Db.Model(&RoleGroup{})
+
+	if keywords != "" {
+		db = db.Where("role_name LIKE ?", "%"+keywords+"%")
+	}
+
+	err = db.Find(&roles).Error
+
+	return
+}
+
+// Deletes 批量删除权限组
+func (RoleGroup) Deletes(idsModel model.IDsModel) (err error) {
+	for _, id := range idsModel.IDs {
+		err = RoleGroup{}.check(id)
+		if err != nil {
+			return
+		}
+	}
+	return global.Db.Delete(&RoleGroup{}, idsModel.IDs).Error
+}
+
+// SelectRules 根据权限组名称获取对应权限
+func (RoleGroup) SelectRules(name string) (rules []utils.CasbinRule, err error) {
+	err = global.Db.Model(&utils.CasbinRule{}).Where(&utils.CasbinRule{
 		RoleKey: name,
 	}).Or(&utils.CasbinRule{
 		RoleKey: "guest",
@@ -215,24 +231,39 @@ func getCasbinRuleByName(name string) (rules []utils.CasbinRule, err error) {
 	return
 }
 
-func updateRoleRules(roleName string, rules []utils.CasbinRule) (err error) {
-	if roleName == "admin" || roleName == "guest" {
+// UpdateRules 更新权限组权限信息
+func (RoleGroup) UpdateRules(roleRuleUpdateEntity RoleRuleUpdateEntity) (err error) {
+	var role RoleGroup
+
+	// 获取对应权限组
+	err = global.Db.Model(&RoleGroup{}).Where(&RoleGroup{
+		IDModel: model.IDModel{
+			ID: roleRuleUpdateEntity.ID,
+		},
+	}).First(&role).Error
+
+	// 权限组校验
+	if err != nil {
+		return
+	} else if role.RoleName == "admin" || role.RoleName == "guest" {
 		return errors.New("不允许对admin、guest权限组进行修改")
 	} else {
+		// 删除原权限
 		err = global.Db.Model(&utils.CasbinRule{}).Where(&utils.CasbinRule{
-			RoleKey: roleName,
+			RoleKey: role.RoleName,
 		}).Delete(&utils.CasbinRule{}).Error
 
-		if len(rules) == 0 {
+		if len(roleRuleUpdateEntity.Rules) == 0 {
 			return
 		}
 
-		for i := range rules {
-			rules[i].Ptype = "p"
-			rules[i].RoleKey = roleName
+		// 新增权限信息
+		for i := range roleRuleUpdateEntity.Rules {
+			roleRuleUpdateEntity.Rules[i].Ptype = "p"
+			roleRuleUpdateEntity.Rules[i].RoleKey = role.RoleName
 		}
 
-		err = global.Db.Model(&utils.CasbinRule{}).Create(&rules).Error
+		err = global.Db.Model(&utils.CasbinRule{}).Create(&roleRuleUpdateEntity.Rules).Error
 		return
 	}
 }

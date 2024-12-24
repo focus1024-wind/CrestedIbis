@@ -10,9 +10,9 @@ VALUES ('p', 'guest', '/swagger/*', 'GET'),
 INSERT INTO sys_users (sys_users.id, username, password)
 VALUES (1, 'admin', '$2a$10$/wq8mbPLfTdXQV/wvr77YuEim/uxcuZmqXM9TEiBlFD6dtt3aQ/Ha');
 
-INSERT INTO role_groups (role_id, role_name)
+INSERT INTO role_groups (id, role_name)
 VALUES (1, 'admin'),
        (2, 'guest');
 
-INSERT INTO user_role_groups(sys_user_id, role_group_role_id)
+INSERT INTO user_role_groups(sys_user_id, role_group_id)
 VALUES (1, 1);
