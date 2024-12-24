@@ -5,92 +5,28 @@ import (
 	"CrestedIbis/src/global"
 	"CrestedIbis/src/global/model"
 	"CrestedIbis/src/utils"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 )
 
-// Login 用户登录
-//
-//	@Summary		用户登录
-//	@Version		1.0.0
-//	@Description	用户登录并生成用户登录日志信息
-//	@Tags			用户管理 /system/user
-//	@Accept			json
-//	@Produce		json
-//	@Param			SysLoginUser	body		SysUserLogin					true	"用户登录信息，密码采用加盐加密"
-//	@Success		200				{object}	model.HttpResponse{data=string}	"登录成功，响应JWT"
-//	@Failure		500				{object}	model.HttpResponse{data=string}	"登录失败，响应失败信息"
-//	@Router			/system/user/login [POST]
-func Login(c *gin.Context) {
-	var sysUserLogin SysUserLogin
-	if err := c.ShouldBind(&sysUserLogin); err != nil {
-		// 参数错误
-		panic(http.StatusBadRequest)
-	} else {
-		roles, err := SysUser{}.Login(sysUserLogin)
-
-		if err != nil {
-			// 登陆失败
-			_ = audit_log.AuditLogLogin{}.Insert(c, sysUserLogin.Username, false, err.Error())
-			model.HttpResponse{}.FailGin(c, err.Error())
-		} else {
-			// 登陆成功，生成Token
-			token, err := utils.JwtToken{}.GenToken(sysUserLogin.Username, roles)
-			if err != nil {
-				_ = audit_log.AuditLogLogin{}.Insert(c, sysUserLogin.Username, false, "Token生成失败")
-				model.HttpResponse{}.FailGin(c, "Token生成失败")
-			} else {
-				_ = audit_log.AuditLogLogin{}.Insert(c, sysUserLogin.Username, true, "登陆成功")
-				model.HttpResponse{}.OkGin(c, token)
-			}
-		}
-	}
-}
-
-// Register 注册用户
-//
-//	@Summary		注册用户
-//	@Version		1.0.0
-//	@Description	注册用户
-//	@Tags			用户管理 /system/user
-//	@Accept			json
-//	@Produce		json
-//	@Param			SysUser	body		SysUser							true	"用户注册信息，密码采用加盐加密"
-//	@Success		200		{object}	model.HttpResponse{}			"注册成功"
-//	@Failure		500		{object}	model.HttpResponse{data=string}	"注册失败，响应失败信息"
-//	@Router			/system/user/register [POST]
-func Register(c *gin.Context) {
-	var sysUser SysUser
-	if err := c.ShouldBind(&sysUser); err != nil {
-		panic(http.StatusBadRequest)
-	} else {
-		err = SysUser{}.Insert(sysUser)
-		if err != nil {
-			model.HttpResponse{}.FailGin(c, err.Error())
-		} else {
-			model.HttpResponse{}.OkGin(c, nil)
-		}
-	}
-}
-
 // UpdateUser 更新用户
 //
 //	@Summary		更新用户
 //	@Version		1.0.0
-//	@Description	更新用户
+//	@Description	更新用户信息
 //	@Tags			用户管理 /system/user
 //	@Accept			json
 //	@Produce		json
-//	@Param			SysUser	body		SysUser							true	"用户更新信息"
-//	@Success		200		{object}	model.HttpResponse{}			"注册成功"
-//	@Failure		500		{object}	model.HttpResponse{data=string}	"注册失败，响应失败信息"
+//	@Param			Authorization	header		string							false	"访问token"
+//	@Param			access_token	query		string							false	"访问token"
+//	@Param			SysUser			body		SysUser							true	"新用户信息，必须携带ID信息"
+//	@Success		200				{object}	model.HttpResponse{data=nil}	"更新用户成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}	"更新用户失败"
 //	@Router			/system/user [POST]
 func UpdateUser(c *gin.Context) {
 	var sysUser SysUser
 	if err := c.ShouldBind(&sysUser); err != nil {
-		fmt.Println(err.Error())
 		panic(http.StatusBadRequest)
 	} else {
 		err = SysUser{}.Update(sysUser)
@@ -110,16 +46,18 @@ func UpdateUser(c *gin.Context) {
 //	@Tags			用户管理 /system/user
 //	@Accept			json
 //	@Produce		json
-//	@Param			UserIdsEntity	body		UserIdsEntity					true	"用户更新信息"
-//	@Success		200				{object}	model.HttpResponse{}			"注册成功"
-//	@Failure		500				{object}	model.HttpResponse{data=string}	"注册失败，响应失败信息"
+//	@Param			Authorization	header		string							false	"访问token"
+//	@Param			access_token	query		string							false	"访问token"
+//	@Param			model.IDModel	body		model.IDModel					true	"用户ID信息"
+//	@Success		200				{object}	model.HttpResponse{data=nil}	"删除成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}	"删除失败"
 //	@Router			/system/user [DELETE]
 func DeleteUser(c *gin.Context) {
-	var userIdsEntity UserIdsEntity
-	if err := c.ShouldBind(&userIdsEntity); err != nil {
+	var idModel model.IDModel
+	if err := c.ShouldBind(&idModel); err != nil {
 		panic(http.StatusBadRequest)
 	} else {
-		err = SysUser{}.Delete(userIdsEntity.Id)
+		err = SysUser{}.Delete(idModel)
 		if err != nil {
 			model.HttpResponse{}.FailGin(c, err.Error())
 		} else {
@@ -128,24 +66,67 @@ func DeleteUser(c *gin.Context) {
 	}
 }
 
-// DeleteUsers 批量删除用户
+// Login 用户登录
 //
-//	@Summary		删除用户
+//	@Summary		用户登录
 //	@Version		1.0.0
-//	@Description	删除用户
+//	@Description	用户登录，返回用户信息和JWT信息
 //	@Tags			用户管理 /system/user
 //	@Accept			json
 //	@Produce		json
-//	@Param			UserIdsEntity	body		UserIdsEntity					true	"用户更新信息"
-//	@Success		200				{object}	model.HttpResponse{}			"注册成功"
-//	@Failure		500				{object}	model.HttpResponse{data=string}	"注册失败，响应失败信息"
-//	@Router			/system/user/users [DELETE]
-func DeleteUsers(c *gin.Context) {
-	var userIdsEntity UserIdsEntity
-	if err := c.ShouldBind(&userIdsEntity); err != nil {
+//	@Param			SysUserLogin	body		SysUserLogin									true	"用户登录信息，密码采用加盐加密"
+//	@Success		200				{object}	model.HttpResponse{data=SysUserLoginResponse}	"登录成功，响应JWT"
+//	@Failure		500				{object}	model.HttpResponse{data=string}					"登录失败，响应失败信息"
+//	@Router			/system/user/login [POST]
+func Login(c *gin.Context) {
+	var sysUserLogin SysUserLogin
+	if err := c.ShouldBind(&sysUserLogin); err != nil {
+		// 参数错误
 		panic(http.StatusBadRequest)
 	} else {
-		err = SysUser{}.Deletes(userIdsEntity.Ids)
+		sysUser, err := SysUser{}.Login(sysUserLogin)
+
+		if err != nil {
+			// 登陆失败
+			_ = audit_log.AuditLogLogin{}.Insert(c, sysUserLogin.Username, false, err.Error())
+			model.HttpResponse{}.FailGin(c, err.Error())
+		} else {
+			// 登陆成功，生成Token
+			roles := make([]string, len(sysUser.RoleGroups))
+			for _, role := range sysUser.RoleGroups {
+				roles = append(roles, role.RoleName)
+			}
+
+			token, err := utils.JwtToken{}.GenToken(sysUserLogin.Username, roles)
+			if err != nil {
+				_ = audit_log.AuditLogLogin{}.Insert(c, sysUserLogin.Username, false, "Token生成失败")
+				model.HttpResponse{}.FailGin(c, "Token生成失败")
+			} else {
+				_ = audit_log.AuditLogLogin{}.Insert(c, sysUserLogin.Username, true, "登陆成功")
+				model.HttpResponse{}.OkGin(c, SysUserLoginResponse{sysUser, token})
+			}
+		}
+	}
+}
+
+// Register 注册用户
+//
+//	@Summary		注册用户，新增用户
+//	@Version		1.0.0
+//	@Description	注册用户，新增用户
+//	@Tags			用户管理 /system/user
+//	@Accept			json
+//	@Produce		json
+//	@Param			SysUser	body		SysUser							true	"用户注册信息，密码采用加盐加密"
+//	@Success		200		{object}	model.HttpResponse{data=nil}	"注册成功"
+//	@Failure		500		{object}	model.HttpResponse{data=string}	"注册失败"
+//	@Router			/system/user/register [POST]
+func Register(c *gin.Context) {
+	var sysUser SysUser
+	if err := c.ShouldBind(&sysUser); err != nil {
+		panic(http.StatusBadRequest)
+	} else {
+		err = SysUser{}.Insert(sysUser)
 		if err != nil {
 			model.HttpResponse{}.FailGin(c, err.Error())
 		} else {
@@ -154,26 +135,27 @@ func DeleteUsers(c *gin.Context) {
 	}
 }
 
-// GetAllUserByPages 搜索用户
+// GetUsers 根据查询条件搜索用户
 //
-//	@Summary		搜索用户
+//	@Summary		根据查询条件搜索用户
 //	@Version		0.0.1
-//	@Description	搜索用户
-//	@Tags			超级用户操作 /system/admin
+//	@Description	根据查询条件搜索用户
+//	@Tags			用户管理 /system/user
 //	@Accept			json
 //	@Produce		json
-//	@Param			Authorization	header		string									false	"访问token"
-//	@Param			access_token	query		string									false	"访问token"
-//	@Param			page			query		integer									false	"分页查询页码，默认值: 1"
-//	@Param			page_size		query		integer									false	"每页查询数量，默认值: 15"
-//	@Param			keywords		query		string									false	"模糊区域名称信息"
-//	@Success		200				{object}	model.HttpResponse{data=SysUserPage}	"查询成功"
-//	@Failure		500				{object}	model.HttpResponse{data=string}			"查询数据失败"
+//	@Param			Authorization	header		string															false	"访问token"
+//	@Param			access_token	query		string															false	"访问token"
+//	@Param			page			query		integer															false	"分页查询页码，默认值: 1"
+//	@Param			page_size		query		integer															false	"每页查询数量，默认值: 15"
+//	@Param			keywords		query		string															false	"用户名、昵称、邮箱、手机号等模糊信息"
+//	@Success		200				{object}	model.HttpResponse{data=model.BasePageResponse{data=[]SysUser}}	"查询成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}									"查询数据失败"
 //	@Router			/system/user/users [GET]
-func GetAllUserByPages(c *gin.Context) {
+func GetUsers(c *gin.Context) {
 	pageQuery := c.DefaultQuery("page", "1")
 	pageSizeQuery := c.DefaultQuery("page_size", "15")
 	keywords := c.DefaultQuery("keywords", "")
+
 	page, err := strconv.ParseInt(pageQuery, 10, 0)
 	if err != nil {
 		panic(http.StatusBadRequest)
@@ -184,18 +166,47 @@ func GetAllUserByPages(c *gin.Context) {
 	}
 
 	total, data, err := selectUsersByPages(page, pageSize, keywords)
+
 	if err != nil {
 		global.Logger.Errorf(err.Error())
 		model.HttpResponse{}.FailGin(c, "搜索用户失败")
 		return
 	} else {
-		model.HttpResponse{}.OkGin(c, &SysUserPage{
+		model.HttpResponse{}.OkGin(c, &model.BasePageResponse{
 			Total:    total,
 			Data:     data,
 			Page:     page,
 			PageSize: pageSize,
 		})
 		return
+	}
+}
+
+// DeleteUsers 批量删除用户
+//
+//	@Summary		批量删除用户
+//	@Version		1.0.0
+//	@Description	批量删除用户
+//	@Tags			用户管理 /system/user
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string							false	"访问token"
+//	@Param			access_token	query		string							false	"访问token"
+//	@Param			model.IDsModel	body		model.IDsModel					true	"ID列表"
+//	@Success		200				{object}	model.HttpResponse{data=nil}	"批量删除用户成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}	"批量删除用户失败"
+//	@Router			/system/user/users [DELETE]
+func DeleteUsers(c *gin.Context) {
+	var idsModel model.IDsModel
+	if err := c.ShouldBind(&idsModel); err != nil {
+		panic(http.StatusBadRequest)
+	} else {
+		err = SysUser{}.Deletes(idsModel)
+		if err != nil {
+			model.HttpResponse{}.FailGin(c, err.Error())
+		} else {
+			model.HttpResponse{}.OkGin(c, nil)
+		}
 	}
 }
 

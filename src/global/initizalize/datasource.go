@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-// InitDatabase connect database
+// InitDatabase 初始化数据库配置
 func InitDatabase(datasource *model.Datasource) *gorm.DB {
 	switch datasource.Type {
 	case "mysql":
@@ -28,7 +28,7 @@ func InitDatabase(datasource *model.Datasource) *gorm.DB {
 	}
 }
 
-// postgres database config
+// MySql数据库配置
 func initMysql(datasource *model.Datasource) *gorm.DB {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local",
 		datasource.Username,
@@ -46,13 +46,14 @@ func initMysql(datasource *model.Datasource) *gorm.DB {
 		SkipInitializeWithVersion: false,
 	}), &gorm.Config{})
 	if err != nil {
-		panic(fmt.Sprintf("Cannot connect to %s database: [%s]", datasource.Type, err.Error()))
+		panic(fmt.Sprintf("连接数据库 %s 失败: [%s]", datasource.Type, err.Error()))
 	}
 
 	sqlDB, err := db.DB()
 	if err != nil {
-		panic(fmt.Sprintf("Cannot connect to %s database: [%s]", datasource.Type, err.Error()))
+		panic(fmt.Sprintf("连接数据库 %s 失败: [%s]", datasource.Type, err.Error()))
 	}
+
 	sqlDB.SetMaxIdleConns(datasource.MaxIdle)
 	sqlDB.SetMaxOpenConns(datasource.MaxOpen)
 	sqlDB.SetConnMaxLifetime(time.Hour)
@@ -71,13 +72,14 @@ func initPostgres(datasource *model.Datasource) *gorm.DB {
 	)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		panic(fmt.Sprintf("Cannot connect to %s database: [%s]", datasource.Type, err.Error()))
+		panic(fmt.Sprintf("连接数据库 %s 失败: [%s]", datasource.Type, err.Error()))
 	}
 
 	sqlDB, err := db.DB()
 	if err != nil {
-		panic(fmt.Sprintf("Cannot connect to %s database: [%s]", datasource.Type, err.Error()))
+		panic(fmt.Sprintf("连接数据库 %s 失败: [%s]", datasource.Type, err.Error()))
 	}
+
 	sqlDB.SetMaxIdleConns(datasource.MaxIdle)
 	sqlDB.SetMaxOpenConns(datasource.MaxOpen)
 	sqlDB.SetConnMaxLifetime(time.Hour)
@@ -85,6 +87,7 @@ func initPostgres(datasource *model.Datasource) *gorm.DB {
 	return db
 }
 
+// InitDbTable 初始化数据库表
 func InitDbTable() {
 	_ = global.Db.AutoMigrate(
 		&audit_log.AuditLogLogin{},

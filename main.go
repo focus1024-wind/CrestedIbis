@@ -15,6 +15,7 @@ import (
 var configFilePath string
 
 func init() {
+	// 命令行参数设置
 	rootCmd.Flags().StringVarP(&configFilePath, "config", "c", "./config.yaml", "config file path, currently only support yaml")
 }
 

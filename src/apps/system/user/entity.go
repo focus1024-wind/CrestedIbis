@@ -16,15 +16,20 @@ type SysUserFields struct {
 	Phone      string      `gorm:"type:varchar(11);comment:用户手机号" json:"phone"`
 	Email      string      `gorm:"type:varchar(32);comment:用户邮箱" json:"email"`
 	Avatar     string      `gorm:"type:varchar(255);comment:用户头像路径" json:"avatar"`
-	Sex        uint8       `gorm:"type:tinyint(1);comment:用户性别(1: 男性; 0: 女性; other: 未知);default:9" json:"sex"`
+	Sex        uint8       `gorm:"type:tinyint(1);comment:用户性别(1: 男性; 2: 女性; other: 未知);default:0" json:"sex"`
 	RoleGroups []RoleGroup `gorm:"many2many:user_role_groups;" json:"role_groups"`
-	model.BaseModel
 }
 
 type SysUser struct {
-	UserId int64 `gorm:"primary_key;auto_increment;comment:用户ID" json:"user_id"`
+	model.IDModel
 	SysUserLogin
 	SysUserFields
+	model.BaseModel
+}
+
+type SysUserLoginResponse struct {
+	SysUser     `json:"user"`
+	AccessToken string `json:"access_token"`
 }
 
 // MarshalJSON 通过 MarshalJSON 序列化用户，避免隐私数据暴露

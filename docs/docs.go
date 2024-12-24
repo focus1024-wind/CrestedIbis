@@ -11,7 +11,7 @@ const docTemplate = `{
         "title": "{{.Title}}",
         "contact": {
             "name": "北溪入江流(focus1024)",
-            "url": "http://focus1024.com(https://github.com/focus1024-wind/CrestedIbis)",
+            "url": "https://github.com/focus1024-wind/CrestedIbis",
             "email": "focus1024@foxmail.com"
         },
         "license": {
@@ -711,6 +711,80 @@ const docTemplate = `{
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/ipc_device.IpcDevicePage"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "查询数据失败",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除IPC设备及对应通道，该删除仅为删除数据库记录，不影响IPC设备的重新注册",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "IPC设备 /ipc/device"
+                ],
+                "summary": "删除IPC设备",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "description": "设备ID",
+                        "name": "IpcDeviceID",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ipc_device.IpcDeviceID"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "查询数据成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
                                         }
                                     }
                                 }
@@ -2220,7 +2294,7 @@ const docTemplate = `{
         },
         "/system/user": {
             "post": {
-                "description": "更新用户",
+                "description": "更新用户信息",
                 "consumes": [
                     "application/json"
                 ],
@@ -2233,7 +2307,19 @@ const docTemplate = `{
                 "summary": "更新用户",
                 "parameters": [
                     {
-                        "description": "用户更新信息",
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "description": "新用户信息，必须携带ID信息",
                         "name": "SysUser",
                         "in": "body",
                         "required": true,
@@ -2244,13 +2330,25 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "注册成功",
+                        "description": "更新用户成功",
                         "schema": {
-                            "$ref": "#/definitions/model.HttpResponse"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {
-                        "description": "注册失败，响应失败信息",
+                        "description": "更新用户失败",
                         "schema": {
                             "allOf": [
                                 {
@@ -2283,24 +2381,48 @@ const docTemplate = `{
                 "summary": "删除用户",
                 "parameters": [
                     {
-                        "description": "用户更新信息",
-                        "name": "UserIdsEntity",
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "description": "用户ID信息",
+                        "name": "model.IDModel",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/user.UserIdsEntity"
+                            "$ref": "#/definitions/model.IDModel"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "注册成功",
+                        "description": "删除成功",
                         "schema": {
-                            "$ref": "#/definitions/model.HttpResponse"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {
-                        "description": "注册失败，响应失败信息",
+                        "description": "删除失败",
                         "schema": {
                             "allOf": [
                                 {
@@ -2322,7 +2444,7 @@ const docTemplate = `{
         },
         "/system/user/login": {
             "post": {
-                "description": "用户登录并生成用户登录日志信息",
+                "description": "用户登录，返回用户信息和JWT信息",
                 "consumes": [
                     "application/json"
                 ],
@@ -2336,7 +2458,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "用户登录信息，密码采用加盐加密",
-                        "name": "SysLoginUser",
+                        "name": "SysUserLogin",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -2356,7 +2478,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "string"
+                                            "$ref": "#/definitions/user.SysUserLoginResponse"
                                         }
                                     }
                                 }
@@ -2386,7 +2508,7 @@ const docTemplate = `{
         },
         "/system/user/register": {
             "post": {
-                "description": "注册用户",
+                "description": "注册用户，新增用户",
                 "consumes": [
                     "application/json"
                 ],
@@ -2396,7 +2518,7 @@ const docTemplate = `{
                 "tags": [
                     "用户管理 /system/user"
                 ],
-                "summary": "注册用户",
+                "summary": "注册用户，新增用户",
                 "parameters": [
                     {
                         "description": "用户注册信息，密码采用加盐加密",
@@ -2412,11 +2534,23 @@ const docTemplate = `{
                     "200": {
                         "description": "注册成功",
                         "schema": {
-                            "$ref": "#/definitions/model.HttpResponse"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {
-                        "description": "注册失败，响应失败信息",
+                        "description": "注册失败",
                         "schema": {
                             "allOf": [
                                 {
@@ -2438,7 +2572,7 @@ const docTemplate = `{
         },
         "/system/user/users": {
             "get": {
-                "description": "搜索用户",
+                "description": "根据查询条件搜索用户",
                 "consumes": [
                     "application/json"
                 ],
@@ -2446,9 +2580,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "超级用户操作 /system/admin"
+                    "用户管理 /system/user"
                 ],
-                "summary": "搜索用户",
+                "summary": "根据查询条件搜索用户",
                 "parameters": [
                     {
                         "type": "string",
@@ -2476,7 +2610,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "模糊区域名称信息",
+                        "description": "用户名、昵称、邮箱、手机号等模糊信息",
                         "name": "keywords",
                         "in": "query"
                     }
@@ -2493,7 +2627,22 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/user.SysUserPage"
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/model.BasePageResponse"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "data": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/user.SysUser"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
                                         }
                                     }
                                 }
@@ -2521,7 +2670,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "删除用户",
+                "description": "批量删除用户",
                 "consumes": [
                     "application/json"
                 ],
@@ -2531,27 +2680,51 @@ const docTemplate = `{
                 "tags": [
                     "用户管理 /system/user"
                 ],
-                "summary": "删除用户",
+                "summary": "批量删除用户",
                 "parameters": [
                     {
-                        "description": "用户更新信息",
-                        "name": "UserIdsEntity",
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "description": "ID列表",
+                        "name": "model.IDsModel",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/user.UserIdsEntity"
+                            "$ref": "#/definitions/model.IDsModel"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "注册成功",
+                        "description": "批量删除用户成功",
                         "schema": {
-                            "$ref": "#/definitions/model.HttpResponse"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "500": {
-                        "description": "注册失败，响应失败信息",
+                        "description": "批量删除用户失败",
                         "schema": {
                             "allOf": [
                                 {
@@ -2877,6 +3050,21 @@ const docTemplate = `{
                 }
             }
         },
+        "model.BasePageResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "page": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "model.HttpResponse": {
             "type": "object",
             "properties": {
@@ -2886,6 +3074,25 @@ const docTemplate = `{
                 "data": {},
                 "msg": {
                     "type": "string"
+                }
+            }
+        },
+        "model.IDModel": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.IDsModel": {
+            "type": "object",
+            "properties": {
+                "ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
                 }
             }
         },
@@ -3012,6 +3219,9 @@ const docTemplate = `{
                 "email": {
                     "type": "string"
                 },
+                "id": {
+                    "type": "integer"
+                },
                 "nickname": {
                     "type": "string"
                 },
@@ -3033,9 +3243,6 @@ const docTemplate = `{
                 },
                 "updated_time": {
                     "type": "string"
-                },
-                "user_id": {
-                    "type": "integer"
                 },
                 "username": {
                     "type": "string",
@@ -3059,23 +3266,14 @@ const docTemplate = `{
                 }
             }
         },
-        "user.SysUserPage": {
+        "user.SysUserLoginResponse": {
             "type": "object",
             "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/user.SysUser"
-                    }
+                "access_token": {
+                    "type": "string"
                 },
-                "page": {
-                    "type": "integer"
-                },
-                "page_size": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
+                "user": {
+                    "$ref": "#/definitions/user.SysUser"
                 }
             }
         },
@@ -3085,20 +3283,6 @@ const docTemplate = `{
                 "username": {
                     "type": "string",
                     "example": "admin"
-                }
-            }
-        },
-        "user.UserIdsEntity": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "ids": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
                 }
             }
         },

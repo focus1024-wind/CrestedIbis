@@ -198,6 +198,16 @@ definitions:
       start:
         type: string
     type: object
+  model.BasePageResponse:
+    properties:
+      data: {}
+      page:
+        type: integer
+      page_size:
+        type: integer
+      total:
+        type: integer
+    type: object
   model.HttpResponse:
     properties:
       code:
@@ -205,6 +215,18 @@ definitions:
       data: {}
       msg:
         type: string
+    type: object
+  model.IDModel:
+    properties:
+      id:
+        type: integer
+    type: object
+  model.IDsModel:
+    properties:
+      ids:
+        items:
+          type: integer
+        type: array
     type: object
   site.PostSiteQuery:
     properties:
@@ -284,6 +306,8 @@ definitions:
         type: string
       email:
         type: string
+      id:
+        type: integer
       nickname:
         type: string
       password:
@@ -299,8 +323,6 @@ definitions:
         type: integer
       updated_time:
         type: string
-      user_id:
-        type: integer
       username:
         example: admin
         type: string
@@ -318,33 +340,18 @@ definitions:
     required:
     - username
     type: object
-  user.SysUserPage:
+  user.SysUserLoginResponse:
     properties:
-      data:
-        items:
-          $ref: '#/definitions/user.SysUser'
-        type: array
-      page:
-        type: integer
-      page_size:
-        type: integer
-      total:
-        type: integer
+      access_token:
+        type: string
+      user:
+        $ref: '#/definitions/user.SysUser'
     type: object
   user.SysUsername:
     properties:
       username:
         example: admin
         type: string
-    type: object
-  user.UserIdsEntity:
-    properties:
-      id:
-        type: integer
-      ids:
-        items:
-          type: integer
-        type: array
     type: object
   utils.CasbinRule:
     properties:
@@ -363,7 +370,7 @@ info:
   contact:
     email: focus1024@foxmail.com
     name: 北溪入江流(focus1024)
-    url: http://focus1024.com(https://github.com/focus1024-wind/CrestedIbis)
+    url: https://github.com/focus1024-wind/CrestedIbis
   description: CrestedIbis目前是一个基于GB28181标准实现的音视频云平台，负责实现GB28181信令和设备管理，未来将会是一个支持物联网设备接入，算法训练和部署的综合物联网平台。
   license:
     name: Apache 2.0
@@ -744,6 +751,49 @@ paths:
       tags:
       - IPC设备 /ipc/device
   /ipc/device/devices:
+    delete:
+      consumes:
+      - application/json
+      description: 删除IPC设备及对应通道，该删除仅为删除数据库记录，不影响IPC设备的重新注册
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 设备ID
+        in: body
+        name: IpcDeviceID
+        required: true
+        schema:
+          $ref: '#/definitions/ipc_device.IpcDeviceID'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 查询数据成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: 查询数据失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 删除IPC设备
+      tags:
+      - IPC设备 /ipc/device
     get:
       consumes:
       - application/json
@@ -1679,21 +1729,34 @@ paths:
       - application/json
       description: 删除用户
       parameters:
-      - description: 用户更新信息
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 用户ID信息
         in: body
-        name: UserIdsEntity
+        name: model.IDModel
         required: true
         schema:
-          $ref: '#/definitions/user.UserIdsEntity'
+          $ref: '#/definitions/model.IDModel'
       produces:
       - application/json
       responses:
         "200":
-          description: 注册成功
+          description: 删除成功
           schema:
-            $ref: '#/definitions/model.HttpResponse'
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
         "500":
-          description: 注册失败，响应失败信息
+          description: 删除失败
           schema:
             allOf:
             - $ref: '#/definitions/model.HttpResponse'
@@ -1707,9 +1770,17 @@ paths:
     post:
       consumes:
       - application/json
-      description: 更新用户
+      description: 更新用户信息
       parameters:
-      - description: 用户更新信息
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 新用户信息，必须携带ID信息
         in: body
         name: SysUser
         required: true
@@ -1719,11 +1790,16 @@ paths:
       - application/json
       responses:
         "200":
-          description: 注册成功
+          description: 更新用户成功
           schema:
-            $ref: '#/definitions/model.HttpResponse'
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
         "500":
-          description: 注册失败，响应失败信息
+          description: 更新用户失败
           schema:
             allOf:
             - $ref: '#/definitions/model.HttpResponse'
@@ -1738,11 +1814,11 @@ paths:
     post:
       consumes:
       - application/json
-      description: 用户登录并生成用户登录日志信息
+      description: 用户登录，返回用户信息和JWT信息
       parameters:
       - description: 用户登录信息，密码采用加盐加密
         in: body
-        name: SysLoginUser
+        name: SysUserLogin
         required: true
         schema:
           $ref: '#/definitions/user.SysUserLogin'
@@ -1756,7 +1832,7 @@ paths:
             - $ref: '#/definitions/model.HttpResponse'
             - properties:
                 data:
-                  type: string
+                  $ref: '#/definitions/user.SysUserLoginResponse'
               type: object
         "500":
           description: 登录失败，响应失败信息
@@ -1774,7 +1850,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: 注册用户
+      description: 注册用户，新增用户
       parameters:
       - description: 用户注册信息，密码采用加盐加密
         in: body
@@ -1788,9 +1864,14 @@ paths:
         "200":
           description: 注册成功
           schema:
-            $ref: '#/definitions/model.HttpResponse'
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
         "500":
-          description: 注册失败，响应失败信息
+          description: 注册失败
           schema:
             allOf:
             - $ref: '#/definitions/model.HttpResponse'
@@ -1798,30 +1879,43 @@ paths:
                 data:
                   type: string
               type: object
-      summary: 注册用户
+      summary: 注册用户，新增用户
       tags:
       - 用户管理 /system/user
   /system/user/users:
     delete:
       consumes:
       - application/json
-      description: 删除用户
+      description: 批量删除用户
       parameters:
-      - description: 用户更新信息
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: ID列表
         in: body
-        name: UserIdsEntity
+        name: model.IDsModel
         required: true
         schema:
-          $ref: '#/definitions/user.UserIdsEntity'
+          $ref: '#/definitions/model.IDsModel'
       produces:
       - application/json
       responses:
         "200":
-          description: 注册成功
+          description: 批量删除用户成功
           schema:
-            $ref: '#/definitions/model.HttpResponse'
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
         "500":
-          description: 注册失败，响应失败信息
+          description: 批量删除用户失败
           schema:
             allOf:
             - $ref: '#/definitions/model.HttpResponse'
@@ -1829,13 +1923,13 @@ paths:
                 data:
                   type: string
               type: object
-      summary: 删除用户
+      summary: 批量删除用户
       tags:
       - 用户管理 /system/user
     get:
       consumes:
       - application/json
-      description: 搜索用户
+      description: 根据查询条件搜索用户
       parameters:
       - description: 访问token
         in: header
@@ -1853,7 +1947,7 @@ paths:
         in: query
         name: page_size
         type: integer
-      - description: 模糊区域名称信息
+      - description: 用户名、昵称、邮箱、手机号等模糊信息
         in: query
         name: keywords
         type: string
@@ -1867,7 +1961,14 @@ paths:
             - $ref: '#/definitions/model.HttpResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/user.SysUserPage'
+                  allOf:
+                  - $ref: '#/definitions/model.BasePageResponse'
+                  - properties:
+                      data:
+                        items:
+                          $ref: '#/definitions/user.SysUser'
+                        type: array
+                    type: object
               type: object
         "500":
           description: 查询数据失败
@@ -1878,7 +1979,7 @@ paths:
                 data:
                   type: string
               type: object
-      summary: 搜索用户
+      summary: 根据查询条件搜索用户
       tags:
-      - 超级用户操作 /system/admin
+      - 用户管理 /system/user
 swagger: "2.0"

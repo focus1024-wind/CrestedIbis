@@ -27,6 +27,7 @@ func InitHttpServer() {
 	global.HttpEngine = gin.Default()
 
 	corsConfig()
+
 	global.HttpEngine.Use(ginLogger())
 	global.HttpEngine.Use(permissionAuth())
 	global.HttpEngine.Use(ginRecovery())
@@ -64,6 +65,7 @@ func corsConfig() {
 }
 
 // ginLogger 日志中间件配置
+// 记录 HTTP 接口执行时间
 func ginLogger() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		startTime := time.Now()
@@ -111,6 +113,7 @@ func ginRecovery() gin.HandlerFunc {
 // getIdentityRoles JWT 身份认证, 认证成功返回
 // 认证方式1: Header: Authorization: Bear xxx(优先)
 // 认证方式2: Params: access_token=xxx
+// 默认权限：guest
 func getIdentityRoles(c *gin.Context) ([]string, error) {
 	tokenString := c.Request.Header.Get("Authorization")
 
@@ -166,7 +169,8 @@ func permissionAuth() gin.HandlerFunc {
 			// 初始化权限执行器出错
 			c.JSON(http.StatusInternalServerError, model.HttpResponse{
 				Code: http.StatusInternalServerError,
-				Msg:  "权限校验失败",
+				Msg:  "error",
+				Data: "权限校验失败",
 			})
 			c.Abort()
 			return
@@ -180,7 +184,8 @@ func permissionAuth() gin.HandlerFunc {
 				// 检测权限出错
 				c.JSON(http.StatusInternalServerError, model.HttpResponse{
 					Code: http.StatusInternalServerError,
-					Msg:  err.Error(),
+					Msg:  "error",
+					Data: err.Error(),
 				})
 				c.Abort()
 				return
@@ -194,7 +199,8 @@ func permissionAuth() gin.HandlerFunc {
 		if !permissionRes {
 			c.JSON(http.StatusForbidden, model.HttpResponse{
 				Code: http.StatusForbidden,
-				Msg:  "无访问权限",
+				Msg:  "error",
+				Data: "无访问权限",
 			})
 			c.Abort()
 			return

@@ -26,3 +26,10 @@ type IDModel struct {
 type IDsModel struct {
 	IDs []int64 `json:"ids"`
 }
+
+type BasePageResponse struct {
+	Total    int64       `json:"total" desc:"总数量"`
+	Data     interface{} `json:"data" desc:"数据列表"`
+	Page     int64       `json:"page" desc:"页码"`
+	PageSize int64       `json:"page_size" desc:"每页查询数量"`
+}

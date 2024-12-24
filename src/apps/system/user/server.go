@@ -2,32 +2,79 @@ package user
 
 import (
 	"CrestedIbis/src/global"
+	"CrestedIbis/src/global/model"
 	"CrestedIbis/src/utils"
 	"errors"
-	"fmt"
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Login 用户登陆
-// return: nil 登陆成功
-func (SysUser) Login(userLogin SysUserLogin) (roles []string, err error) {
-	var user SysUser
-	user.Username = userLogin.Username
-	err = global.Db.Where(&user).Preload("RoleGroups").First(&user).Error
+// Update 更新用户
+func (SysUser) Update(sysUser SysUser) (err error) {
+	// 记录更新用户的权限ID信息，用户删除权限组
+	roleIds := make(map[int64]bool)
+	for _, role := range sysUser.RoleGroups {
+		// map默认为false，所以用true记录
+		roleIds[role.RoleId] = true
+	}
 
-	if err != nil {
-		global.Logger.Errorf("查询用户失败, err: %s", err.Error())
-		return roles, errors.New("查询用户失败")
+	// 更新数据
+	// 在更新时，会自动添加新增的role信息，所以后续只需要删除对应的role即可
+	// gorm在更新时不会更新0值，所以强制sex性别进行更新
+	err = global.Db.Updates(&sysUser).Error
+
+	err = global.Db.Where(&SysUser{
+		IDModel: model.IDModel{
+			ID: sysUser.ID,
+		},
+	}).Preload("RoleGroups").First(&sysUser).Error
+
+	// 删除对应外键关系
+	for _, role := range sysUser.RoleGroups {
+		if !roleIds[role.RoleId] {
+			// admin特殊权限，不允许删除
+			if sysUser.Username == "admin" && role.RoleName == "admin" {
+				continue
+			}
+			err = global.Db.Model(&sysUser).Association("RoleGroups").Delete(&RoleGroup{
+				RoleId: role.RoleId,
+			})
+		}
+	}
+	return
+}
+
+func (SysUser) Delete(idModel model.IDModel) (err error) {
+	var user SysUser
+
+	if err = global.Db.Where(&SysUser{
+		IDModel: idModel,
+	}).First(&user).Error; err != nil {
+		return err
+	}
+
+	if user.Username == "admin" {
+		return errors.New("admin 用户不允许删除")
+	} else {
+		return global.Db.Where(&SysUser{
+			IDModel: idModel,
+		}).Delete(&SysUser{}).Error
+	}
+}
+
+// Login 用户登陆
+func (SysUser) Login(sysUserLogin SysUserLogin) (sysUser SysUser, err error) {
+	sysUser.Username = sysUserLogin.Username
+
+	if err = global.Db.Model(&sysUser).Preload("RoleGroups").First(&sysUser).Error; err != nil {
+		global.Logger.Errorf("[DataBase] 数据库搜索查询用户失败: %s", err.Error())
+		return sysUser, errors.New("查询用户失败")
 	} else {
 		// 密码校验
-		err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userLogin.Password))
-		if err != nil {
-			return roles, errors.New("用户名密码错误")
+		if err = bcrypt.CompareHashAndPassword([]byte(sysUser.Password), []byte(sysUserLogin.Password)); err != nil {
+			global.Logger.Errorf("用户名或密码错误: %s", err.Error())
+			return sysUser, errors.New("用户名或密码错误")
 		} else {
-			for _, role := range user.RoleGroups {
-				roles = append(roles, role.RoleName)
-			}
-			return roles, nil
+			return sysUser, nil
 		}
 	}
 }
@@ -52,56 +99,8 @@ func (SysUser) Insert(user SysUser) (err error) {
 	}
 }
 
-// Update 更新用户
-func (SysUser) Update(user SysUser) (err error) {
-	// 记录更新用户的权限ID信息，用户删除权限组
-	roleIds := make(map[int64]bool)
-	for _, role := range user.RoleGroups {
-		// map默认为false，所以用true记录
-		roleIds[role.RoleId] = true
-	}
-
-	// 更新数据
-	// 在更新时，会自动添加新增的role信息，所以后续只需要删除对应的role即可
-	err = global.Db.Select("sex").Updates(&user).Error
-
-	err = global.Db.Where(&SysUser{
-		UserId: user.UserId,
-	}).Preload("RoleGroups").First(&user).Error
-
-	// 删除对应外键关系
-	for _, role := range user.RoleGroups {
-		if !roleIds[role.RoleId] {
-			// admin特殊权限，不允许删除
-			if user.Username == "admin" && role.RoleName == "admin" {
-				continue
-			}
-			err = global.Db.Model(&user).Association("RoleGroups").Delete(&RoleGroup{
-				RoleId: role.RoleId,
-			})
-		}
-	}
-	return
-}
-
-func (SysUser) Delete(userId int64) (err error) {
-	var user SysUser
-	err = global.Db.Where(&SysUser{
-		UserId: userId,
-	}).First(&user).Error
-
-	if err != nil {
-		return
-	} else if user.Username == "admin" {
-		return errors.New("admin 用户不允许删除")
-	}
-
-	return global.Db.Where(&SysUser{
-		UserId: userId,
-	}).Delete(&SysUser{}).Error
-}
-
-func (SysUser) Deletes(userIds []int64) (err error) {
+// Deletes 批量删除用户
+func (SysUser) Deletes(idsModel model.IDsModel) (err error) {
 	var user SysUser
 	err = global.Db.Where(&SysUser{
 		SysUserLogin: SysUserLogin{
@@ -109,37 +108,33 @@ func (SysUser) Deletes(userIds []int64) (err error) {
 		},
 	}).First(&user).Error
 
-	for i := range userIds {
-		if userIds[i] == user.UserId {
-			userIds = append(userIds[:i], userIds[i+1:]...)
+	for i := range idsModel.IDs {
+		if idsModel.IDs[i] == user.ID {
+			idsModel.IDs = append(idsModel.IDs[:i], idsModel.IDs[i+1:]...)
 			break
 		}
 	}
 
-	return global.Db.Model(&SysUser{}).Delete(&SysUser{}, userIds).Error
+	return global.Db.Model(&SysUser{}).Delete(&SysUser{}, idsModel.IDs).Error
 }
 
-func selectUsersByPages(page int64, pageSize int64, keywords string) (total int64, users []SysUser, err error) {
-	db := global.Db.Model(SysUser{})
+func selectUsersByPages(page int64, pageSize int64, keywords string) (total int64, sysUsers []SysUser, err error) {
+	db := global.Db.Model(SysUser{}).Preload("RoleGroups")
+
+	if keywords != "" {
+		db = db.Where("username LIKE ?", "%"+keywords+"%").
+			Or("nickname LIKE ?", "%"+keywords+"%").
+			Or("email LIKE ?", "%"+keywords+"%").
+			Or("phone LIKE ?", "%"+keywords+"%")
+	}
 
 	if err = db.Count(&total).Error; err != nil {
 		return
 	}
 
 	offset := (page - 1) * pageSize
-	if keywords == "" {
-		if err = db.Preload("RoleGroups").Offset(int(offset)).Limit(int(pageSize)).Find(&users).Error; err != nil {
-			return
-		}
-	} else {
-		fmt.Println(fmt.Sprintf("A%sA", keywords))
-		if err = db.Preload("RoleGroups").Where("username LIKE ?", "%"+keywords+"%").
-			Or("nickname LIKE ?", "%"+keywords+"%").
-			Or("email LIKE ?", "%"+keywords+"%").
-			Or("phone LIKE ?", "%"+keywords+"%").Offset(int(offset)).Limit(int(pageSize)).Find(&users).Error; err != nil {
-			return
-		}
-	}
+
+	err = db.Offset(int(offset)).Limit(int(pageSize)).Find(&sysUsers).Error
 
 	return
 }
