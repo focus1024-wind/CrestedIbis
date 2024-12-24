@@ -165,7 +165,7 @@ func GetUsers(c *gin.Context) {
 		panic(http.StatusBadRequest)
 	}
 
-	total, data, err := selectUsersByPages(page, pageSize, keywords)
+	total, data, err := SysUser{}.SelectUsers(page, pageSize, keywords)
 
 	if err != nil {
 		global.Logger.Errorf(err.Error())

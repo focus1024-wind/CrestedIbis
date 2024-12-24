@@ -43,6 +43,7 @@ func (SysUser) Update(sysUser SysUser) (err error) {
 	return
 }
 
+// Delete 删除用户
 func (SysUser) Delete(idModel model.IDModel) (err error) {
 	var user SysUser
 
@@ -99,26 +100,7 @@ func (SysUser) Insert(user SysUser) (err error) {
 	}
 }
 
-// Deletes 批量删除用户
-func (SysUser) Deletes(idsModel model.IDsModel) (err error) {
-	var user SysUser
-	err = global.Db.Where(&SysUser{
-		SysUserLogin: SysUserLogin{
-			Username: "admin",
-		},
-	}).First(&user).Error
-
-	for i := range idsModel.IDs {
-		if idsModel.IDs[i] == user.ID {
-			idsModel.IDs = append(idsModel.IDs[:i], idsModel.IDs[i+1:]...)
-			break
-		}
-	}
-
-	return global.Db.Model(&SysUser{}).Delete(&SysUser{}, idsModel.IDs).Error
-}
-
-func selectUsersByPages(page int64, pageSize int64, keywords string) (total int64, sysUsers []SysUser, err error) {
+func (SysUser) SelectUsers(page int64, pageSize int64, keywords string) (total int64, sysUsers []SysUser, err error) {
 	db := global.Db.Model(SysUser{}).Preload("RoleGroups")
 
 	if keywords != "" {
@@ -137,6 +119,25 @@ func selectUsersByPages(page int64, pageSize int64, keywords string) (total int6
 	err = db.Offset(int(offset)).Limit(int(pageSize)).Find(&sysUsers).Error
 
 	return
+}
+
+// Deletes 批量删除用户
+func (SysUser) Deletes(idsModel model.IDsModel) (err error) {
+	var user SysUser
+	err = global.Db.Where(&SysUser{
+		SysUserLogin: SysUserLogin{
+			Username: "admin",
+		},
+	}).First(&user).Error
+
+	for i := range idsModel.IDs {
+		if idsModel.IDs[i] == user.ID {
+			idsModel.IDs = append(idsModel.IDs[:i], idsModel.IDs[i+1:]...)
+			break
+		}
+	}
+
+	return global.Db.Model(&SysUser{}).Delete(&SysUser{}, idsModel.IDs).Error
 }
 
 func updateUserPassword(username string, password string) (err error) {
