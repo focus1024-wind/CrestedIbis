@@ -1703,7 +1703,7 @@ const docTemplate = `{
         },
         "/system/admin/password": {
             "post": {
-                "description": "搜索用户",
+                "description": "修改用户密码",
                 "consumes": [
                     "application/json"
                 ],
@@ -1741,12 +1741,6 @@ const docTemplate = `{
                     "200": {
                         "description": "修改用户密码成功",
                         "schema": {
-                            "$ref": "#/definitions/model.HttpResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "修改用户密码失败",
-                        "schema": {
                             "allOf": [
                                 {
                                     "$ref": "#/definitions/model.HttpResponse"
@@ -1755,61 +1749,15 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "string"
+                                            "type": "object"
                                         }
                                     }
                                 }
                             ]
                         }
-                    }
-                }
-            }
-        },
-        "/system/admin/user": {
-            "delete": {
-                "description": "删除用户",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "超级用户操作 /system/admin"
-                ],
-                "summary": "删除用户",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "访问token",
-                        "name": "Authorization",
-                        "in": "header"
-                    },
-                    {
-                        "type": "string",
-                        "description": "访问token",
-                        "name": "access_token",
-                        "in": "query"
-                    },
-                    {
-                        "description": "用户名",
-                        "name": "SysUsername",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/user.SysUsername"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "删除用户成功",
-                        "schema": {
-                            "$ref": "#/definitions/model.HttpResponse"
-                        }
                     },
                     "500": {
-                        "description": "删除用户失败",
+                        "description": "修改用户密码失败",
                         "schema": {
                             "allOf": [
                                 {
@@ -3274,15 +3222,6 @@ const docTemplate = `{
                 },
                 "user": {
                     "$ref": "#/definitions/user.SysUser"
-                }
-            }
-        },
-        "user.SysUsername": {
-            "type": "object",
-            "properties": {
-                "username": {
-                    "type": "string",
-                    "example": "admin"
                 }
             }
         },

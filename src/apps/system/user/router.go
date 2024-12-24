@@ -3,6 +3,12 @@ package user
 import "CrestedIbis/src/global"
 
 func InitSystemUserRouter() {
+	// 超级管理员接口
+	systemAdminRouter := global.HttpEngine.Group("/system/admin")
+	{
+		systemAdminRouter.POST("/password", AdminChangePassword)
+	}
+
 	// 用户接口
 	systemUserRouter := global.HttpEngine.Group("/system/user")
 	{
@@ -12,13 +18,6 @@ func InitSystemUserRouter() {
 		systemUserRouter.POST("/register", Register)
 		systemUserRouter.GET("/users", GetUsers)
 		systemUserRouter.DELETE("/users", DeleteUsers)
-	}
-
-	systemAdminRouter := global.HttpEngine.Group("/system/admin")
-	{
-		systemAdminRouter.GET("/users", GetUsers)
-		systemAdminRouter.POST("/password", AdminChangePassword)
-		systemAdminRouter.DELETE("/user", AdminDeleteUser)
 	}
 
 	systemRoleRouter := global.HttpEngine.Group("/system/role")

@@ -347,12 +347,6 @@ definitions:
       user:
         $ref: '#/definitions/user.SysUser'
     type: object
-  user.SysUsername:
-    properties:
-      username:
-        example: admin
-        type: string
-    type: object
   utils.CasbinRule:
     properties:
       id:
@@ -1379,7 +1373,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: 搜索用户
+      description: 修改用户密码
       parameters:
       - description: 访问token
         in: header
@@ -1401,7 +1395,12 @@ paths:
         "200":
           description: 修改用户密码成功
           schema:
-            $ref: '#/definitions/model.HttpResponse'
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
         "500":
           description: 修改用户密码失败
           schema:
@@ -1412,45 +1411,6 @@ paths:
                   type: string
               type: object
       summary: 修改用户密码
-      tags:
-      - 超级用户操作 /system/admin
-  /system/admin/user:
-    delete:
-      consumes:
-      - application/json
-      description: 删除用户
-      parameters:
-      - description: 访问token
-        in: header
-        name: Authorization
-        type: string
-      - description: 访问token
-        in: query
-        name: access_token
-        type: string
-      - description: 用户名
-        in: body
-        name: SysUsername
-        required: true
-        schema:
-          $ref: '#/definitions/user.SysUsername'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 删除用户成功
-          schema:
-            $ref: '#/definitions/model.HttpResponse'
-        "500":
-          description: 删除用户失败
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpResponse'
-            - properties:
-                data:
-                  type: string
-              type: object
-      summary: 删除用户
       tags:
       - 超级用户操作 /system/admin
   /system/role:

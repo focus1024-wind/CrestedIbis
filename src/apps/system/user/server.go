@@ -8,6 +8,13 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// UpdatePassword 修改用户密码
+func (SysUser) UpdatePassword(sysUserLogin SysUserLogin) (err error) {
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(sysUserLogin.Password), bcrypt.DefaultCost)
+	err = global.Db.Model(&SysUser{}).Where("username = ?", sysUserLogin.Username).Update("password", string(hashedPassword)).Error
+	return
+}
+
 // Update 更新用户
 func (SysUser) Update(sysUser SysUser) (err error) {
 	// 记录更新用户的权限ID信息，用户删除权限组
@@ -15,6 +22,13 @@ func (SysUser) Update(sysUser SysUser) (err error) {
 	for _, role := range sysUser.RoleGroups {
 		// map默认为false，所以用true记录
 		roleIds[role.RoleId] = true
+	}
+
+	if sysUser.Password != "" {
+		// 若密码不为空，对密码进行加密
+		// 密码加盐加密
+		password, _ := bcrypt.GenerateFromPassword([]byte(sysUser.Password), bcrypt.DefaultCost)
+		sysUser.Password = string(password)
 	}
 
 	// 更新数据
@@ -81,11 +95,11 @@ func (SysUser) Login(sysUserLogin SysUserLogin) (sysUser SysUser, err error) {
 }
 
 // Insert 新增用户
-func (SysUser) Insert(user SysUser) (err error) {
+func (SysUser) Insert(sysUser SysUser) (err error) {
 	var count int64
 	global.Db.Model(&SysUser{}).Where(&SysUser{
 		SysUserLogin: SysUserLogin{
-			Username: user.Username,
+			Username: sysUser.Username,
 		},
 	}).Count(&count)
 
@@ -93,9 +107,9 @@ func (SysUser) Insert(user SysUser) (err error) {
 		return errors.New("用户已存在")
 	} else {
 		// 密码加盐加密
-		password, _ := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-		user.Password = string(password)
-		err = global.Db.Create(&user).Error
+		password, _ := bcrypt.GenerateFromPassword([]byte(sysUser.Password), bcrypt.DefaultCost)
+		sysUser.Password = string(password)
+		err = global.Db.Create(&sysUser).Error
 		return err
 	}
 }
@@ -138,19 +152,6 @@ func (SysUser) Deletes(idsModel model.IDsModel) (err error) {
 	}
 
 	return global.Db.Model(&SysUser{}).Delete(&SysUser{}, idsModel.IDs).Error
-}
-
-func updateUserPassword(username string, password string) (err error) {
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	err = global.Db.Model(&SysUser{}).Where("username = ?", username).Update("password", string(hashedPassword)).Error
-	return
-}
-
-func deleteUser(username string) (err error) {
-	if username == "admin" {
-		return errors.New("admin 用户不允许删除")
-	}
-	return global.Db.Where("username = ?", username).Delete(&SysUser{}).Error
 }
 
 func checkRole(id int64) (err error) {

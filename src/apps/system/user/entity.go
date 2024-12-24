@@ -68,8 +68,3 @@ type RoleRuleUpdateEntity struct {
 	RoleId int64              `json:"role_id"`
 	Rules  []utils.CasbinRule `json:"rules"`
 }
-
-type UserIdsEntity struct {
-	Id  int64   `json:"id"`
-	Ids []int64 `json:"ids"`
-}

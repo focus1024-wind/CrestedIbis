@@ -10,6 +10,34 @@ import (
 	"strconv"
 )
 
+// AdminChangePassword 修改用户密码
+//
+//	@Summary		修改用户密码
+//	@Version		0.0.1
+//	@Description	修改用户密码
+//	@Tags			超级用户操作 /system/admin
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string							false	"访问token"
+//	@Param			access_token	query		string							false	"访问token"
+//	@Param			SysUserLogin	body		SysUserLogin					true	"用户名、密码"
+//	@Success		200				{object}	model.HttpResponse{data=nil}	"修改用户密码成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}	"修改用户密码失败"
+//	@Router			/system/admin/password [POST]
+func AdminChangePassword(c *gin.Context) {
+	var sysUserLogin SysUserLogin
+	if err := c.ShouldBind(&sysUserLogin); err != nil {
+		panic(http.StatusBadRequest)
+	} else {
+		err = SysUser{}.UpdatePassword(sysUserLogin)
+		if err != nil {
+			model.HttpResponse{}.FailGin(c, "修改用户密码失败")
+		} else {
+			model.HttpResponse{}.OkGin(c, nil)
+		}
+	}
+}
+
 // UpdateUser 更新用户
 //
 //	@Summary		更新用户
@@ -202,62 +230,6 @@ func DeleteUsers(c *gin.Context) {
 		panic(http.StatusBadRequest)
 	} else {
 		err = SysUser{}.Deletes(idsModel)
-		if err != nil {
-			model.HttpResponse{}.FailGin(c, err.Error())
-		} else {
-			model.HttpResponse{}.OkGin(c, nil)
-		}
-	}
-}
-
-// AdminChangePassword 修改用户密码
-//
-//	@Summary		修改用户密码
-//	@Version		0.0.1
-//	@Description	搜索用户
-//	@Tags			超级用户操作 /system/admin
-//	@Accept			json
-//	@Produce		json
-//	@Param			Authorization	header		string							false	"访问token"
-//	@Param			access_token	query		string							false	"访问token"
-//	@Param			SysUserLogin	body		SysUserLogin					true	"用户名、密码"
-//	@Success		200				{object}	model.HttpResponse{}			"修改用户密码成功"
-//	@Failure		500				{object}	model.HttpResponse{data=string}	"修改用户密码失败"
-//	@Router			/system/admin/password [POST]
-func AdminChangePassword(c *gin.Context) {
-	var sysUserLogin SysUserLogin
-	if err := c.ShouldBind(&sysUserLogin); err != nil {
-		panic(http.StatusBadRequest)
-	} else {
-		err = updateUserPassword(sysUserLogin.Username, sysUserLogin.Password)
-		if err != nil {
-			model.HttpResponse{}.FailGin(c, "修改用户密码失败")
-		} else {
-			model.HttpResponse{}.OkGin(c, nil)
-		}
-	}
-}
-
-// AdminDeleteUser 删除用户
-//
-//	@Summary		删除用户
-//	@Version		0.0.1
-//	@Description	删除用户
-//	@Tags			超级用户操作 /system/admin
-//	@Accept			json
-//	@Produce		json
-//	@Param			Authorization	header		string							false	"访问token"
-//	@Param			access_token	query		string							false	"访问token"
-//	@Param			SysUsername		body		SysUsername						true	"用户名"
-//	@Success		200				{object}	model.HttpResponse{}			"删除用户成功"
-//	@Failure		500				{object}	model.HttpResponse{data=string}	"删除用户失败"
-//	@Router			/system/admin/user [DELETE]
-func AdminDeleteUser(c *gin.Context) {
-	var sysUsername SysUsername
-	if err := c.ShouldBind(&sysUsername); err != nil {
-		panic(http.StatusBadRequest)
-	} else {
-		err = deleteUser(sysUsername.Username)
 		if err != nil {
 			model.HttpResponse{}.FailGin(c, err.Error())
 		} else {
