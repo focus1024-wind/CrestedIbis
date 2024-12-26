@@ -31,11 +31,6 @@ type SysUser struct {
 	model.BaseModel
 }
 
-type SysUserLoginResponse struct {
-	SysUser     `json:"user"`
-	AccessToken string `json:"access_token"`
-}
-
 // MarshalJSON 通过 MarshalJSON 序列化用户，避免隐私数据暴露
 func (sysUser *SysUser) MarshalJSON() ([]byte, error) {
 	sysUser.Password = ""
@@ -43,6 +38,16 @@ func (sysUser *SysUser) MarshalJSON() ([]byte, error) {
 		sysUser.Nickname = sysUser.Username
 	}
 	return json.Marshal(*sysUser)
+}
+
+type SysUserLoginResponse struct {
+	SysUser     `json:"user"`
+	AccessToken string `json:"access_token"`
+}
+
+func (sysUserLoginResponse *SysUserLoginResponse) MarshalJSON() ([]byte, error) {
+	sysUserLoginResponse.Password = ""
+	return json.Marshal(*sysUserLoginResponse)
 }
 
 /**

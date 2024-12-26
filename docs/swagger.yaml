@@ -1146,24 +1146,70 @@ paths:
       - application/json
       responses:
         "200":
-          description: 注册成功，响应点播地址
+          description: 点播成功，响应点播地址
           schema:
             allOf:
             - $ref: '#/definitions/model.HttpResponse'
             - properties:
                 data:
-                  type: string
+                  additionalProperties:
+                    type: string
+                  type: object
               type: object
         "500":
-          description: 注册失败，响应失败信息
+          description: 点播失败
           schema:
             allOf:
             - $ref: '#/definitions/model.HttpResponse'
             - properties:
                 data:
-                  type: string
+                  type: object
               type: object
       summary: Ipc设备点播
+      tags:
+      - 设备点播 /ipc/media
+  /ipc/media/stop:
+    post:
+      consumes:
+      - application/json
+      description: Ipc设备停止点播
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 点播参数
+        in: body
+        name: IpcMediaPlayModel
+        required: true
+        schema:
+          $ref: '#/definitions/ipc_media.IpcMediaPlayModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 停止点播成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: 停止点播失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Ipc设备停止点播
       tags:
       - 设备点播 /ipc/media
   /site:

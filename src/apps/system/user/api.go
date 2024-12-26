@@ -131,7 +131,11 @@ func Login(c *gin.Context) {
 				model.HttpResponse{}.FailGin(c, "Token生成失败")
 			} else {
 				_ = audit_log.AuditLogLogin{}.Insert(c, sysUserLogin.Username, true, "登陆成功")
-				model.HttpResponse{}.OkGin(c, SysUserLoginResponse{sysUser, token})
+
+				model.HttpResponse{}.OkGin(c, &SysUserLoginResponse{
+					SysUser:     sysUser,
+					AccessToken: token,
+				})
 			}
 		}
 	}

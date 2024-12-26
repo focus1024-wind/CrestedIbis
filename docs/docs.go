@@ -1391,7 +1391,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "注册成功，响应点播地址",
+                        "description": "点播成功，响应点播地址",
                         "schema": {
                             "allOf": [
                                 {
@@ -1401,7 +1401,10 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "string"
+                                            "type": "object",
+                                            "additionalProperties": {
+                                                "type": "string"
+                                            }
                                         }
                                     }
                                 }
@@ -1409,7 +1412,7 @@ const docTemplate = `{
                         }
                     },
                     "500": {
-                        "description": "注册失败，响应失败信息",
+                        "description": "点播失败",
                         "schema": {
                             "allOf": [
                                 {
@@ -1419,7 +1422,83 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "string"
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/ipc/media/stop": {
+            "post": {
+                "description": "Ipc设备停止点播",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "设备点播 /ipc/media"
+                ],
+                "summary": "Ipc设备停止点播",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "description": "点播参数",
+                        "name": "IpcMediaPlayModel",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ipc_media.IpcMediaPlayModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "停止点播成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "停止点播失败",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
                                         }
                                     }
                                 }
