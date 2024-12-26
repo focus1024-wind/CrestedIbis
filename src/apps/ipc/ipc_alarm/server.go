@@ -77,7 +77,7 @@ func (IpcAlarm) Deletes(ids model.IDsModel) (err error) {
 	}
 
 	if len(errDeleteAlarmIds) > 0 {
-		return errors.New(fmt.Sprintf("%v 删除失败", errDeleteAlarmIds))
+		return errors.New(fmt.Sprintf("%s 删除失败", errDeleteAlarmIds))
 	}
 
 	// 批量删除

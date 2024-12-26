@@ -297,9 +297,231 @@ const docTemplate = `{
                 }
             }
         },
+        "/ipc/channel": {
+            "post": {
+                "description": "更新IPC通道",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "IPC设备通道 /ipc/channel"
+                ],
+                "summary": "更新IPC通道",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "description": "设备通道信息",
+                        "name": "IpcChannel",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/ipc_device.IpcChannel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "更新IPC通道成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "更新IPC通道失败",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/ipc/channel/channels": {
+            "get": {
+                "description": "获取设备通道列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "IPC设备通道 /ipc/channel"
+                ],
+                "summary": "获取设备通道列表",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "设备ID",
+                        "name": "device_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "查询数据成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/ipc_device.IpcChannel"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "查询数据失败",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/ipc/channel/upload_image": {
+            "post": {
+                "description": "GB28181图像抓拍，图片上传接口",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "IPC设备通道 /ipc/channel"
+                ],
+                "summary": "IPC图像上传",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "上传图片",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "上传图片成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "上传图片失败",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/ipc/device": {
             "get": {
-                "description": "根据device_id获取IPC设备",
+                "description": "获取IPC设备",
                 "consumes": [
                     "application/json"
                 ],
@@ -309,7 +531,7 @@ const docTemplate = `{
                 "tags": [
                     "IPC设备 /ipc/device"
                 ],
-                "summary": "根据device_id获取IPC设备",
+                "summary": "获取IPC设备",
                 "parameters": [
                     {
                         "type": "string",
@@ -417,7 +639,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/ipc_device.IpcDevice"
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -471,17 +693,17 @@ const docTemplate = `{
                     },
                     {
                         "description": "设备ID",
-                        "name": "IpcDeviceID",
+                        "name": "IpcDeviceIDModel",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ipc_device.IpcDeviceID"
+                            "$ref": "#/definitions/ipc_device.IpcDeviceIDModel"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "查询数据成功",
+                        "description": "删除IPC设备成功",
                         "schema": {
                             "allOf": [
                                 {
@@ -491,7 +713,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "string"
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -499,160 +721,7 @@ const docTemplate = `{
                         }
                     },
                     "500": {
-                        "description": "查询数据失败",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/ipc/device/channel": {
-            "post": {
-                "description": "更新IPC通道",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "IPC设备 /ipc/device"
-                ],
-                "summary": "更新IPC通道",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "访问token",
-                        "name": "Authorization",
-                        "in": "header"
-                    },
-                    {
-                        "type": "string",
-                        "description": "访问token",
-                        "name": "access_token",
-                        "in": "query"
-                    },
-                    {
-                        "description": "设备信息",
-                        "name": "IpcDevice",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/ipc_device.IpcDevice"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "更新成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/ipc_device.IpcChannel"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "查询数据失败",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/ipc/device/channels": {
-            "get": {
-                "description": "查询GB28181 设备对应通道信息",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "IPC设备 /ipc/device"
-                ],
-                "summary": "获取设备通道信息",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "访问token",
-                        "name": "Authorization",
-                        "in": "header"
-                    },
-                    {
-                        "type": "string",
-                        "description": "访问token",
-                        "name": "access_token",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "设备ID",
-                        "name": "device_id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "查询数据成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/ipc_device.IpcChannel"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "查询数据失败",
+                        "description": "删除IPC设备失败",
                         "schema": {
                             "allOf": [
                                 {
@@ -674,7 +743,7 @@ const docTemplate = `{
         },
         "/ipc/device/devices": {
             "get": {
-                "description": "分页查询GB28181 IpcDevice设备",
+                "description": "获取IPC设备列表",
                 "consumes": [
                     "application/json"
                 ],
@@ -684,7 +753,7 @@ const docTemplate = `{
                 "tags": [
                     "IPC设备 /ipc/device"
                 ],
-                "summary": "分页查询IpcDevice设备",
+                "summary": "获取IPC设备列表",
                 "parameters": [
                     {
                         "type": "string",
@@ -709,11 +778,23 @@ const docTemplate = `{
                         "description": "每页查询数量，默认值: 15",
                         "name": "page_size",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "设备状态，支持: ALl、ON、OFF，默认值: ALL",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "设备模型查询信息",
+                        "name": "keywords",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "分页查询成功",
+                        "description": "获取IPC设备列表成功",
                         "schema": {
                             "allOf": [
                                 {
@@ -723,7 +804,22 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/ipc_device.IpcDevicePage"
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/model.BasePageResponse"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "data": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/ipc_device.IpcDevice"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
                                         }
                                     }
                                 }
@@ -731,7 +827,7 @@ const docTemplate = `{
                         }
                     },
                     "500": {
-                        "description": "查询数据失败",
+                        "description": "获取IPC设备列表失败",
                         "schema": {
                             "allOf": [
                                 {
@@ -751,7 +847,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "删除IPC设备及对应通道，该删除仅为删除数据库记录，不影响IPC设备的重新注册",
+                "description": "批量删除IPC设备及对应通道，该删除仅为删除数据库记录，不影响IPC设备的重新注册",
                 "consumes": [
                     "application/json"
                 ],
@@ -761,7 +857,7 @@ const docTemplate = `{
                 "tags": [
                     "IPC设备 /ipc/device"
                 ],
-                "summary": "删除IPC设备",
+                "summary": "批量删除IPC设备",
                 "parameters": [
                     {
                         "type": "string",
@@ -776,18 +872,18 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "description": "设备ID",
-                        "name": "IpcDeviceID",
+                        "description": "设备ID列表",
+                        "name": "IpcDeviceIDsModel",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/ipc_device.IpcDeviceID"
+                            "$ref": "#/definitions/ipc_device.IpcDeviceIDsModel"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "查询数据成功",
+                        "description": "批量删除IPC设备成功",
                         "schema": {
                             "allOf": [
                                 {
@@ -797,7 +893,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "type": "string"
+                                            "type": "object"
                                         }
                                     }
                                 }
@@ -805,7 +901,7 @@ const docTemplate = `{
                         }
                     },
                     "500": {
-                        "description": "查询数据失败",
+                        "description": "批量删除IPC设备失败",
                         "schema": {
                             "allOf": [
                                 {
@@ -827,7 +923,7 @@ const docTemplate = `{
         },
         "/ipc/device/devices/site_id": {
             "get": {
-                "description": "分页查询GB28181 IpcDevice设备",
+                "description": "根据区域ID查询Ipc设备",
                 "consumes": [
                     "application/json"
                 ],
@@ -837,7 +933,7 @@ const docTemplate = `{
                 "tags": [
                     "IPC设备 /ipc/device"
                 ],
-                "summary": "根据区域ID查询IpcDevice设备",
+                "summary": "根据区域ID查询Ipc设备",
                 "parameters": [
                     {
                         "type": "string",
@@ -871,7 +967,10 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/ipc_device.IpcDevicePage"
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/ipc_device.IpcDevice"
+                                            }
                                         }
                                     }
                                 }
@@ -880,142 +979,6 @@ const docTemplate = `{
                     },
                     "500": {
                         "description": "查询数据失败",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/ipc/device/status": {
-            "get": {
-                "description": "获取设备状态信息，总设备量，在线设备量，离线设备量",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "IPC设备 /ipc/device"
-                ],
-                "summary": "获取设备状态信息",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "访问token",
-                        "name": "Authorization",
-                        "in": "header"
-                    },
-                    {
-                        "type": "string",
-                        "description": "访问token",
-                        "name": "access_token",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "查询数据成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "查询数据失败",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/ipc/device/upload_image": {
-            "post": {
-                "description": "GB28181图像抓拍，图片上传接口",
-                "consumes": [
-                    "multipart/form-data"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "IPC设备 /ipc/device"
-                ],
-                "summary": "IPC图像上传",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "访问token",
-                        "name": "access_token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "file",
-                        "description": "上传图片",
-                        "name": "file",
-                        "in": "formData",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "上传图片成功",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/model.HttpResponse"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "上传图片失败",
                         "schema": {
                             "allOf": [
                                 {
@@ -3092,7 +3055,7 @@ const docTemplate = `{
                 }
             }
         },
-        "ipc_device.IpcDeviceID": {
+        "ipc_device.IpcDeviceIDModel": {
             "type": "object",
             "properties": {
                 "device_id": {
@@ -3100,23 +3063,14 @@ const docTemplate = `{
                 }
             }
         },
-        "ipc_device.IpcDevicePage": {
+        "ipc_device.IpcDeviceIDsModel": {
             "type": "object",
             "properties": {
-                "data": {
+                "device_ids": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/ipc_device.IpcDevice"
+                        "type": "string"
                     }
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "page_size": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
                 }
             }
         },

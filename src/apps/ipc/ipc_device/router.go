@@ -8,12 +8,15 @@ func InitIpcDeviceRouter() {
 		ipcDeviceRouter.GET("", GetIpcDevice)
 		ipcDeviceRouter.POST("", PostIpcDevice)
 		ipcDeviceRouter.DELETE("", DeleteIpcDevice)
+		ipcDeviceRouter.GET("/devices", GetIpcDevices)
 		ipcDeviceRouter.DELETE("/devices", DeleteIpcDevices)
-		ipcDeviceRouter.GET("/status", GetIpcDevicesStatus)
-		ipcDeviceRouter.GET("/devices", GetIpcDevicesByPages)
-		ipcDeviceRouter.GET("/devices/site_id", GetIpcDevicesBySite)
-		ipcDeviceRouter.POST("/channel", PostIpcChannel)
-		ipcDeviceRouter.GET("/channels", GetIpcChannels)
-		ipcDeviceRouter.POST("/upload_image", IpcUploadImage)
+		ipcDeviceRouter.GET("/devices/site_id", GetIpcDevicesBySiteID)
+	}
+
+	ipcChannelRouter := global.HttpEngine.Group("/ipc/channel")
+	{
+		ipcChannelRouter.POST("", PostIpcChannel)
+		ipcChannelRouter.GET("/channels", GetIpcChannels)
+		ipcChannelRouter.POST("/upload_image", IpcUploadImage)
 	}
 }

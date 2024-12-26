@@ -6,28 +6,30 @@ import (
 	"CrestedIbis/src/global"
 	"CrestedIbis/src/utils"
 	"errors"
+	"fmt"
+	"gorm.io/gorm"
 )
 
-func selectIpcDevice(deviceID string) (device IpcDevice, err error) {
+func (IpcDevice) Select(deviceID string) (device IpcDevice, err error) {
 	err = global.Db.Model(&IpcDevice{}).Where(&IpcDevice{DeviceID: deviceID}).First(&device).Error
 	return
 }
 
-func updateIpcDevice(device IpcDevice) (err error) {
+func (IpcDevice) Update(device IpcDevice) (err error) {
 	if device.DeviceID == "" {
-		return errors.New("device_id is empty")
+		return errors.New("device_id 参数为空")
 	}
-	err = global.Db.Debug().Model(&IpcDevice{}).Where(&IpcDevice{
+	err = global.Db.Model(&IpcDevice{}).Where(&IpcDevice{
 		DeviceID: device.DeviceID,
 	}).Updates(&device).Error
 	if err != nil {
 		global.Logger.Errorf("更新 %s 设备失败：%s", device.DeviceID, err.Error())
-		return errors.New("update device error")
+		return errors.New(fmt.Sprintf("更新 %s 设备失败：%s", device.DeviceID, err.Error()))
 	}
 	return
 }
 
-func deleteIpcDevice(deviceID string) (err error) {
+func (IpcDevice) Delete(deviceID string) (err error) {
 	// 删除对应通道
 	err = global.Db.Model(&IpcChannel{}).Where(&IpcChannel{
 		ParentID: deviceID,
@@ -42,48 +44,57 @@ func deleteIpcDevice(deviceID string) (err error) {
 	return
 }
 
-func deleteIpcDevices(deviceIDs []string) (err error) {
-	for _, deviceID := range deviceIDs {
-		deleteIpcDevice(deviceID)
-	}
-	return
-}
+// SelectIpcDevices 分页搜索IpcDevices
+func (IpcDevice) SelectIpcDevices(page int64, pageSize int64, status string, keywords string) (total int64, ipcDevices []IpcDevice, err error) {
+	db := global.Db.Model(IpcDevice{}).Preload("IpcChannels").Preload("Site", site.ExpandSitePreload)
 
-// selectIpcDeviceByPages 分页搜索IpcDevices
-// page: 页码，pageSize: 每页的数量
-func selectIpcDevicesByPages(page int64, pageSize int64, status string, keywords string) (total int64, ipcDevices []IpcDevice, err error) {
-	db := global.Db.Model(IpcDevice{})
-
-	if err = db.Count(&total).Error; err != nil {
-		return
-	}
-
-	offset := (page - 1) * pageSize
-	if keywords != "" {
-		db = db.Where("device_id LIKE ?", "%"+keywords+"%")
-	}
 	if status == gb28181_server.DeviceOnLineStatus || status == gb28181_server.DeviceOffLineStatus {
 		db = db.Where("status LIKE ?", status)
 	}
-	if err = db.Debug().Preload("IpcChannels").Preload("Site", site.ExpandSitePreload).Order("id").Offset(int(offset)).Limit(int(pageSize)).Find(&ipcDevices).Error; err != nil {
+	if keywords != "" {
+		db = db.Where("device_id LIKE ?", "%"+keywords+"%")
+	}
+
+	db = db.Session(&gorm.Session{})
+
+	if err = db.Count(&total).Error; err != nil {
 		return
+	} else {
+		offset := (page - 1) * pageSize
+		err = db.Order("id").Offset(int(offset)).Limit(int(pageSize)).Find(&ipcDevices).Error
+		return
+	}
+}
+
+func (IpcDevice) Deletes(deviceIDs []string) (err error) {
+	var errDeleteDeviceIds []string
+	for _, deviceID := range deviceIDs {
+		err = IpcDevice{}.Delete(deviceID)
+		if err != nil {
+			errDeleteDeviceIds = append(errDeleteDeviceIds, deviceID)
+			err = nil
+		}
+	}
+
+	if len(errDeleteDeviceIds) > 0 {
+		return errors.New(fmt.Sprintf("%s 删除失败", errDeleteDeviceIds))
 	}
 	return
 }
 
-func selectIpcDevicesBySiteId(site_id *int64) (ipcDevices []IpcDevice, err error) {
+func (IpcDevice) SelectBySiteID(siteID *int64) (ipcDevices []IpcDevice, err error) {
 	err = global.Db.Model(&IpcDevice{}).Where(&IpcDevice{
-		SiteId: site_id,
+		SiteId: siteID,
 	}).Preload("IpcChannels").Preload("Site", site.ExpandSitePreload).
 		Order("id").Find(&ipcDevices).Error
 	return
 }
 
-func updateIpcChannel(channel IpcChannel) (err error) {
+func (IpcChannel) Update(channel IpcChannel) (err error) {
 	if channel.ParentID == "" || channel.DeviceID == "" {
-		return errors.New("parent_id or device_id is empty")
+		return errors.New("parent_id 或 device_id 为空")
 	}
-	err = global.Db.Debug().Model(&IpcChannel{}).Where(&IpcChannel{
+	err = global.Db.Model(&IpcChannel{}).Where(&IpcChannel{
 		ParentID: channel.ParentID,
 		DeviceID: channel.DeviceID,
 	}).Select("ptz_type").Updates(&channel).Error
@@ -94,7 +105,7 @@ func updateIpcChannel(channel IpcChannel) (err error) {
 	return
 }
 
-func selectIpcChannels(deviceID string) (channels []IpcChannel, err error) {
+func (IpcChannel) SelectChannels(deviceID string) (channels []IpcChannel, err error) {
 	err = global.Db.Where(&IpcChannel{ParentID: deviceID}).Find(&channels).Error
 	return
 }

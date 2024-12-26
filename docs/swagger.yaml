@@ -127,23 +127,17 @@ definitions:
       updated_time:
         type: string
     type: object
-  ipc_device.IpcDeviceID:
+  ipc_device.IpcDeviceIDModel:
     properties:
       device_id:
         type: string
     type: object
-  ipc_device.IpcDevicePage:
+  ipc_device.IpcDeviceIDsModel:
     properties:
-      data:
+      device_ids:
         items:
-          $ref: '#/definitions/ipc_device.IpcDevice'
+          type: string
         type: array
-      page:
-        type: integer
-      page_size:
-        type: integer
-      total:
-        type: integer
     type: object
   ipc_device.simpleSite:
     properties:
@@ -470,136 +464,7 @@ paths:
       summary: 获取IPC设备告警列表
       tags:
       - IPC告警 /ipc/alarm
-  /ipc/device:
-    delete:
-      consumes:
-      - application/json
-      description: 删除IPC设备及对应通道，该删除仅为删除数据库记录，不影响IPC设备的重新注册
-      parameters:
-      - description: 访问token
-        in: header
-        name: Authorization
-        type: string
-      - description: 访问token
-        in: query
-        name: access_token
-        type: string
-      - description: 设备ID
-        in: body
-        name: IpcDeviceID
-        required: true
-        schema:
-          $ref: '#/definitions/ipc_device.IpcDeviceID'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 查询数据成功
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpResponse'
-            - properties:
-                data:
-                  type: string
-              type: object
-        "500":
-          description: 查询数据失败
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpResponse'
-            - properties:
-                data:
-                  type: string
-              type: object
-      summary: 删除IPC设备
-      tags:
-      - IPC设备 /ipc/device
-    get:
-      consumes:
-      - application/json
-      description: 根据device_id获取IPC设备
-      parameters:
-      - description: 访问token
-        in: header
-        name: Authorization
-        type: string
-      - description: 访问token
-        in: query
-        name: access_token
-        type: string
-      - description: 设备ID
-        in: query
-        name: device_id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 查询成功
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/ipc_device.IpcDevice'
-              type: object
-        "500":
-          description: 查询数据失败
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpResponse'
-            - properties:
-                data:
-                  type: string
-              type: object
-      summary: 根据device_id获取IPC设备
-      tags:
-      - IPC设备 /ipc/device
-    post:
-      consumes:
-      - application/json
-      description: 更新IPC设备
-      parameters:
-      - description: 访问token
-        in: header
-        name: Authorization
-        type: string
-      - description: 访问token
-        in: query
-        name: access_token
-        type: string
-      - description: 设备信息
-        in: body
-        name: IpcDevice
-        required: true
-        schema:
-          $ref: '#/definitions/ipc_device.IpcDevice'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 更新成功
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/ipc_device.IpcDevice'
-              type: object
-        "500":
-          description: 查询数据失败
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpResponse'
-            - properties:
-                data:
-                  type: string
-              type: object
-      summary: 更新IPC设备
-      tags:
-      - IPC设备 /ipc/device
-  /ipc/device/channel:
+  /ipc/channel:
     post:
       consumes:
       - application/json
@@ -613,26 +478,26 @@ paths:
         in: query
         name: access_token
         type: string
-      - description: 设备信息
+      - description: 设备通道信息
         in: body
-        name: IpcDevice
+        name: IpcChannel
         required: true
         schema:
-          $ref: '#/definitions/ipc_device.IpcDevice'
+          $ref: '#/definitions/ipc_device.IpcChannel'
       produces:
       - application/json
       responses:
         "200":
-          description: 更新成功
+          description: 更新IPC通道成功
           schema:
             allOf:
             - $ref: '#/definitions/model.HttpResponse'
             - properties:
                 data:
-                  $ref: '#/definitions/ipc_device.IpcChannel'
+                  type: object
               type: object
         "500":
-          description: 查询数据失败
+          description: 更新IPC通道失败
           schema:
             allOf:
             - $ref: '#/definitions/model.HttpResponse'
@@ -642,12 +507,12 @@ paths:
               type: object
       summary: 更新IPC通道
       tags:
-      - IPC设备 /ipc/device
-  /ipc/device/channels:
+      - IPC设备通道 /ipc/channel
+  /ipc/channel/channels:
     get:
       consumes:
       - application/json
-      description: 查询GB28181 设备对应通道信息
+      description: 获取设备通道列表
       parameters:
       - description: 访问token
         in: header
@@ -685,180 +550,10 @@ paths:
                 data:
                   type: string
               type: object
-      summary: 获取设备通道信息
+      summary: 获取设备通道列表
       tags:
-      - IPC设备 /ipc/device
-  /ipc/device/devices:
-    delete:
-      consumes:
-      - application/json
-      description: 删除IPC设备及对应通道，该删除仅为删除数据库记录，不影响IPC设备的重新注册
-      parameters:
-      - description: 访问token
-        in: header
-        name: Authorization
-        type: string
-      - description: 访问token
-        in: query
-        name: access_token
-        type: string
-      - description: 设备ID
-        in: body
-        name: IpcDeviceID
-        required: true
-        schema:
-          $ref: '#/definitions/ipc_device.IpcDeviceID'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 查询数据成功
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpResponse'
-            - properties:
-                data:
-                  type: string
-              type: object
-        "500":
-          description: 查询数据失败
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpResponse'
-            - properties:
-                data:
-                  type: string
-              type: object
-      summary: 删除IPC设备
-      tags:
-      - IPC设备 /ipc/device
-    get:
-      consumes:
-      - application/json
-      description: 分页查询GB28181 IpcDevice设备
-      parameters:
-      - description: 访问token
-        in: header
-        name: Authorization
-        type: string
-      - description: 访问token
-        in: query
-        name: access_token
-        type: string
-      - description: '分页查询页码，默认值: 1'
-        in: query
-        name: page
-        type: integer
-      - description: '每页查询数量，默认值: 15'
-        in: query
-        name: page_size
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 分页查询成功
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/ipc_device.IpcDevicePage'
-              type: object
-        "500":
-          description: 查询数据失败
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpResponse'
-            - properties:
-                data:
-                  type: string
-              type: object
-      summary: 分页查询IpcDevice设备
-      tags:
-      - IPC设备 /ipc/device
-  /ipc/device/devices/site_id:
-    get:
-      consumes:
-      - application/json
-      description: 分页查询GB28181 IpcDevice设备
-      parameters:
-      - description: 访问token
-        in: header
-        name: Authorization
-        type: string
-      - description: 访问token
-        in: query
-        name: access_token
-        type: string
-      - description: 区域ID
-        in: query
-        name: site_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 查询成功
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/ipc_device.IpcDevicePage'
-              type: object
-        "500":
-          description: 查询数据失败
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpResponse'
-            - properties:
-                data:
-                  type: string
-              type: object
-      summary: 根据区域ID查询IpcDevice设备
-      tags:
-      - IPC设备 /ipc/device
-  /ipc/device/status:
-    get:
-      consumes:
-      - application/json
-      description: 获取设备状态信息，总设备量，在线设备量，离线设备量
-      parameters:
-      - description: 访问token
-        in: header
-        name: Authorization
-        type: string
-      - description: 访问token
-        in: query
-        name: access_token
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: 查询数据成功
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpResponse'
-            - properties:
-                data:
-                  type: string
-              type: object
-        "500":
-          description: 查询数据失败
-          schema:
-            allOf:
-            - $ref: '#/definitions/model.HttpResponse'
-            - properties:
-                data:
-                  type: string
-              type: object
-      summary: 获取设备状态信息
-      tags:
-      - IPC设备 /ipc/device
-  /ipc/device/upload_image:
+      - IPC设备通道 /ipc/channel
+  /ipc/channel/upload_image:
     post:
       consumes:
       - multipart/form-data
@@ -896,6 +591,284 @@ paths:
                   type: string
               type: object
       summary: IPC图像上传
+      tags:
+      - IPC设备通道 /ipc/channel
+  /ipc/device:
+    delete:
+      consumes:
+      - application/json
+      description: 删除IPC设备及对应通道，该删除仅为删除数据库记录，不影响IPC设备的重新注册
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 设备ID
+        in: body
+        name: IpcDeviceIDModel
+        required: true
+        schema:
+          $ref: '#/definitions/ipc_device.IpcDeviceIDModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 删除IPC设备成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: 删除IPC设备失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 删除IPC设备
+      tags:
+      - IPC设备 /ipc/device
+    get:
+      consumes:
+      - application/json
+      description: 获取IPC设备
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 设备ID
+        in: query
+        name: device_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 查询成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/ipc_device.IpcDevice'
+              type: object
+        "500":
+          description: 查询数据失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 获取IPC设备
+      tags:
+      - IPC设备 /ipc/device
+    post:
+      consumes:
+      - application/json
+      description: 更新IPC设备
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 设备信息
+        in: body
+        name: IpcDevice
+        required: true
+        schema:
+          $ref: '#/definitions/ipc_device.IpcDevice'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 更新成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: 查询数据失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 更新IPC设备
+      tags:
+      - IPC设备 /ipc/device
+  /ipc/device/devices:
+    delete:
+      consumes:
+      - application/json
+      description: 批量删除IPC设备及对应通道，该删除仅为删除数据库记录，不影响IPC设备的重新注册
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 设备ID列表
+        in: body
+        name: IpcDeviceIDsModel
+        required: true
+        schema:
+          $ref: '#/definitions/ipc_device.IpcDeviceIDsModel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 批量删除IPC设备成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: 批量删除IPC设备失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 批量删除IPC设备
+      tags:
+      - IPC设备 /ipc/device
+    get:
+      consumes:
+      - application/json
+      description: 获取IPC设备列表
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: '分页查询页码，默认值: 1'
+        in: query
+        name: page
+        type: integer
+      - description: '每页查询数量，默认值: 15'
+        in: query
+        name: page_size
+        type: integer
+      - description: '设备状态，支持: ALl、ON、OFF，默认值: ALL'
+        in: query
+        name: status
+        type: string
+      - description: 设备模型查询信息
+        in: query
+        name: keywords
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取IPC设备列表成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/model.BasePageResponse'
+                  - properties:
+                      data:
+                        items:
+                          $ref: '#/definitions/ipc_device.IpcDevice'
+                        type: array
+                    type: object
+              type: object
+        "500":
+          description: 获取IPC设备列表失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 获取IPC设备列表
+      tags:
+      - IPC设备 /ipc/device
+  /ipc/device/devices/site_id:
+    get:
+      consumes:
+      - application/json
+      description: 根据区域ID查询Ipc设备
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 区域ID
+        in: query
+        name: site_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 查询成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/ipc_device.IpcDevice'
+                  type: array
+              type: object
+        "500":
+          description: 查询数据失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 根据区域ID查询Ipc设备
       tags:
       - IPC设备 /ipc/device
   /ipc/media/play:

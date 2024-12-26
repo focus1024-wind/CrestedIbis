@@ -1,7 +1,6 @@
 package ipc_device
 
 import (
-	"CrestedIbis/gb28181_server"
 	"CrestedIbis/src/global"
 	"CrestedIbis/src/global/model"
 	"CrestedIbis/src/utils"
@@ -13,11 +12,11 @@ import (
 	"strings"
 )
 
-// GetIpcDevice 根据device_id获取IPC设备
+// GetIpcDevice 获取IPC设备
 //
-//	@Summary		根据device_id获取IPC设备
+//	@Summary		获取IPC设备
 //	@Version		0.0.1
-//	@Description	根据device_id获取IPC设备
+//	@Description	获取IPC设备
 //	@Tags			IPC设备 /ipc/device
 //	@Accept			json
 //	@Produce		json
@@ -32,7 +31,7 @@ func GetIpcDevice(c *gin.Context) {
 	if deviceID == "" {
 		panic(http.StatusBadRequest)
 	} else {
-		device, err := selectIpcDevice(deviceID)
+		device, err := IpcDevice{}.Select(deviceID)
 		if err != nil {
 			model.HttpResponse{}.FailGin(c, "查询设备失败")
 		} else {
@@ -49,22 +48,22 @@ func GetIpcDevice(c *gin.Context) {
 //	@Tags			IPC设备 /ipc/device
 //	@Accept			json
 //	@Produce		json
-//	@Param			Authorization	header		string								false	"访问token"
-//	@Param			access_token	query		string								false	"访问token"
-//	@Param			IpcDevice		body		IpcDevice							true	"设备信息"
-//	@Success		200				{object}	model.HttpResponse{data=IpcDevice}	"更新成功"
-//	@Failure		500				{object}	model.HttpResponse{data=string}		"查询数据失败"
+//	@Param			Authorization	header		string							false	"访问token"
+//	@Param			access_token	query		string							false	"访问token"
+//	@Param			IpcDevice		body		IpcDevice						true	"设备信息"
+//	@Success		200				{object}	model.HttpResponse{data=nil}	"更新成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}	"查询数据失败"
 //	@Router			/ipc/device [POST]
 func PostIpcDevice(c *gin.Context) {
 	var ipcDevice IpcDevice
 	if err := c.ShouldBind(&ipcDevice); err != nil {
 		panic(http.StatusBadRequest)
 	}
-	err := updateIpcDevice(ipcDevice)
+	err := IpcDevice{}.Update(ipcDevice)
 	if err != nil {
 		model.HttpResponse{}.FailGin(c, err.Error())
 	} else {
-		model.HttpResponse{}.OkGin(c, ipcDevice)
+		model.HttpResponse{}.OkGin(c, nil)
 	}
 }
 
@@ -76,115 +75,44 @@ func PostIpcDevice(c *gin.Context) {
 //	@Tags			IPC设备 /ipc/device
 //	@Accept			json
 //	@Produce		json
-//	@Param			Authorization	header		string							false	"访问token"
-//	@Param			access_token	query		string							false	"访问token"
-//	@Param			IpcDeviceID		body		IpcDeviceID						true	"设备ID"
-//	@Success		200				{object}	model.HttpResponse{data=string}	"查询数据成功"
-//	@Failure		500				{object}	model.HttpResponse{data=string}	"查询数据失败"
+//	@Param			Authorization		header		string							false	"访问token"
+//	@Param			access_token		query		string							false	"访问token"
+//	@Param			IpcDeviceIDModel	body		IpcDeviceIDModel				true	"设备ID"
+//	@Success		200					{object}	model.HttpResponse{data=nil}	"删除IPC设备成功"
+//	@Failure		500					{object}	model.HttpResponse{data=string}	"删除IPC设备失败"
 //	@Router			/ipc/device [DELETE]
 func DeleteIpcDevice(c *gin.Context) {
-	var deviceID IpcDeviceID
+	var deviceID IpcDeviceIDModel
 	if err := c.ShouldBind(&deviceID); err != nil {
 		panic(http.StatusBadRequest)
 	}
 
-	err := deleteIpcDevice(deviceID.DeviceID)
+	err := IpcDevice{}.Delete(deviceID.DeviceID)
 	if err != nil {
 		model.HttpResponse{}.FailGin(c, "删除设备失败")
 	} else {
-		model.HttpResponse{}.OkGin(c, "删除设备成功")
+		model.HttpResponse{}.OkGin(c, nil)
 	}
 }
 
-// DeleteIpcDevices 删除IPC设备
+// GetIpcDevices 获取IPC设备列表
 //
-//	@Summary		删除IPC设备
+//	@Summary		获取IPC设备列表
 //	@Version		0.0.1
-//	@Description	删除IPC设备及对应通道，该删除仅为删除数据库记录，不影响IPC设备的重新注册
+//	@Description	获取IPC设备列表
 //	@Tags			IPC设备 /ipc/device
 //	@Accept			json
 //	@Produce		json
-//	@Param			Authorization	header		string							false	"访问token"
-//	@Param			access_token	query		string							false	"访问token"
-//	@Param			IpcDeviceID		body		IpcDeviceID						true	"设备ID"
-//	@Success		200				{object}	model.HttpResponse{data=string}	"查询数据成功"
-//	@Failure		500				{object}	model.HttpResponse{data=string}	"查询数据失败"
-//	@Router			/ipc/device/devices [DELETE]
-func DeleteIpcDevices(c *gin.Context) {
-	var idsModel IpcDeviceIDs
-	if err := c.ShouldBind(&idsModel); err != nil {
-		panic(http.StatusBadRequest)
-	}
-
-	err := deleteIpcDevices(idsModel.DeviceIDs)
-	if err != nil {
-		model.HttpResponse{}.FailGin(c, "删除设备失败")
-	} else {
-		model.HttpResponse{}.OkGin(c, "删除设备成功")
-	}
-}
-
-// GetIpcDevicesStatus 获取设备状态信息
-//
-//	@Summary		获取设备状态信息
-//	@Version		0.0.1
-//	@Description	获取设备状态信息，总设备量，在线设备量，离线设备量
-//	@Tags			IPC设备 /ipc/device
-//	@Accept			json
-//	@Produce		json
-//	@Param			Authorization	header		string							false	"访问token"
-//	@Param			access_token	query		string							false	"访问token"
-//	@Success		200				{object}	model.HttpResponse{data=string}	"查询数据成功"
-//	@Failure		500				{object}	model.HttpResponse{data=string}	"查询数据失败"
-//	@Router			/ipc/device/status [GET]
-func GetIpcDevicesStatus(c *gin.Context) {
-	var (
-		total     int64
-		online    int64
-		offline   int64
-		ipcDevice IpcDevice
-	)
-
-	global.Db.Model(IpcDevice{}).Count(&total)
-	ipcDevice.Status = gb28181_server.DeviceOnLineStatus
-	global.Db.Model(IpcDevice{}).Where(IpcDevice{
-		GB28181Device: gb28181_server.GB28181Device{
-			Status: gb28181_server.DeviceOnLineStatus,
-		},
-	}).Count(&online)
-	global.Db.Model(IpcDevice{}).Where(IpcDevice{
-		GB28181Device: gb28181_server.GB28181Device{
-			Status: gb28181_server.DeviceOffLineStatus,
-		},
-	}).Count(&offline)
-
-	model.HttpResponse{}.OkGin(c, &struct {
-		Total   int64 `json:"total"`
-		Online  int64 `json:"online"`
-		Offline int64 `json:"offline"`
-	}{
-		Total:   total,
-		Online:  online,
-		Offline: offline,
-	})
-}
-
-// GetIpcDevicesByPages 分页查询IpcDevice设备
-//
-//	@Summary		分页查询IpcDevice设备
-//	@Version		0.0.1
-//	@Description	分页查询GB28181 IpcDevice设备
-//	@Tags			IPC设备 /ipc/device
-//	@Accept			json
-//	@Produce		json
-//	@Param			Authorization	header		string									false	"访问token"
-//	@Param			access_token	query		string									false	"访问token"
-//	@Param			page			query		integer									false	"分页查询页码，默认值: 1"
-//	@Param			page_size		query		integer									false	"每页查询数量，默认值: 15"
-//	@Success		200				{object}	model.HttpResponse{data=IpcDevicePage}	"分页查询成功"
-//	@Failure		500				{object}	model.HttpResponse{data=string}			"查询数据失败"
+//	@Param			Authorization	header		string																false	"访问token"
+//	@Param			access_token	query		string																false	"访问token"
+//	@Param			page			query		integer																false	"分页查询页码，默认值: 1"
+//	@Param			page_size		query		integer																false	"每页查询数量，默认值: 15"
+//	@Param			status			query		string																false	"设备状态，支持: ALl、ON、OFF，默认值: ALL"
+//	@Param			keywords		query		string																false	"设备模型查询信息"
+//	@Success		200				{object}	model.HttpResponse{data=model.BasePageResponse{data=[]IpcDevice}}	"获取IPC设备列表成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}										"获取IPC设备列表失败"
 //	@Router			/ipc/device/devices [GET]
-func GetIpcDevicesByPages(c *gin.Context) {
+func GetIpcDevices(c *gin.Context) {
 	pageQuery := c.DefaultQuery("page", "1")
 	pageSizeQuery := c.DefaultQuery("page_size", "15")
 	statusQuery := c.DefaultQuery("status", "ALL")
@@ -199,12 +127,12 @@ func GetIpcDevicesByPages(c *gin.Context) {
 		panic(http.StatusBadRequest)
 	}
 
-	total, data, err := selectIpcDevicesByPages(page, pageSize, statusQuery, keywords)
+	total, data, err := IpcDevice{}.SelectIpcDevices(page, pageSize, statusQuery, keywords)
 	if err != nil {
 		model.HttpResponse{}.FailGin(c, "查询数据失败")
 		return
 	} else {
-		model.HttpResponse{}.OkGin(c, &IpcDevicePage{
+		model.HttpResponse{}.OkGin(c, &model.BasePageResponse{
 			Total:    total,
 			Data:     data,
 			Page:     page,
@@ -213,21 +141,49 @@ func GetIpcDevicesByPages(c *gin.Context) {
 	}
 }
 
-// GetIpcDevicesBySite 根据区域ID查询IpcDevice设备
+// DeleteIpcDevices 批量删除IPC设备
 //
-//	@Summary		根据区域ID查询IpcDevice设备
+//	@Summary		批量删除IPC设备
 //	@Version		0.0.1
-//	@Description	分页查询GB28181 IpcDevice设备
+//	@Description	批量删除IPC设备及对应通道，该删除仅为删除数据库记录，不影响IPC设备的重新注册
+//	@Tags			IPC设备 /ipc/device
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization		header		string							false	"访问token"
+//	@Param			access_token		query		string							false	"访问token"
+//	@Param			IpcDeviceIDsModel	body		IpcDeviceIDsModel				true	"设备ID列表"
+//	@Success		200					{object}	model.HttpResponse{data=nil}	"批量删除IPC设备成功"
+//	@Failure		500					{object}	model.HttpResponse{data=string}	"批量删除IPC设备失败"
+//	@Router			/ipc/device/devices [DELETE]
+func DeleteIpcDevices(c *gin.Context) {
+	var idsModel IpcDeviceIDsModel
+	if err := c.ShouldBind(&idsModel); err != nil {
+		panic(http.StatusBadRequest)
+	}
+
+	err := IpcDevice{}.Deletes(idsModel.DeviceIDs)
+	if err != nil {
+		model.HttpResponse{}.FailGin(c, err.Error())
+	} else {
+		model.HttpResponse{}.OkGin(c, nil)
+	}
+}
+
+// GetIpcDevicesBySiteID 根据区域ID查询Ipc设备
+//
+//	@Summary		根据区域ID查询Ipc设备
+//	@Version		0.0.1
+//	@Description	根据区域ID查询Ipc设备
 //	@Tags			IPC设备 /ipc/device
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string									false	"访问token"
 //	@Param			access_token	query		string									false	"访问token"
 //	@Param			site_id			query		integer									true	"区域ID"
-//	@Success		200				{object}	model.HttpResponse{data=IpcDevicePage}	"查询成功"
+//	@Success		200				{object}	model.HttpResponse{data=[]IpcDevice}	"查询成功"
 //	@Failure		500				{object}	model.HttpResponse{data=string}			"查询数据失败"
 //	@Router			/ipc/device/devices/site_id [GET]
-func GetIpcDevicesBySite(c *gin.Context) {
+func GetIpcDevicesBySiteID(c *gin.Context) {
 	siteIdQuery := c.Query("site_id")
 	if siteIdQuery == "" {
 		panic(http.StatusBadRequest)
@@ -238,7 +194,7 @@ func GetIpcDevicesBySite(c *gin.Context) {
 		panic(http.StatusBadRequest)
 	}
 
-	data, err := selectIpcDevicesBySiteId(&siteId)
+	data, err := IpcDevice{}.SelectBySiteID(&siteId)
 	if err != nil {
 		model.HttpResponse{}.FailGin(c, "查询数据失败")
 		return
@@ -252,34 +208,34 @@ func GetIpcDevicesBySite(c *gin.Context) {
 //	@Summary		更新IPC通道
 //	@Version		0.0.1
 //	@Description	更新IPC通道
-//	@Tags			IPC设备 /ipc/device
+//	@Tags			IPC设备通道 /ipc/channel
 //	@Accept			json
 //	@Produce		json
-//	@Param			Authorization	header		string								false	"访问token"
-//	@Param			access_token	query		string								false	"访问token"
-//	@Param			IpcDevice		body		IpcDevice							true	"设备信息"
-//	@Success		200				{object}	model.HttpResponse{data=IpcChannel}	"更新成功"
-//	@Failure		500				{object}	model.HttpResponse{data=string}		"查询数据失败"
-//	@Router			/ipc/device/channel [POST]
+//	@Param			Authorization	header		string							false	"访问token"
+//	@Param			access_token	query		string							false	"访问token"
+//	@Param			IpcChannel		body		IpcChannel						true	"设备通道信息"
+//	@Success		200				{object}	model.HttpResponse{data=nil}	"更新IPC通道成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}	"更新IPC通道失败"
+//	@Router			/ipc/channel [POST]
 func PostIpcChannel(c *gin.Context) {
 	var ipcChannel IpcChannel
 	if err := c.ShouldBind(&ipcChannel); err != nil {
 		panic(http.StatusBadRequest)
 	}
-	err := updateIpcChannel(ipcChannel)
+	err := IpcChannel{}.Update(ipcChannel)
 	if err != nil {
 		model.HttpResponse{}.FailGin(c, err.Error())
 	} else {
-		model.HttpResponse{}.OkGin(c, ipcChannel)
+		model.HttpResponse{}.OkGin(c, nil)
 	}
 }
 
-// GetIpcChannels 获取设备通道信息
+// GetIpcChannels 获取设备通道列表
 //
-//	@Summary		获取设备通道信息
+//	@Summary		获取设备通道列表
 //	@Version		0.0.1
-//	@Description	查询GB28181 设备对应通道信息
-//	@Tags			IPC设备 /ipc/device
+//	@Description	获取设备通道列表
+//	@Tags			IPC设备通道 /ipc/channel
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string									false	"访问token"
@@ -287,14 +243,14 @@ func PostIpcChannel(c *gin.Context) {
 //	@Param			device_id		query		string									true	"设备ID"
 //	@Success		200				{object}	model.HttpResponse{data=[]IpcChannel}	"查询数据成功"
 //	@Failure		500				{object}	model.HttpResponse{data=string}			"查询数据失败"
-//	@Router			/ipc/device/channels [GET]
+//	@Router			/ipc/channel/channels [GET]
 func GetIpcChannels(c *gin.Context) {
 	deviceId := c.Query("device_id")
 	if deviceId == "" {
 		panic(http.StatusBadRequest)
 	}
 
-	ipcChannels, err := selectIpcChannels(deviceId)
+	ipcChannels, err := IpcChannel{}.SelectChannels(deviceId)
 
 	if err != nil {
 		model.HttpResponse{}.FailGin(c, "查询数据失败")
@@ -310,14 +266,14 @@ func GetIpcChannels(c *gin.Context) {
 //	@Summary		IPC图像上传
 //	@Version		0.0.1
 //	@Description	GB28181图像抓拍，图片上传接口
-//	@Tags			IPC设备 /ipc/device
+//	@Tags			IPC设备通道 /ipc/channel
 //	@Accept			mpfd
 //	@Produce		json
 //	@Param			access_token	query		string							true	"访问token"
 //	@Param			file			formData	file							true	"上传图片"
 //	@Success		200				{object}	model.HttpResponse{data=string}	"上传图片成功"
 //	@Failure		500				{object}	model.HttpResponse{data=string}	"上传图片失败"
-//	@Router			/ipc/device/upload_image [POST]
+//	@Router			/ipc/channel/upload_image [POST]
 func IpcUploadImage(c *gin.Context) {
 	file, err := c.FormFile("file")
 	if err != nil {

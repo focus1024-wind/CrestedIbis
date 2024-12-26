@@ -8,16 +8,16 @@ import (
 	"time"
 )
 
-func (IpcDevice) LoadDevice(deviceId string) (gb28181_server.GB28181Device, bool) {
-	var gb28181Device IpcDevice
-	err := global.Db.Where(&IpcDevice{DeviceID: deviceId}).First(&gb28181Device).Error
-	if err != nil {
-		return gb28181_server.GB28181Device{DeviceID: deviceId}, false
+func (IpcDevice) LoadDevice(deviceID string) (gb28181_server.GB28181Device, bool) {
+	var ipcDevice IpcDevice
+
+	if err := global.Db.Where(&IpcDevice{DeviceID: deviceID}).First(&ipcDevice).Error; err != nil {
+		return gb28181_server.GB28181Device{DeviceID: deviceID}, false
 	} else {
-		gb28181Device.GB28181Device.DeviceID = gb28181Device.DeviceID
-		gb28181Device.GB28181Device.RegisterTime = time.Time(gb28181Device.RegisterTime)
-		gb28181Device.GB28181Device.KeepaliveTime = time.Time(gb28181Device.KeepaliveTime)
-		return gb28181Device.GB28181Device, true
+		ipcDevice.GB28181Device.DeviceID = ipcDevice.DeviceID
+		ipcDevice.GB28181Device.RegisterTime = time.Time(ipcDevice.RegisterTime)
+		ipcDevice.GB28181Device.KeepaliveTime = time.Time(ipcDevice.KeepaliveTime)
+		return ipcDevice.GB28181Device, true
 	}
 }
 
@@ -25,17 +25,21 @@ func (IpcDevice) StoreDevice(gb28181Device gb28181_server.GB28181Device) {
 	if gb28181Device.DeviceID == "" {
 		return
 	}
-	// 新建设备
-	err := global.Db.Debug().Where(&IpcDevice{
-		DeviceID: gb28181Device.DeviceID,
-	}).Save(&IpcDevice{
-		DeviceID:      gb28181Device.DeviceID,
-		GB28181Device: gb28181Device,
-		RegisterTime:  model.LocalTime(gb28181Device.RegisterTime),
-		KeepaliveTime: model.LocalTime(gb28181Device.KeepaliveTime),
-	}).Error
-	if err != nil {
-		// 修改设备信息
+
+	var ipcDevice IpcDevice
+
+	if err := global.Db.Where(&IpcDevice{DeviceID: gb28181Device.DeviceID}).First(&ipcDevice).Error; err != nil {
+		// 数据库无数据，新建设备信息
+		global.Db.Where(&IpcDevice{
+			DeviceID: gb28181Device.DeviceID,
+		}).Save(&IpcDevice{
+			DeviceID:      gb28181Device.DeviceID,
+			GB28181Device: gb28181Device,
+			RegisterTime:  model.LocalTime(gb28181Device.RegisterTime),
+			KeepaliveTime: model.LocalTime(gb28181Device.KeepaliveTime),
+		})
+	} else {
+		// 数据库存在设备信息，修改设备信息
 		// 参数置空，不额外存储设备名称，避免平台修改后被覆盖
 		gb28181Device.Name = ""
 		global.Db.Debug().Where(&IpcDevice{
@@ -49,9 +53,9 @@ func (IpcDevice) StoreDevice(gb28181Device gb28181_server.GB28181Device) {
 	}
 }
 
-func (IpcDevice) DeviceOffline(deviceId string) {
+func (IpcDevice) DeviceOffline(deviceID string) {
 	var gb28181Device IpcDevice
-	err := global.Db.Where(&IpcDevice{DeviceID: deviceId}).First(&gb28181Device).Error
+	err := global.Db.Where(&IpcDevice{DeviceID: deviceID}).First(&gb28181Device).Error
 	if err != nil {
 		return
 	}
@@ -59,11 +63,11 @@ func (IpcDevice) DeviceOffline(deviceId string) {
 	global.Db.Save(&gb28181Device)
 }
 
-func (IpcDevice) LoadChannel(deviceId string, channelId string) (gb28181_server.GB28181Channel, bool) {
+func (IpcDevice) LoadChannel(deviceID string, channelID string) (gb28181_server.GB28181Channel, bool) {
 	var channel IpcChannel
 	err := global.Db.Where(&IpcChannel{
-		ParentID: deviceId,
-		DeviceID: channelId,
+		ParentID: deviceID,
+		DeviceID: channelID,
 	}).First(&channel).Error
 
 	if err != nil {
