@@ -347,7 +347,7 @@ paths:
               type: object
       summary: 删除告警记录
       tags:
-      - IPC告警 /ipc/alarm
+      - IPC告警
   /ipc/alarm/alarms:
     delete:
       consumes:
@@ -391,7 +391,7 @@ paths:
               type: object
       summary: 批量删除告警记录
       tags:
-      - IPC告警 /ipc/alarm
+      - IPC告警
     get:
       consumes:
       - application/json
@@ -463,7 +463,7 @@ paths:
               type: object
       summary: 获取IPC设备告警列表
       tags:
-      - IPC告警 /ipc/alarm
+      - IPC告警
   /ipc/channel:
     post:
       consumes:
@@ -507,7 +507,7 @@ paths:
               type: object
       summary: 更新IPC通道
       tags:
-      - IPC设备通道 /ipc/channel
+      - IPC设备通道
   /ipc/channel/channels:
     get:
       consumes:
@@ -552,7 +552,7 @@ paths:
               type: object
       summary: 获取设备通道列表
       tags:
-      - IPC设备通道 /ipc/channel
+      - IPC设备通道
   /ipc/channel/upload_image:
     post:
       consumes:
@@ -592,7 +592,7 @@ paths:
               type: object
       summary: IPC图像上传
       tags:
-      - IPC设备通道 /ipc/channel
+      - IPC设备通道
   /ipc/device:
     delete:
       consumes:
@@ -636,7 +636,7 @@ paths:
               type: object
       summary: 删除IPC设备
       tags:
-      - IPC设备 /ipc/device
+      - IPC设备
     get:
       consumes:
       - application/json
@@ -678,7 +678,7 @@ paths:
               type: object
       summary: 获取IPC设备
       tags:
-      - IPC设备 /ipc/device
+      - IPC设备
     post:
       consumes:
       - application/json
@@ -721,7 +721,7 @@ paths:
               type: object
       summary: 更新IPC设备
       tags:
-      - IPC设备 /ipc/device
+      - IPC设备
   /ipc/device/devices:
     delete:
       consumes:
@@ -765,7 +765,7 @@ paths:
               type: object
       summary: 批量删除IPC设备
       tags:
-      - IPC设备 /ipc/device
+      - IPC设备
     get:
       consumes:
       - application/json
@@ -825,7 +825,7 @@ paths:
               type: object
       summary: 获取IPC设备列表
       tags:
-      - IPC设备 /ipc/device
+      - IPC设备
   /ipc/device/devices/site_id:
     get:
       consumes:
@@ -870,7 +870,7 @@ paths:
               type: object
       summary: 根据区域ID查询Ipc设备
       tags:
-      - IPC设备 /ipc/device
+      - IPC设备
   /ipc/media/play:
     post:
       consumes:
@@ -916,7 +916,7 @@ paths:
               type: object
       summary: Ipc设备点播
       tags:
-      - IPC设备点播 /ipc/media
+      - IPC设备点播
   /ipc/media/stop:
     post:
       consumes:
@@ -960,7 +960,7 @@ paths:
               type: object
       summary: Ipc设备停止点播
       tags:
-      - IPC设备点播 /ipc/media
+      - IPC设备点播
   /ipc/record:
     delete:
       consumes:
@@ -1004,7 +1004,7 @@ paths:
               type: object
       summary: 删除录像文件
       tags:
-      - IPC录像 /ipc/record
+      - IPC录像
     get:
       consumes:
       - application/json
@@ -1028,7 +1028,7 @@ paths:
       responses: {}
       summary: 下载录像文件
       tags:
-      - IPC录像 /ipc/record
+      - IPC录像
   /ipc/record/records:
     delete:
       consumes:
@@ -1072,7 +1072,7 @@ paths:
               type: object
       summary: 批量删除录像文件
       tags:
-      - IPC录像 /ipc/record
+      - IPC录像
     get:
       consumes:
       - application/json
@@ -1144,7 +1144,7 @@ paths:
               type: object
       summary: 获取IPC设备录像列表
       tags:
-      - IPC录像 /ipc/record
+      - IPC录像
   /site:
     delete:
       consumes:
@@ -1178,7 +1178,7 @@ paths:
             $ref: '#/definitions/model.HttpResponse'
       summary: 删除区域站点
       tags:
-      - 区域管理 /site
+      - 区域管理
     post:
       consumes:
       - application/json
@@ -1221,7 +1221,7 @@ paths:
               type: object
       summary: 修改区域信息
       tags:
-      - 区域管理 /site
+      - 区域管理
     put:
       consumes:
       - application/json
@@ -1264,7 +1264,7 @@ paths:
               type: object
       summary: 新建区域
       tags:
-      - 区域管理 /site
+      - 区域管理
   /site/sites:
     delete:
       consumes:
@@ -1308,7 +1308,7 @@ paths:
               type: object
       summary: 批量删除区域
       tags:
-      - 区域管理 /site
+      - 区域管理
     get:
       consumes:
       - application/json
@@ -1350,7 +1350,7 @@ paths:
             $ref: '#/definitions/model.HttpResponse'
       summary: 获取区域列表
       tags:
-      - 区域管理 /site
+      - 区域管理
   /system/admin/password:
     post:
       consumes:
@@ -1394,7 +1394,7 @@ paths:
               type: object
       summary: 修改用户密码
       tags:
-      - 超级用户操作 /system/admin
+      - 超级用户操作
   /system/role:
     delete:
       consumes:
@@ -1438,7 +1438,7 @@ paths:
               type: object
       summary: 删除权限组
       tags:
-      - 权限管理 /system/role
+      - 权限管理
     post:
       consumes:
       - application/json
@@ -1481,7 +1481,7 @@ paths:
               type: object
       summary: 更新权限组
       tags:
-      - 权限管理 /system/role
+      - 权限管理
     put:
       consumes:
       - application/json
@@ -1524,7 +1524,7 @@ paths:
               type: object
       summary: 新增权限组
       tags:
-      - 权限管理 /system/role
+      - 权限管理
   /system/role/roles:
     delete:
       consumes:
@@ -1568,7 +1568,7 @@ paths:
               type: object
       summary: 批量删除权限组
       tags:
-      - 权限管理 /system/role
+      - 权限管理
     get:
       consumes:
       - application/json
@@ -1611,7 +1611,7 @@ paths:
               type: object
       summary: 获取权限组列表
       tags:
-      - 权限管理 /system/role
+      - 权限管理
   /system/role/rules:
     get:
       consumes:
@@ -1656,7 +1656,7 @@ paths:
               type: object
       summary: 获取权限组对应权限
       tags:
-      - 权限管理 /system/role
+      - 权限管理
     post:
       consumes:
       - application/json
@@ -1699,7 +1699,7 @@ paths:
               type: object
       summary: 更新权限组对应权限
       tags:
-      - 权限管理 /system/role
+      - 权限管理
   /system/user:
     delete:
       consumes:
@@ -1743,7 +1743,7 @@ paths:
               type: object
       summary: 删除用户
       tags:
-      - 用户管理 /system/user
+      - 用户管理
     post:
       consumes:
       - application/json
@@ -1786,7 +1786,7 @@ paths:
               type: object
       summary: 更新用户
       tags:
-      - 用户管理 /system/user
+      - 用户管理
   /system/user/login:
     post:
       consumes:
@@ -1822,7 +1822,7 @@ paths:
               type: object
       summary: 用户登录
       tags:
-      - 用户管理 /system/user
+      - 用户管理
   /system/user/register:
     post:
       consumes:
@@ -1858,7 +1858,7 @@ paths:
               type: object
       summary: 注册用户，新增用户
       tags:
-      - 用户管理 /system/user
+      - 用户管理
   /system/user/users:
     delete:
       consumes:
@@ -1902,7 +1902,7 @@ paths:
               type: object
       summary: 批量删除用户
       tags:
-      - 用户管理 /system/user
+      - 用户管理
     get:
       consumes:
       - application/json
@@ -1958,5 +1958,5 @@ paths:
               type: object
       summary: 根据查询条件搜索用户
       tags:
-      - 用户管理 /system/user
+      - 用户管理
 swagger: "2.0"

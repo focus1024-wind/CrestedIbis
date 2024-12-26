@@ -17,7 +17,7 @@ import (
 //	@Summary		获取IPC设备
 //	@Version		0.0.1
 //	@Description	获取IPC设备
-//	@Tags			IPC设备 /ipc/device
+//	@Tags			IPC设备
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string								false	"访问token"
@@ -45,7 +45,7 @@ func GetIpcDevice(c *gin.Context) {
 //	@Summary		更新IPC设备
 //	@Version		0.0.1
 //	@Description	更新IPC设备
-//	@Tags			IPC设备 /ipc/device
+//	@Tags			IPC设备
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string							false	"访问token"
@@ -72,7 +72,7 @@ func PostIpcDevice(c *gin.Context) {
 //	@Summary		删除IPC设备
 //	@Version		0.0.1
 //	@Description	删除IPC设备及对应通道，该删除仅为删除数据库记录，不影响IPC设备的重新注册
-//	@Tags			IPC设备 /ipc/device
+//	@Tags			IPC设备
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization		header		string							false	"访问token"
@@ -100,7 +100,7 @@ func DeleteIpcDevice(c *gin.Context) {
 //	@Summary		获取IPC设备列表
 //	@Version		0.0.1
 //	@Description	获取IPC设备列表
-//	@Tags			IPC设备 /ipc/device
+//	@Tags			IPC设备
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string																false	"访问token"
@@ -146,7 +146,7 @@ func GetIpcDevices(c *gin.Context) {
 //	@Summary		批量删除IPC设备
 //	@Version		0.0.1
 //	@Description	批量删除IPC设备及对应通道，该删除仅为删除数据库记录，不影响IPC设备的重新注册
-//	@Tags			IPC设备 /ipc/device
+//	@Tags			IPC设备
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization		header		string							false	"访问token"
@@ -174,7 +174,7 @@ func DeleteIpcDevices(c *gin.Context) {
 //	@Summary		根据区域ID查询Ipc设备
 //	@Version		0.0.1
 //	@Description	根据区域ID查询Ipc设备
-//	@Tags			IPC设备 /ipc/device
+//	@Tags			IPC设备
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string									false	"访问token"
@@ -208,7 +208,7 @@ func GetIpcDevicesBySiteID(c *gin.Context) {
 //	@Summary		更新IPC通道
 //	@Version		0.0.1
 //	@Description	更新IPC通道
-//	@Tags			IPC设备通道 /ipc/channel
+//	@Tags			IPC设备通道
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string							false	"访问token"
@@ -235,7 +235,7 @@ func PostIpcChannel(c *gin.Context) {
 //	@Summary		获取设备通道列表
 //	@Version		0.0.1
 //	@Description	获取设备通道列表
-//	@Tags			IPC设备通道 /ipc/channel
+//	@Tags			IPC设备通道
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string									false	"访问token"
@@ -266,7 +266,7 @@ func GetIpcChannels(c *gin.Context) {
 //	@Summary		IPC图像上传
 //	@Version		0.0.1
 //	@Description	GB28181图像抓拍，图片上传接口
-//	@Tags			IPC设备通道 /ipc/channel
+//	@Tags			IPC设备通道
 //	@Accept			mpfd
 //	@Produce		json
 //	@Param			access_token	query		string							true	"访问token"

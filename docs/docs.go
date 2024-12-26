@@ -33,7 +33,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "IPC告警 /ipc/alarm"
+                    "IPC告警"
                 ],
                 "summary": "删除告警记录",
                 "parameters": [
@@ -109,7 +109,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "IPC告警 /ipc/alarm"
+                    "IPC告警"
                 ],
                 "summary": "获取IPC设备告警列表",
                 "parameters": [
@@ -231,7 +231,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "IPC告警 /ipc/alarm"
+                    "IPC告警"
                 ],
                 "summary": "批量删除告警记录",
                 "parameters": [
@@ -307,7 +307,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "IPC设备通道 /ipc/channel"
+                    "IPC设备通道"
                 ],
                 "summary": "更新IPC通道",
                 "parameters": [
@@ -383,7 +383,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "IPC设备通道 /ipc/channel"
+                    "IPC设备通道"
                 ],
                 "summary": "获取设备通道列表",
                 "parameters": [
@@ -460,7 +460,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "IPC设备通道 /ipc/channel"
+                    "IPC设备通道"
                 ],
                 "summary": "IPC图像上传",
                 "parameters": [
@@ -529,7 +529,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "IPC设备 /ipc/device"
+                    "IPC设备"
                 ],
                 "summary": "获取IPC设备",
                 "parameters": [
@@ -601,7 +601,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "IPC设备 /ipc/device"
+                    "IPC设备"
                 ],
                 "summary": "更新IPC设备",
                 "parameters": [
@@ -675,7 +675,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "IPC设备 /ipc/device"
+                    "IPC设备"
                 ],
                 "summary": "删除IPC设备",
                 "parameters": [
@@ -751,7 +751,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "IPC设备 /ipc/device"
+                    "IPC设备"
                 ],
                 "summary": "获取IPC设备列表",
                 "parameters": [
@@ -855,7 +855,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "IPC设备 /ipc/device"
+                    "IPC设备"
                 ],
                 "summary": "批量删除IPC设备",
                 "parameters": [
@@ -931,7 +931,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "IPC设备 /ipc/device"
+                    "IPC设备"
                 ],
                 "summary": "根据区域ID查询Ipc设备",
                 "parameters": [
@@ -1008,7 +1008,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "IPC设备点播 /ipc/media"
+                    "IPC设备点播"
                 ],
                 "summary": "Ipc设备点播",
                 "parameters": [
@@ -1087,7 +1087,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "IPC设备点播 /ipc/media"
+                    "IPC设备点播"
                 ],
                 "summary": "Ipc设备停止点播",
                 "parameters": [
@@ -1163,7 +1163,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "IPC录像 /ipc/record"
+                    "IPC录像"
                 ],
                 "summary": "下载录像文件",
                 "parameters": [
@@ -1198,7 +1198,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "IPC录像 /ipc/record"
+                    "IPC录像"
                 ],
                 "summary": "删除录像文件",
                 "parameters": [
@@ -1274,7 +1274,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "IPC录像 /ipc/record"
+                    "IPC录像"
                 ],
                 "summary": "获取IPC设备录像列表",
                 "parameters": [
@@ -1396,7 +1396,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "IPC录像 /ipc/record"
+                    "IPC录像"
                 ],
                 "summary": "批量删除录像文件",
                 "parameters": [
@@ -1472,7 +1472,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "区域管理 /site"
+                    "区域管理"
                 ],
                 "summary": "新建区域",
                 "parameters": [
@@ -1546,7 +1546,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "区域管理 /site"
+                    "区域管理"
                 ],
                 "summary": "修改区域信息",
                 "parameters": [
@@ -1620,7 +1620,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "区域管理 /site"
+                    "区域管理"
                 ],
                 "summary": "删除区域站点",
                 "parameters": [
@@ -1672,7 +1672,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "区域管理 /site"
+                    "区域管理"
                 ],
                 "summary": "获取区域列表",
                 "parameters": [
@@ -1740,7 +1740,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "区域管理 /site"
+                    "区域管理"
                 ],
                 "summary": "批量删除区域",
                 "parameters": [
@@ -1816,7 +1816,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "超级用户操作 /system/admin"
+                    "超级用户操作"
                 ],
                 "summary": "修改用户密码",
                 "parameters": [
@@ -1892,7 +1892,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "权限管理 /system/role"
+                    "权限管理"
                 ],
                 "summary": "新增权限组",
                 "parameters": [
@@ -1966,7 +1966,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "权限管理 /system/role"
+                    "权限管理"
                 ],
                 "summary": "更新权限组",
                 "parameters": [
@@ -2040,7 +2040,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "权限管理 /system/role"
+                    "权限管理"
                 ],
                 "summary": "删除权限组",
                 "parameters": [
@@ -2116,7 +2116,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "权限管理 /system/role"
+                    "权限管理"
                 ],
                 "summary": "获取权限组列表",
                 "parameters": [
@@ -2190,7 +2190,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "权限管理 /system/role"
+                    "权限管理"
                 ],
                 "summary": "批量删除权限组",
                 "parameters": [
@@ -2266,7 +2266,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "权限管理 /system/role"
+                    "权限管理"
                 ],
                 "summary": "获取权限组对应权限",
                 "parameters": [
@@ -2341,7 +2341,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "权限管理 /system/role"
+                    "权限管理"
                 ],
                 "summary": "更新权限组对应权限",
                 "parameters": [
@@ -2417,7 +2417,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "用户管理 /system/user"
+                    "用户管理"
                 ],
                 "summary": "更新用户",
                 "parameters": [
@@ -2491,7 +2491,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "用户管理 /system/user"
+                    "用户管理"
                 ],
                 "summary": "删除用户",
                 "parameters": [
@@ -2567,7 +2567,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "用户管理 /system/user"
+                    "用户管理"
                 ],
                 "summary": "用户登录",
                 "parameters": [
@@ -2631,7 +2631,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "用户管理 /system/user"
+                    "用户管理"
                 ],
                 "summary": "注册用户，新增用户",
                 "parameters": [
@@ -2695,7 +2695,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "用户管理 /system/user"
+                    "用户管理"
                 ],
                 "summary": "根据查询条件搜索用户",
                 "parameters": [
@@ -2793,7 +2793,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "用户管理 /system/user"
+                    "用户管理"
                 ],
                 "summary": "批量删除用户",
                 "parameters": [

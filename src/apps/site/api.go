@@ -12,7 +12,7 @@ import (
 //	@Summary		新建区域
 //	@Version		0.0.1
 //	@Description	新建区域
-//	@Tags			区域管理 /site
+//	@Tags			区域管理
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string							false	"访问token"
@@ -40,7 +40,7 @@ func CreateSite(c *gin.Context) {
 //	@Summary		修改区域信息
 //	@Version		0.0.1
 //	@Description	修改区域信息
-//	@Tags			区域管理 /site
+//	@Tags			区域管理
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string							false	"访问token"
@@ -68,7 +68,7 @@ func UpdateSite(c *gin.Context) {
 //	@Summary		删除区域站点
 //	@Version		0.0.1
 //	@Description	删除区域站点
-//	@Tags			区域管理 /site
+//	@Tags			区域管理
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string					false	"访问token"
@@ -96,7 +96,7 @@ func DeleteSite(c *gin.Context) {
 //	@Summary		获取区域列表
 //	@Version		0.0.1
 //	@Description	获取区域列表
-//	@Tags			区域管理 /site
+//	@Tags			区域管理
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string							false	"访问token"
@@ -134,7 +134,7 @@ func GetSites(c *gin.Context) {
 //	@Summary		批量删除区域
 //	@Version		0.0.1
 //	@Description	批量删除区域
-//	@Tags			区域管理 /site
+//	@Tags			区域管理
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string							false	"访问token"

@@ -17,7 +17,7 @@ import (
 //	@Summary		删除告警记录
 //	@Version		0.0.1
 //	@Description	删除告警记录
-//	@Tags			IPC告警 /ipc/alarm
+//	@Tags			IPC告警
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string							false	"访问token"
@@ -46,7 +46,7 @@ func DeleteIpcAlarm(c *gin.Context) {
 //	@Summary		获取IPC设备告警列表
 //	@Version		0.0.1
 //	@Description	获取IPC设备告警列表
-//	@Tags			IPC告警 /ipc/alarm
+//	@Tags			IPC告警
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string																false	"访问token"
@@ -98,7 +98,7 @@ func GetIpcAlarms(c *gin.Context) {
 //	@Summary		批量删除告警记录
 //	@Version		0.0.1
 //	@Description	批量删除告警记录
-//	@Tags			IPC告警 /ipc/alarm
+//	@Tags			IPC告警
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string							false	"访问token"
@@ -127,7 +127,7 @@ func DeleteIpcAlarms(c *gin.Context) {
 //	@Summary		下载录像文件
 //	@Version		0.0.1
 //	@Description	下载录像文件
-//	@Tags			IPC录像 /ipc/record
+//	@Tags			IPC录像
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header	string	false	"访问token"
@@ -187,7 +187,7 @@ func DownloadRecord(c *gin.Context) {
 //	@Summary		删除录像文件
 //	@Version		0.0.1
 //	@Description	删除录像文件
-//	@Tags			IPC录像 /ipc/record
+//	@Tags			IPC录像
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string							false	"访问token"
@@ -216,7 +216,7 @@ func DeleteRecord(c *gin.Context) {
 //	@Summary		获取IPC设备录像列表
 //	@Version		0.0.1
 //	@Description	获取IPC设备录像列表
-//	@Tags			IPC录像 /ipc/record
+//	@Tags			IPC录像
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string																false	"访问token"
@@ -268,7 +268,7 @@ func GetIpcRecords(c *gin.Context) {
 //	@Summary		批量删除录像文件
 //	@Version		0.0.1
 //	@Description	批量删除录像文件
-//	@Tags			IPC录像 /ipc/record
+//	@Tags			IPC录像
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string							false	"访问token"

@@ -15,7 +15,7 @@ import (
 //	@Summary		修改用户密码
 //	@Version		0.0.1
 //	@Description	修改用户密码
-//	@Tags			超级用户操作 /system/admin
+//	@Tags			超级用户操作
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string							false	"访问token"
@@ -43,7 +43,7 @@ func AdminChangePassword(c *gin.Context) {
 //	@Summary		更新用户
 //	@Version		1.0.0
 //	@Description	更新用户信息
-//	@Tags			用户管理 /system/user
+//	@Tags			用户管理
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string							false	"访问token"
@@ -71,7 +71,7 @@ func UpdateUser(c *gin.Context) {
 //	@Summary		删除用户
 //	@Version		1.0.0
 //	@Description	删除用户
-//	@Tags			用户管理 /system/user
+//	@Tags			用户管理
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string							false	"访问token"
@@ -99,7 +99,7 @@ func DeleteUser(c *gin.Context) {
 //	@Summary		用户登录
 //	@Version		1.0.0
 //	@Description	用户登录，返回用户信息和JWT信息
-//	@Tags			用户管理 /system/user
+//	@Tags			用户管理
 //	@Accept			json
 //	@Produce		json
 //	@Param			SysUserLogin	body		SysUserLogin									true	"用户登录信息，密码采用加盐加密"
@@ -146,7 +146,7 @@ func Login(c *gin.Context) {
 //	@Summary		注册用户，新增用户
 //	@Version		1.0.0
 //	@Description	注册用户，新增用户
-//	@Tags			用户管理 /system/user
+//	@Tags			用户管理
 //	@Accept			json
 //	@Produce		json
 //	@Param			SysUser	body		SysUser							true	"用户注册信息，密码采用加盐加密"
@@ -172,7 +172,7 @@ func Register(c *gin.Context) {
 //	@Summary		根据查询条件搜索用户
 //	@Version		0.0.1
 //	@Description	根据查询条件搜索用户
-//	@Tags			用户管理 /system/user
+//	@Tags			用户管理
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string															false	"访问token"
@@ -219,7 +219,7 @@ func GetUsers(c *gin.Context) {
 //	@Summary		批量删除用户
 //	@Version		1.0.0
 //	@Description	批量删除用户
-//	@Tags			用户管理 /system/user
+//	@Tags			用户管理
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string							false	"访问token"
@@ -247,7 +247,7 @@ func DeleteUsers(c *gin.Context) {
 //	@Summary		新增权限组
 //	@Version		0.0.1
 //	@Description	新增权限组
-//	@Tags			权限管理 /system/role
+//	@Tags			权限管理
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string							false	"访问token"
@@ -280,7 +280,7 @@ func CreateRole(c *gin.Context) {
 //	@Summary		更新权限组
 //	@Version		0.0.1
 //	@Description	更新权限组
-//	@Tags			权限管理 /system/role
+//	@Tags			权限管理
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string							false	"访问token"
@@ -308,7 +308,7 @@ func UpdateRole(c *gin.Context) {
 //	@Summary		删除权限组
 //	@Version		0.0.1
 //	@Description	删除权限组
-//	@Tags			权限管理 /system/role
+//	@Tags			权限管理
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string							false	"访问token"
@@ -336,7 +336,7 @@ func DeleteRole(c *gin.Context) {
 //	@Summary		获取权限组列表
 //	@Version		0.0.1
 //	@Description	获取权限组列表
-//	@Tags			权限管理 /system/role
+//	@Tags			权限管理
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string									false	"访问token"
@@ -360,7 +360,7 @@ func GetRoles(c *gin.Context) {
 //	@Summary		批量删除权限组
 //	@Version		0.0.1
 //	@Description	批量删除权限组
-//	@Tags			权限管理 /system/role
+//	@Tags			权限管理
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string							false	"访问token"
@@ -389,7 +389,7 @@ func DeleteRoles(c *gin.Context) {
 //	@Summary		获取权限组对应权限
 //	@Version		0.0.1
 //	@Description	获取权限组对应权限
-//	@Tags			权限管理 /system/role
+//	@Tags			权限管理
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization	header		string									false	"访问token"
@@ -417,7 +417,7 @@ func GetRoleRules(c *gin.Context) {
 //	@Summary		更新权限组对应权限
 //	@Version		0.0.1
 //	@Description	更新权限组对应权限
-//	@Tags			权限管理 /system/role
+//	@Tags			权限管理
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization			header		string							false	"访问token"

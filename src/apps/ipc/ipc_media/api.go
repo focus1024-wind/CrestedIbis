@@ -12,7 +12,7 @@ import (
 //	@Summary		Ipc设备点播
 //	@Version		0.0.1
 //	@Description	Ipc设备点播
-//	@Tags			IPC设备点播 /ipc/media
+//	@Tags			IPC设备点播
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization		header		string										false	"访问token"
@@ -37,7 +37,7 @@ func IpcMediaPlay(c *gin.Context) {
 //	@Summary		Ipc设备停止点播
 //	@Version		0.0.1
 //	@Description	Ipc设备停止点播
-//	@Tags			IPC设备点播 /ipc/media
+//	@Tags			IPC设备点播
 //	@Accept			json
 //	@Produce		json
 //	@Param			Authorization		header		string							false	"访问token"
