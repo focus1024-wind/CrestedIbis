@@ -3,57 +3,63 @@ package ipc_alarm
 import (
 	"CrestedIbis/gb28181_server"
 	"CrestedIbis/src/global"
+	"CrestedIbis/src/global/model"
 	"errors"
 	"fmt"
+	"gorm.io/gorm"
 	"net/http"
 	"strings"
 )
 
-func selectIpcAlarmsByPages(page int64, pageSize int64, deviceID string, channelID string, start string, end string, keywords string) (total int64, ipcDevices []IpcAlarm, err error) {
-	db := global.Db.Model(IpcAlarm{})
+func (IpcAlarm) SelectAlarms(page int64, pageSize int64, deviceID string, channelID string, start string, end string, keywords string) (total int64, ipcAlarms []IpcAlarm, err error) {
+	db := global.Db.Model(&IpcAlarm{})
 
-	if err = db.Where(IpcAlarm{
-		Alarm: gb28181_server.Alarm{
-			DeviceID:  deviceID,
-			ChannelID: channelID,
-		},
-	}).Where("created_time BETWEEN ? AND ? ", start, end).
-		Where("device_id LIKE ? OR channel_id LIKE ?", "%"+keywords+"%", "%"+keywords+"%").
-		Count(&total).Error; err != nil {
-		return
+	if deviceID != "" {
+		db = db.Where("device_id=?", deviceID)
+	}
+	if channelID != "" {
+		db = db.Where("channel_id=?", channelID)
+	}
+	if start != "" && end != "" {
+		db = db.Where("created_time BETWEEN ? AND ? ", start, end)
+	}
+	if keywords != "" {
+		db = db.Where("device_id LIKE ? OR channel_id LIKE ?", "%"+keywords+"%", "%"+keywords+"%")
 	}
 
-	offset := (page - 1) * pageSize
-	if err = db.Debug().Where(IpcAlarm{
-		Alarm: gb28181_server.Alarm{
-			DeviceID:  deviceID,
-			ChannelID: channelID,
-		},
-	}).
-		Where("device_id LIKE ? OR channel_id LIKE ?", "%"+keywords+"%", "%"+keywords+"%").
-		Preload("IpcRecords").Order("id DESC").Offset(int(offset)).Limit(int(pageSize)).Find(&ipcDevices).Error; err != nil {
+	db = db.Session(&gorm.Session{})
+
+	if err = db.Count(&total).Error; err != nil {
+		return
+	} else {
+		offset := (page - 1) * pageSize
+		err = db.Preload("IpcRecords").Order("id DESC").Offset(int(offset)).Limit(int(pageSize)).Find(&ipcAlarms).Error
 		return
 	}
-	return
 }
 
-func DeleteIpcAlarmById(id int64) (err error) {
+func (IpcAlarm) Delete(idModel model.IDModel) (err error) {
 	var ipcAlarm IpcAlarm
-	if err = global.Db.Model(&IpcAlarm{}).Preload("IpcRecords").Where("id = ?", id).First(&ipcAlarm).Error; err != nil {
+	if err = global.Db.Model(&IpcAlarm{}).Preload("IpcRecords").Where("id = ?", idModel.ID).First(&ipcAlarm).Error; err != nil {
 		return
 	}
 
 	for _, record := range ipcAlarm.IpcRecords {
-		fmt.Println(record.ID)
 		// 删除对应历史回放信息
-		DeleteRecordServer(record.ID)
+		err = IpcRecord{}.Delete(model.IDModel{ID: record.ID})
+		if err != nil {
+			global.Logger.Errorf("删除告警信息对应告警视频失败: %s", err.Error())
+			return
+		}
 	}
 
 	err = global.Db.Delete(&ipcAlarm).Error
 	return
 }
 
-func DeleteIpcAlarmByIds(ids []int64) (err error) {
+func (IpcAlarm) Deletes(ids model.IDsModel) (err error) {
+	var errDeleteAlarmIds []int64
+
 	var ipcAlarms []IpcAlarm
 	if err = global.Db.Model(&IpcAlarm{}).Preload("IpcRecords").Find(&ipcAlarms, ids).Error; err != nil {
 		return
@@ -62,8 +68,16 @@ func DeleteIpcAlarmByIds(ids []int64) (err error) {
 	for _, ipcAlarm := range ipcAlarms {
 		if len(ipcAlarm.IpcRecords) > 0 {
 			// 存在录像视频的提前删除
-			DeleteIpcAlarmById(ipcAlarm.ID)
+			err = IpcAlarm{}.Delete(model.IDModel{ID: ipcAlarm.ID})
+			if err != nil {
+				errDeleteAlarmIds = append(errDeleteAlarmIds, ipcAlarm.ID)
+				err = nil
+			}
 		}
+	}
+
+	if len(errDeleteAlarmIds) > 0 {
+		return errors.New(fmt.Sprintf("%v 删除失败", errDeleteAlarmIds))
 	}
 
 	// 批量删除
@@ -72,40 +86,16 @@ func DeleteIpcAlarmByIds(ids []int64) (err error) {
 	return
 }
 
-func selectIpcRecordsByPages(page int64, pageSize int64, deviceID string, channelID string, start int64, end int64, keywords string) (total int64, ipcDevices []IpcRecord, err error) {
-	db := global.Db.Model(IpcRecord{})
-	var stream string
-	if deviceID != "" && channelID != "" {
-		stream = fmt.Sprintf("%s/%s", deviceID, channelID)
-	}
-
-	if err = db.Debug().Where(IpcRecord{
-		Record: gb28181_server.Record{
-			Stream: stream,
-		},
-	}).Where("start_time BETWEEN ? AND ? ", start, end).Where("stream LIKE ?", "%"+keywords+"%").Count(&total).Error; err != nil {
-		return
-	}
-
-	offset := (page - 1) * pageSize
-	if err = db.Debug().Where(IpcRecord{
-		Record: gb28181_server.Record{
-			Stream: stream,
-		},
-	}).Where("start_time BETWEEN ? AND ? ", start, end).Where("stream LIKE ?", "%"+keywords+"%").Order("id DESC").Offset(int(offset)).Limit(int(pageSize)).Find(&ipcDevices).Error; err != nil {
-		return
-	}
-	return
-}
-
-func DeleteRecordServer(id int64) (err error) {
+func (IpcRecord) Delete(idModel model.IDModel) (err error) {
 	var ipcRecord IpcRecord
 	err = global.Db.Model(&IpcRecord{}).Where(&IpcRecord{
-		ID: id,
+		IDModel: idModel,
 	}).First(&ipcRecord).Error
+
 	if err != nil {
 		return errors.New("数据不存在")
 	}
+
 	var (
 		app    = ipcRecord.App
 		stream = ipcRecord.Stream
@@ -130,12 +120,38 @@ func DeleteRecordServer(id int64) (err error) {
 	}
 
 	// 删除磁盘上录像文件
-	gb28181_server.DelRecord(app, stream, period, name)
+	_, err = gb28181_server.DelRecord(app, stream, period, name)
+	if err != nil {
+		global.Logger.Error("删除录像视频失败")
+		return
+	}
 
 	// 删除数据库对应记录
-	global.Db.Model(&IpcRecord{}).Where(&IpcRecord{
-		ID: ipcRecord.ID,
-	}).Delete(&IpcRecord{})
+	return global.Db.Model(&IpcRecord{}).Where(&IpcRecord{
+		IDModel: idModel,
+	}).Delete(&IpcRecord{}).Error
+}
 
-	return
+func (IpcRecord) SelectRecords(page int64, pageSize int64, deviceID string, channelID string, start string, end string, keywords string) (total int64, ipcRecords []IpcRecord, err error) {
+	db := global.Db.Model(&IpcRecord{})
+
+	if deviceID != "" && channelID != "" {
+		db = db.Where("stream=?", fmt.Sprintf("%s/%s", deviceID, channelID))
+	}
+	if start != "" && end != "" {
+		db = db.Where("created_time BETWEEN ? AND ? ", start, end)
+	}
+	if keywords != "" {
+		db = db.Where("stream LIKE ?", "%"+keywords+"%")
+	}
+
+	db = db.Session(&gorm.Session{})
+
+	if err = db.Count(&total).Error; err != nil {
+		return
+	} else {
+		offset := (page - 1) * pageSize
+		err = db.Order("id DESC").Offset(int(offset)).Limit(int(pageSize)).Find(&ipcRecords).Error
+		return
+	}
 }

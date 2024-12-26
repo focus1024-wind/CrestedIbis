@@ -9,13 +9,21 @@ import (
 )
 
 func InitIpcAlarmRouter() {
-	global.HttpEngine.GET("/ipc/device/alarms", GetIpcAlarms)
-	global.HttpEngine.DELETE("/ipc/device/alarm", DeleteIpcAlarm)
-	global.HttpEngine.DELETE("/ipc/device/alarm/alarms", DeleteIpcAlarms)
-	global.HttpEngine.GET("/ipc/device/records", GetIpcRecords)
-	global.HttpEngine.GET("/ipc/device/record", DownloadRecord)
-	global.HttpEngine.DELETE("/ipc/device/record", DeleteRecord)
-	global.HttpEngine.DELETE("/ipc/device/records", DeleteRecords)
+	ipcAlarmRouter := global.HttpEngine.Group("/ipc/alarm")
+	{
+		ipcAlarmRouter.DELETE("", DeleteIpcAlarm)
+		ipcAlarmRouter.GET("/alarms", GetIpcAlarms)
+		ipcAlarmRouter.DELETE("/alarms", DeleteIpcAlarms)
+	}
+
+	ipcRecordRouter := global.HttpEngine.Group("/ipc/record")
+	{
+		ipcRecordRouter.GET("", DownloadRecord)
+		ipcRecordRouter.DELETE("", DeleteRecord)
+		ipcRecordRouter.GET("/records", GetIpcRecords)
+		ipcRecordRouter.DELETE("/records", DeleteRecords)
+	}
+
 	global.HttpEngine.Any("/record/*name", proxyRecordHandler)
 }
 

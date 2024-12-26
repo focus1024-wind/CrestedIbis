@@ -6,20 +6,15 @@ import (
 )
 
 type IpcAlarm struct {
+	model.IDModel
 	gb28181_server.Alarm
-	ID         int64       `gorm:"primary_key;auto_increment" json:"id"`
 	IpcRecords []IpcRecord `gorm:"foreignKey:AlarmID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"ipc_records"`
 	model.BaseModel
 }
 
 type IpcRecord struct {
+	model.IDModel
 	gb28181_server.Record
-	ID      int64  `gorm:"primary_key;auto_increment" json:"id"`
 	AlarmID *int64 `json:"alarm_id"`
 	model.BaseModel
-}
-
-type IpcRecordIdEntity struct {
-	ID  int64   `json:"id"`
-	Ids []int64 `json:"ids"`
 }
