@@ -109,11 +109,11 @@ func (Site) SelectList(pid *int64, keywords string) (sites []Site, err error) {
 		// 都不存在，从一级level开始搜索
 		err = db.Where(&Site{
 			Level: 1,
-		}).Error
+		}).Find(&sites).Error
 	} else {
 		err = db.Where(&Site{
 			Pid: pid,
-		}).Error
+		}).Find(&sites).Error
 	}
 
 	return
