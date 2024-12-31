@@ -28,7 +28,7 @@ func (IpcDevice) StoreDevice(gb28181Device gb28181_server.GB28181Device) {
 
 	var ipcDeviceCount int64
 
-	if global.Db.Where(&IpcDevice{DeviceID: gb28181Device.DeviceID}).Count(&ipcDeviceCount); ipcDeviceCount == 0 {
+	if global.Db.Model(&IpcDevice{}).Where(&IpcDevice{DeviceID: gb28181Device.DeviceID}).Count(&ipcDeviceCount); ipcDeviceCount == 0 {
 		// 数据库无数据，新建设备信息
 		global.Db.Where(&IpcDevice{
 			DeviceID: gb28181Device.DeviceID,
@@ -99,15 +99,20 @@ func (IpcDevice) LoadChannels(deviceId string) ([]gb28181_server.GB28181Channel,
 func (IpcDevice) UpdateChannels(channels []gb28181_server.GB28181Channel) {
 	// 更新通道信息
 	for _, channel := range channels {
-		err := global.Db.Where(&IpcChannel{
+		var count int64 = 0
+		if global.Db.Model(&IpcChannel{}).Where(&IpcChannel{
 			ParentID: channel.ParentID,
 			DeviceID: channel.DeviceID,
-		}).Save(&IpcChannel{
-			ParentID:       channel.ParentID,
-			DeviceID:       channel.DeviceID,
-			GB28181Channel: channel,
-		}).Error
-		if err != nil {
+		}).Count(&count); count == 0 {
+			global.Db.Where(&IpcChannel{
+				ParentID: channel.ParentID,
+				DeviceID: channel.DeviceID,
+			}).Save(&IpcChannel{
+				ParentID:       channel.ParentID,
+				DeviceID:       channel.DeviceID,
+				GB28181Channel: channel,
+			})
+		} else {
 			// 修改设备信息
 			// 参数置空，不额外存储设备名称，避免平台修改后被覆盖
 			channel.Name = ""
@@ -124,7 +129,7 @@ func (IpcDevice) UpdateChannels(channels []gb28181_server.GB28181Channel) {
 
 	// 更新通道数
 	for _, channel := range channels {
-		var count int64
+		var count int64 = 0
 		if err := global.Db.Model(&IpcChannel{}).Where(&IpcChannel{ParentID: channel.ParentID}).Count(&count).Error; err != nil {
 			return
 		}
