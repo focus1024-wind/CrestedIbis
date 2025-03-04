@@ -13,18 +13,20 @@ var globalGB28181Config GB28181Config
 
 type GB28181Config struct {
 	SipServer struct {
-		IP   string `default:"0.0.0.0" yaml:"ip" desc:"SIP服务器绑定网卡IP"`
-		Port uint16 `default:"5060" yaml:"port" desc:"SIP服务器绑定端口"`
+		IP       string `default:"0.0.0.0" yaml:"ip" desc:"SIP服务器绑定网卡IP"`
+		PublicIP string `default:"" yaml:"public-ip" desc:"SIP映射的公网IP，解决云服务器IP不一致问题，默认为IP"`
+		Port     uint16 `default:"5060" yaml:"port" desc:"SIP服务器绑定端口"`
 		// ToDo: 添加ALL模式，同时支持TCP和UDP模式
 		Mode string `default:"udp" yaml:"mode" desc:"SIP服务器模式" enum:"udp: UDP模式，tcp: TCP模式"`
 	} `yaml:"sip-server" desc:"SIP服务器配置"`
 	MediaServer struct {
-		Secret string `yaml:"secret" desc:"ZLMediaKit服务器密钥"`
-		server string `default:"http://localhost:80" desc:"ZLMediaKit服务器地址"`
-		IP     string `default:"localhost" yaml:"ip" desc:"ZLMediaKit服务器地址"`
-		Port   uint16 `default:"80" yaml:"port" desc:"ZLMediaKit服务器API端口"`
-		SSL    bool   `default:"false" yaml:"ssl" desc:"是否启用HTTPS协议"`
-		Mode   string `default:"udp" yaml:"mode" desc:"SIP服务器模式" enum:"udp: UDP模式，tcp: TCP模式"`
+		Secret   string `yaml:"secret" desc:"ZLMediaKit服务器密钥"`
+		server   string `default:"http://localhost:80" desc:"ZLMediaKit服务器地址"`
+		IP       string `default:"localhost" yaml:"ip" desc:"ZLMediaKit服务器地址"`
+		PublicIP string `default:"" yaml:"public-ip" desc:"SIP映射的公网IP，解决云服务器IP不一致问题，默认为IP"`
+		Port     uint16 `default:"80" yaml:"port" desc:"ZLMediaKit服务器API端口"`
+		SSL      bool   `default:"false" yaml:"ssl" desc:"是否启用HTTPS协议"`
+		Mode     string `default:"udp" yaml:"mode" desc:"SIP服务器模式" enum:"udp: UDP模式，tcp: TCP模式"`
 	} `yaml:"media-server"`
 	HttpServer struct {
 		IP   string `default:"0.0.0.0" yaml:"ip" desc:"ZLMediatKit Hook Http接口服务IP"`
@@ -73,6 +75,13 @@ func Run(configFilePath string) {
 		globalGB28181Config.MediaServer.server = fmt.Sprintf("https://%s:%d", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port)
 	} else {
 		globalGB28181Config.MediaServer.server = fmt.Sprintf("http://%s:%d", globalGB28181Config.MediaServer.IP, globalGB28181Config.MediaServer.Port)
+	}
+
+	if globalGB28181Config.SipServer.PublicIP == "" {
+		globalGB28181Config.SipServer.PublicIP = globalGB28181Config.SipServer.IP
+	}
+	if globalGB28181Config.MediaServer.PublicIP == "" {
+		globalGB28181Config.MediaServer.PublicIP = globalGB28181Config.MediaServer.IP
 	}
 
 	globalGB28181Config.startSipServer()

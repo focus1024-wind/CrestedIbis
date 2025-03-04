@@ -112,7 +112,7 @@ func (gb28181Device *GB28181Device) createSipRequest(method sip.RequestMethod) (
 	fromAddress := sip.Address{
 		Uri: &sip.SipUri{
 			FUser: sip.String{Str: globalGB28181Config.Serial},
-			FHost: globalGB28181Config.SipServer.IP,
+			FHost: globalGB28181Config.SipServer.PublicIP,
 			FPort: &port,
 		},
 		Params: sip.NewParams().Add("tag", sip.String{Str: utils.RandNumString(9)}),
