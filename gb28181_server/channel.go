@@ -4,10 +4,11 @@ import (
 	"CrestedIbis/gb28181_server/utils"
 	"context"
 	"fmt"
-	"github.com/ghettovoice/gosip/sip"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/ghettovoice/gosip/sip"
 )
 
 type GB28181Channel struct {
@@ -212,6 +213,7 @@ func (channel *GB28181Channel) Bye() int {
 	return int(resp.StatusCode())
 }
 
+// PtzControl PTZ控制
 func (channel *GB28181Channel) PtzControl(ptzCmd string) int {
 	request := channel.CreateSipRequest(sip.MESSAGE)
 	contentType := sip.ContentType("Application/MANSCDP+xml")

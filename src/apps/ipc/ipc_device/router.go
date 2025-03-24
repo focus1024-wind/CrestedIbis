@@ -19,4 +19,5 @@ func InitIpcDeviceRouter() {
 		ipcChannelRouter.GET("/channels", GetIpcChannels)
 		ipcChannelRouter.POST("/upload_image", IpcUploadImage)
 	}
+	global.HttpEngine.POST("/ipc/ptz", ControlPTZ)
 }

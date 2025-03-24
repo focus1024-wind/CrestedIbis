@@ -1,15 +1,17 @@
 package ipc_device
 
 import (
+	"CrestedIbis/gb28181_server"
 	"CrestedIbis/src/global"
 	"CrestedIbis/src/global/model"
 	"CrestedIbis/src/utils"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"path"
 	"strconv"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 // GetIpcDevice 获取IPC设备
@@ -303,5 +305,39 @@ func IpcUploadImage(c *gin.Context) {
 	} else {
 		model.HttpResponse{}.FailGin(c, "图片格式错误，目前仅支持.jpg, .png, .jpeg格式数据上传")
 		return
+	}
+}
+
+// ControlPTZ PTZ控制
+//
+//	@Summary		PTZ控制
+//	@Version		0.0.1
+//	@Description	PTZ控制接口
+//	@Tags			IPC控制
+//	@Accept			json
+//	@Produce		json
+//	@Param			Authorization	header		string								false	"访问token"
+//	@Param			access_token	query		string								false	"访问token"
+//	@Param			channel_id		query		string								true	"通道ID"
+//	@Param			options			body		gb28181_server.PTZControlOptions	true	"PTZ控制参数"
+//	@Success		200				{object}	model.HttpResponse{data=string}		"PTZ控制成功"
+//	@Failure		500				{object}	model.HttpResponse{data=string}		"PTZ控制失败"
+//	@Router			/ipc/ptz [POST]
+func ControlPTZ(c *gin.Context) {
+	channelID := c.Query("channel_id")
+	if channelID == "" {
+		model.HttpResponse{}.FailGin(c, "通道ID不能为空")
+		return
+	}
+	var options gb28181_server.PTZControlOptions
+	if err := c.ShouldBind(&options); err != nil {
+		panic(http.StatusBadRequest)
+	}
+
+	_, err := gb28181_server.ControlPTZ(channelID, &options)
+	if err != nil {
+		model.HttpResponse{}.FailGin(c, err.Error())
+	} else {
+		model.HttpResponse{}.OkGin(c, nil)
 	}
 }

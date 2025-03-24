@@ -44,13 +44,15 @@ gb28181:
   log-level: Info
   sip-server:
     # default: 0.0.0.0
-    ip: 127.0.0.1
+    ip: 192.168.1.11
+    public-ip: 192.168.1.11
     # default: 5060
     port: 5060
-    mode: udp
+    mode: tcp
   media-server:
     secret: Uva5PKPA1aGOoBiQHglYExH2kMi2cX2S
-    ip: 127.0.0.1
+    ip: 192.168.1.11
+    public-ip:
     port: 8080
     mode: tcp
   http-server:

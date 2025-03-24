@@ -143,25 +143,8 @@ func permissionAuth() gin.HandlerFunc {
 			return
 		}
 
-		// 获取用户权限列表
-		roles, err := getIdentityRoles(c)
-		if err != nil {
-			if errors.Is(err, jwt.ErrTokenExpired) {
-				c.JSON(http.StatusUnauthorized, model.HttpResponse{
-					Code: http.StatusUnauthorized,
-					Msg:  "error",
-					Data: "登录已过期",
-				})
-			} else {
-				c.JSON(http.StatusUnauthorized, model.HttpResponse{
-					Code: http.StatusUnauthorized,
-					Msg:  "error",
-					Data: err.Error(),
-				})
-			}
-			c.Abort()
-			return
-		}
+		// 获取用户权限列表, 错误信息后续处理，避免过期Token重新调用登录接口
+		roles, roles_err := getIdentityRoles(c)
 
 		// 获取casbin鉴权执行器
 		casbinEnforcer := utils.CasbinService()
@@ -196,6 +179,25 @@ func permissionAuth() gin.HandlerFunc {
 				break
 			}
 		}
+
+		if roles_err != nil && !permissionRes {
+			if errors.Is(roles_err, jwt.ErrTokenExpired) {
+				c.JSON(http.StatusUnauthorized, model.HttpResponse{
+					Code: http.StatusUnauthorized,
+					Msg:  "error",
+					Data: "登录已过期",
+				})
+			} else {
+				c.JSON(http.StatusUnauthorized, model.HttpResponse{
+					Code: http.StatusUnauthorized,
+					Msg:  "error",
+					Data: roles_err.Error(),
+				})
+			}
+			c.Abort()
+			return
+		}
+
 		if !permissionRes {
 			c.JSON(http.StatusForbidden, model.HttpResponse{
 				Code: http.StatusForbidden,

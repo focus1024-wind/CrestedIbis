@@ -1145,6 +1145,89 @@
                 }
             }
         },
+        "/ipc/ptz": {
+            "post": {
+                "description": "PTZ控制接口",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "IPC控制"
+                ],
+                "summary": "PTZ控制",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "Authorization",
+                        "in": "header"
+                    },
+                    {
+                        "type": "string",
+                        "description": "访问token",
+                        "name": "access_token",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "通道ID",
+                        "name": "channel_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "PTZ控制参数",
+                        "name": "options",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/gb28181_server.PTZControlOptions"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "PTZ控制成功",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "PTZ控制失败",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/model.HttpResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/ipc/record": {
             "get": {
                 "description": "下载录像文件",
@@ -2853,6 +2936,23 @@
         }
     },
     "definitions": {
+        "gb28181_server.PTZControlOptions": {
+            "type": "object",
+            "properties": {
+                "command": {
+                    "type": "string"
+                },
+                "horizontal_speed": {
+                    "type": "integer"
+                },
+                "vertical_speed": {
+                    "type": "integer"
+                },
+                "zoom_speed": {
+                    "type": "integer"
+                }
+            }
+        },
         "ipc_alarm.IpcAlarm": {
             "type": "object",
             "properties": {

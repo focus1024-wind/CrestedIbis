@@ -1,4 +1,15 @@
 definitions:
+  gb28181_server.PTZControlOptions:
+    properties:
+      command:
+        type: string
+      horizontal_speed:
+        type: integer
+      vertical_speed:
+        type: integer
+      zoom_speed:
+        type: integer
+    type: object
   ipc_alarm.IpcAlarm:
     properties:
       alarm_description:
@@ -961,6 +972,55 @@ paths:
       summary: Ipc设备停止点播
       tags:
       - IPC设备点播
+  /ipc/ptz:
+    post:
+      consumes:
+      - application/json
+      description: PTZ控制接口
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      - description: 通道ID
+        in: query
+        name: channel_id
+        required: true
+        type: string
+      - description: PTZ控制参数
+        in: body
+        name: options
+        required: true
+        schema:
+          $ref: '#/definitions/gb28181_server.PTZControlOptions'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: PTZ控制成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+        "500":
+          description: PTZ控制失败
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: PTZ控制
+      tags:
+      - IPC控制
   /ipc/record:
     delete:
       consumes:
