@@ -10,6 +10,23 @@ definitions:
       zoom_speed:
         type: integer
     type: object
+  ipc.GB28181Info:
+    properties:
+      media_ip:
+        type: string
+      password:
+        type: string
+      realm:
+        type: string
+      serial:
+        type: string
+      sip_ip:
+        type: string
+      sip_mode:
+        type: string
+      sip_port:
+        type: string
+    type: object
   ipc_alarm.IpcAlarm:
     properties:
       alarm_description:
@@ -880,6 +897,35 @@ paths:
                   type: string
               type: object
       summary: 根据区域ID查询Ipc设备
+      tags:
+      - IPC设备
+  /ipc/gb28181_info:
+    get:
+      consumes:
+      - application/json
+      description: 获取GB28181连接信息
+      parameters:
+      - description: 访问token
+        in: header
+        name: Authorization
+        type: string
+      - description: 访问token
+        in: query
+        name: access_token
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 查询成功
+          schema:
+            allOf:
+            - $ref: '#/definitions/model.HttpResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/ipc.GB28181Info'
+              type: object
+      summary: 获取GB28181连接信息
       tags:
       - IPC设备
   /ipc/media/play:
