@@ -22,3 +22,13 @@ type GB28181 struct {
 		Port uint16 `yaml:"port"`
 	} `yaml:"http-server"`
 }
+
+func (gb28181 *GB28181) Init() {
+	if gb28181.SipServer.PublicIp == "" {
+		gb28181.SipServer.PublicIp = gb28181.SipServer.IP
+	}
+
+	if gb28181.MediaServer.PublicIp == "" {
+		gb28181.MediaServer.PublicIp = gb28181.MediaServer.IP
+	}
+}

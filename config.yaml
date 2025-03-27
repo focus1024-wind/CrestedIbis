@@ -52,7 +52,6 @@ gb28181:
   media-server:
     secret: Uva5PKPA1aGOoBiQHglYExH2kMi2cX2S
     ip: 192.168.1.11
-    public-ip:
     port: 8080
     mode: tcp
   http-server:

@@ -56,5 +56,7 @@ func initYamlConfig(configFilePath string) *Config {
 	}
 
 	config.Store.Init()
+	config.GB28181.Init()
+
 	return config
 }
